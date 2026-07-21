@@ -1,8 +1,8 @@
 import type { QuestionGroup } from "../../questionGroups/types/questionGroup";
-import type { DrawResult } from "./observation";
+import type { DrawResult, Observation } from "./observation";
 
 export type ObservationDraft = {
-  currentStep: 1 | 2 | 3 | 4;
+  currentStep: 1 | 2 | 3 | 4 | 5 | 6;
   observationDate: string;
   drawTime: string;
   subjectAlias: string;
@@ -28,4 +28,5 @@ export type ObservationDraft = {
     primaryJudgment: string;
     uncertainties: string;
   };
+  verification: Observation["verification"];
 };

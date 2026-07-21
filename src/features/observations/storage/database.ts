@@ -60,6 +60,23 @@ async function put<T>(storeName: StoreName, value: T): Promise<void> {
   database.close();
 }
 
+async function getByKey<T>(storeName: StoreName, key: IDBValidKey): Promise<T | undefined> {
+  const database = await openDatabase();
+  const transaction = database.transaction(storeName, "readonly");
+  const result = await requestToPromise(transaction.objectStore(storeName).get(key) as IDBRequest<T | undefined>);
+  await transactionDone(transaction);
+  database.close();
+  return result;
+}
+
+async function deleteByKey(storeName: StoreName, key: IDBValidKey): Promise<void> {
+  const database = await openDatabase();
+  const transaction = database.transaction(storeName, "readwrite");
+  transaction.objectStore(storeName).delete(key);
+  await transactionDone(transaction);
+  database.close();
+}
+
 export async function initializeDatabase(): Promise<void> {
   const existing = await listQuestionGroups();
   if (existing.length > 0) return;
@@ -73,6 +90,14 @@ export function listObservations(): Promise<Observation[]> {
 
 export function saveObservation(observation: Observation): Promise<void> {
   return put("observations", observation);
+}
+
+export function getObservation(id: string): Promise<Observation | undefined> {
+  return getByKey<Observation>("observations", id);
+}
+
+export function deleteObservation(id: string): Promise<void> {
+  return deleteByKey("observations", id);
 }
 
 export function listQuestionGroups(): Promise<QuestionGroup[]> {
@@ -96,4 +121,8 @@ export async function getSetting<T>(key: string): Promise<T | undefined> {
 
 export function saveSetting(key: string, value: unknown): Promise<void> {
   return put<SettingRecord>("settings", { key, value, updatedAt: new Date().toISOString() });
+}
+
+export function deleteSetting(key: string): Promise<void> {
+  return deleteByKey("settings", key);
 }

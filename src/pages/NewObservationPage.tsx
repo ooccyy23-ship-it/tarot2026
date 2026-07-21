@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { InterpretationStep } from "../features/observations/components/InterpretationStep";
+import { ConfirmationStep } from "../features/observations/components/ConfirmationStep";
 import { ObservationDrawStep } from "../features/observations/components/ObservationDrawStep";
 import { ObservationStepper } from "../features/observations/components/ObservationStepper";
 import { attachDrawResultOnce } from "../features/observations/logic/observationDraft";
-import { getSetting, initializeDatabase, listQuestionGroups, saveQuestionGroup, saveSetting } from "../features/observations/storage/database";
+import { buildObservation, validateObservationDraft } from "../features/observations/logic/buildObservation";
+import { deleteSetting, getSetting, initializeDatabase, listQuestionGroups, saveObservation, saveQuestionGroup, saveSetting } from "../features/observations/storage/database";
 import type { DrawResult } from "../features/observations/types/observation";
 import type { ObservationDraft } from "../features/observations/types/observationDraft";
 import { QuestionGroupSelector } from "../features/questionGroups/components/QuestionGroupSelector";
 import type { QuestionGroup } from "../features/questionGroups/types/questionGroup";
 import { getWeekdayLabel, weekdayOptions } from "../logic/weekday";
 import type { WeekdayKey } from "../types/tarot";
+import { VerificationSetupStep } from "../features/verification/components/VerificationSetupStep";
 
 const emotions = ["平靜", "期待", "焦慮", "困惑", "失落", "生氣", "矛盾", "無明顯情緒", "其他"];
 const dayKeys: WeekdayKey[] = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -49,6 +52,15 @@ function createInitialDraft(): ObservationDraft {
     drawResult: null,
     interpretations: [],
     overallInterpretation: { summary: "", primaryJudgment: "", uncertainties: "" },
+    verification: {
+      requirement: "uncertain",
+      status: "pending",
+      prediction: "",
+      dueDate: "",
+      criteria: "",
+      expectedEvent: "",
+      evidenceSources: [],
+    },
   };
 }
 
@@ -56,7 +68,7 @@ function normalizeDraft(saved?: Partial<ObservationDraft>): ObservationDraft {
   const initial = createInitialDraft();
   if (!saved) return initial;
   const requestedStep = Number(saved.currentStep ?? 1);
-  const maxStep = saved.drawResult ? 4 : 3;
+  const maxStep = saved.drawResult ? 6 : 3;
   const currentStep = Math.min(Math.max(requestedStep, 1), maxStep) as ObservationDraft["currentStep"];
   return {
     ...initial,
@@ -69,6 +81,7 @@ function normalizeDraft(saved?: Partial<ObservationDraft>): ObservationDraft {
     drawResult: saved.drawResult ?? null,
     interpretations: saved.interpretations ?? [],
     overallInterpretation: { ...initial.overallInterpretation, ...(saved.overallInterpretation ?? {}) },
+    verification: { ...initial.verification, ...(saved.verification ?? {}) },
   };
 }
 
@@ -78,6 +91,7 @@ export function NewObservationPage() {
   const [groups, setGroups] = useState<QuestionGroup[]>([]);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     Promise.all([initializeDatabase(), getSetting<ObservationDraft>("newObservationDraft")])
@@ -151,10 +165,39 @@ export function NewObservationPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const saveInterpretationDraft = async () => {
-    const nextDraft = { ...draft, currentStep: 4 as const };
+  const goToVerificationStep = async () => {
+    const nextDraft = { ...draft, currentStep: 5 as const };
     await persistDraft(nextDraft);
-    setMessage("步驟 4 解讀內容已安全儲存在此瀏覽器；驗證設定將於第三階段接續。");
+    setStep(5);
+    setMessage("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const goToConfirmationStep = async () => {
+    const errors = validateObservationDraft(draft);
+    if (errors.length > 0) {
+      setMessage(errors.join(" "));
+      return;
+    }
+    const nextDraft = { ...draft, currentStep: 6 as const };
+    await persistDraft(nextDraft);
+    setStep(6);
+    setMessage("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleSaveObservation = async () => {
+    setSaving(true);
+    setMessage("");
+    try {
+      const observation = buildObservation(draft);
+      await saveObservation(observation);
+      await deleteSetting("newObservationDraft");
+      window.location.hash = `/observations/${observation.id}`;
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "儲存觀測失敗，請稍後再試。");
+      setSaving(false);
+    }
   };
 
   return (
@@ -227,7 +270,27 @@ export function NewObservationPage() {
           draft={draft}
           onChange={(nextDraft) => { setDraft(nextDraft); setMessage(""); }}
           onBack={() => setStep(3)}
-          onSave={saveInterpretationDraft}
+          onContinue={goToVerificationStep}
+          message={message}
+        />
+      ) : null}
+
+      {!loading && step === 5 ? (
+        <VerificationSetupStep
+          draft={draft}
+          onChange={(nextDraft) => { setDraft(nextDraft); setMessage(""); }}
+          onBack={() => setStep(4)}
+          onContinue={goToConfirmationStep}
+          message={message}
+        />
+      ) : null}
+
+      {!loading && step === 6 ? (
+        <ConfirmationStep
+          draft={draft}
+          onBack={() => setStep(5)}
+          onSave={handleSaveObservation}
+          saving={saving}
           message={message}
         />
       ) : null}

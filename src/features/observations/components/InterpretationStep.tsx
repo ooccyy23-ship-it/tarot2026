@@ -4,13 +4,13 @@ export function InterpretationStep({
   draft,
   onChange,
   onBack,
-  onSave,
+  onContinue,
   message,
 }: {
   draft: ObservationDraft;
   onChange: (draft: ObservationDraft) => void;
   onBack: () => void;
-  onSave: () => void;
+  onContinue: () => void;
   message: string;
 }) {
   const questions = [...(draft.questionGroupSnapshot?.questions ?? [])].sort((a, b) => a.order - b.order);
@@ -65,7 +65,7 @@ export function InterpretationStep({
       {message ? <p className="notice-text" role="status">{message}</p> : null}
       <div className="flow-actions">
         <button className="ghost-button" type="button" onClick={onBack}>返回查看抽牌結果</button>
-        <button className="primary-button" type="button" onClick={onSave}>儲存解讀草稿</button>
+        <button className="primary-button" type="button" onClick={onContinue}>下一步：現實驗證設定</button>
       </div>
     </section>
   );

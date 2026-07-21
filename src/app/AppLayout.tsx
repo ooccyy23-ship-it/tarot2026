@@ -10,7 +10,8 @@ const navigation: Array<{ route: AppRoute; label: string }> = [
   { route: "/draw", label: "抽牌工具" },
 ];
 
-export function AppLayout({ currentRoute, children }: { currentRoute: AppRoute; children: ReactNode }) {
+export function AppLayout({ currentRoute, children }: { currentRoute: string; children: ReactNode }) {
+  const activeRoute = currentRoute.startsWith("/observations/") ? "/history" : currentRoute;
   return (
     <div className="site-shell">
       <header className="site-header">
@@ -25,9 +26,9 @@ export function AppLayout({ currentRoute, children }: { currentRoute: AppRoute; 
           {navigation.map((item) => (
             <a
               key={item.route}
-              className={currentRoute === item.route ? "is-active" : ""}
+              className={activeRoute === item.route ? "is-active" : ""}
               href={`#${item.route}`}
-              aria-current={currentRoute === item.route ? "page" : undefined}
+              aria-current={activeRoute === item.route ? "page" : undefined}
             >
               {item.label}
             </a>

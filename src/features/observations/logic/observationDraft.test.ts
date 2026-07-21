@@ -26,6 +26,7 @@ const draft = {
   drawResult: null,
   interpretations: [],
   overallInterpretation: { summary: "", primaryJudgment: "", uncertainties: "" },
+  verification: { requirement: "uncertain", status: "pending", evidenceSources: [] },
 } satisfies ObservationDraft;
 
 describe("observation draw result locking", () => {

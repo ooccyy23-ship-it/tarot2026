@@ -3,6 +3,7 @@ import DrawToolPage from "../App";
 import { DashboardPage } from "../pages/DashboardPage";
 import { DataManagementPage } from "../pages/DataManagementPage";
 import { NewObservationPage } from "../pages/NewObservationPage";
+import { ObservationDetailPage } from "../pages/ObservationDetailPage";
 import { ObservationHistoryPage } from "../pages/ObservationHistoryPage";
 import { PendingVerificationPage } from "../pages/PendingVerificationPage";
 import { AppLayout } from "./AppLayout";
@@ -10,13 +11,14 @@ import { AppLayout } from "./AppLayout";
 const routes = ["/", "/new", "/history", "/pending", "/data", "/draw"] as const;
 export type AppRoute = (typeof routes)[number];
 
-function getRoute(): AppRoute {
+function getRoute(): string {
   const path = window.location.hash.replace(/^#/, "") || "/";
-  return routes.includes(path as AppRoute) ? (path as AppRoute) : "/";
+  if (routes.includes(path as AppRoute) || path.startsWith("/observations/")) return path;
+  return "/";
 }
 
 export function AppRouter() {
-  const [route, setRoute] = useState<AppRoute>(getRoute);
+  const [route, setRoute] = useState(getRoute);
 
   useEffect(() => {
     const handleHashChange = () => setRoute(getRoute());
@@ -24,8 +26,12 @@ export function AppRouter() {
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);
 
+  const routePath = route.split(/[?#]/)[0];
   let page;
-  switch (route) {
+  if (routePath.startsWith("/observations/")) {
+    const observationId = decodeURIComponent(routePath.slice("/observations/".length));
+    page = <ObservationDetailPage observationId={observationId} startEditing={route.includes("edit=1")} />;
+  } else switch (routePath) {
     case "/new":
       page = <NewObservationPage />;
       break;
