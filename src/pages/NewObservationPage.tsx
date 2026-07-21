@@ -1,6 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { InterpretationStep } from "../features/observations/components/InterpretationStep";
+import { ObservationDrawStep } from "../features/observations/components/ObservationDrawStep";
 import { ObservationStepper } from "../features/observations/components/ObservationStepper";
+import { attachDrawResultOnce } from "../features/observations/logic/observationDraft";
 import { getSetting, initializeDatabase, listQuestionGroups, saveQuestionGroup, saveSetting } from "../features/observations/storage/database";
+import type { DrawResult } from "../features/observations/types/observation";
 import type { ObservationDraft } from "../features/observations/types/observationDraft";
 import { QuestionGroupSelector } from "../features/questionGroups/components/QuestionGroupSelector";
 import type { QuestionGroup } from "../features/questionGroups/types/questionGroup";
@@ -23,6 +27,7 @@ function weekdayFromDate(value: string): number {
 function createInitialDraft(): ObservationDraft {
   const observationDate = localDateString();
   return {
+    currentStep: 1,
     observationDate,
     drawTime: "",
     subjectAlias: "",
@@ -41,11 +46,34 @@ function createInitialDraft(): ObservationDraft {
       fearedResult: "",
       note: "",
     },
+    drawResult: null,
+    interpretations: [],
+    overallInterpretation: { summary: "", primaryJudgment: "", uncertainties: "" },
+  };
+}
+
+function normalizeDraft(saved?: Partial<ObservationDraft>): ObservationDraft {
+  const initial = createInitialDraft();
+  if (!saved) return initial;
+  const requestedStep = Number(saved.currentStep ?? 1);
+  const maxStep = saved.drawResult ? 4 : 3;
+  const currentStep = Math.min(Math.max(requestedStep, 1), maxStep) as ObservationDraft["currentStep"];
+  return {
+    ...initial,
+    ...saved,
+    currentStep,
+    weekday: Number.isInteger(saved.weekday) && Number(saved.weekday) >= 0 && Number(saved.weekday) <= 6
+      ? Number(saved.weekday)
+      : initial.weekday,
+    preEmotion: { ...initial.preEmotion, ...(saved.preEmotion ?? {}) },
+    drawResult: saved.drawResult ?? null,
+    interpretations: saved.interpretations ?? [],
+    overallInterpretation: { ...initial.overallInterpretation, ...(saved.overallInterpretation ?? {}) },
   };
 }
 
 export function NewObservationPage() {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState<ObservationDraft["currentStep"]>(1);
   const [draft, setDraft] = useState<ObservationDraft>(createInitialDraft);
   const [groups, setGroups] = useState<QuestionGroup[]>([]);
   const [message, setMessage] = useState("");
@@ -54,7 +82,9 @@ export function NewObservationPage() {
   useEffect(() => {
     Promise.all([initializeDatabase(), getSetting<ObservationDraft>("newObservationDraft")])
       .then(async ([, savedDraft]) => {
-        if (savedDraft) setDraft(savedDraft);
+        const nextDraft = normalizeDraft(savedDraft);
+        setDraft(nextDraft);
+        setStep(nextDraft.currentStep);
         setGroups(await listQuestionGroups());
       })
       .catch((error) => setMessage(error instanceof Error ? error.message : "無法讀取本機資料。"))
@@ -63,6 +93,11 @@ export function NewObservationPage() {
 
   const automaticWeekday = useMemo(() => weekdayFromDate(draft.observationDate), [draft.observationDate]);
   const selectedWeekdayKey = dayKeys[draft.weekday];
+
+  const persistDraft = async (nextDraft: ObservationDraft) => {
+    setDraft(nextDraft);
+    await saveSetting("newObservationDraft", nextDraft);
+  };
 
   const updateDraft = <K extends keyof ObservationDraft>(key: K, value: ObservationDraft[K]) => {
     setDraft((current) => ({ ...current, [key]: value }));
@@ -83,14 +118,43 @@ export function NewObservationPage() {
       setMessage("請選擇一個包含五個問題的題組。");
       return;
     }
-    await saveSetting("newObservationDraft", draft);
+    const nextDraft = { ...draft, currentStep: 2 as const };
+    await persistDraft(nextDraft);
     setStep(2);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const saveEmotionDraft = async () => {
-    await saveSetting("newObservationDraft", draft);
-    setMessage("步驟 1、2 已安全儲存在此瀏覽器。抽牌整合將於第二階段接續。");
+  const goToDrawStep = async () => {
+    const nextDraft = { ...draft, currentStep: 3 as const };
+    await persistDraft(nextDraft);
+    setStep(3);
+    setMessage("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleDrawComplete = useCallback((result: DrawResult) => {
+    setDraft((current) => {
+      const nextDraft = attachDrawResultOnce(current, result);
+      if (nextDraft === current) return current;
+      void saveSetting("newObservationDraft", nextDraft);
+      return nextDraft;
+    });
+    setMessage("五張牌已完成並鎖定，抽牌結果已儲存在此瀏覽器。");
+  }, []);
+
+  const goToInterpretationStep = async () => {
+    if (!draft.drawResult) return;
+    const nextDraft = { ...draft, currentStep: 4 as const };
+    await persistDraft(nextDraft);
+    setStep(4);
+    setMessage("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const saveInterpretationDraft = async () => {
+    const nextDraft = { ...draft, currentStep: 4 as const };
+    await persistDraft(nextDraft);
+    setMessage("步驟 4 解讀內容已安全儲存在此瀏覽器；驗證設定將於第三階段接續。");
   };
 
   return (
@@ -135,11 +199,7 @@ export function NewObservationPage() {
             {draft.preEmotion.primaryEmotion === "其他" ? <label className="field"><span>其他情緒</span><input className="text-input" value={draft.preEmotion.customEmotion} onChange={(event) => setDraft((current) => ({ ...current, preEmotion: { ...current.preEmotion, customEmotion: event.target.value } }))} /></label> : <div />}
           </div>
           <div className="range-grid">
-            {([
-              ["expectationLevel", "期待程度"],
-              ["anxietyLevel", "焦慮程度"],
-              ["calmLevel", "平靜程度"],
-            ] as const).map(([key, label]) => (
+            {([ ["expectationLevel", "期待程度"], ["anxietyLevel", "焦慮程度"], ["calmLevel", "平靜程度"] ] as const).map(([key, label]) => (
               <label className="range-field" key={key}><span>{label}</span><div><input type="range" min="0" max="10" value={draft.preEmotion[key]} onChange={(event) => setDraft((current) => ({ ...current, preEmotion: { ...current.preEmotion, [key]: Number(event.target.value) } }))} /><output>{draft.preEmotion[key]}</output></div></label>
             ))}
           </div>
@@ -149,8 +209,27 @@ export function NewObservationPage() {
             <label className="field field-wide"><span>補充說明</span><textarea className="text-area" rows={3} value={draft.preEmotion.note} onChange={(event) => setDraft((current) => ({ ...current, preEmotion: { ...current.preEmotion, note: event.target.value } }))} /></label>
           </div>
           {message ? <p className="notice-text" role="status">{message}</p> : null}
-          <div className="flow-actions"><button className="ghost-button" type="button" onClick={() => setStep(1)}>返回修改</button><button className="primary-button" type="button" onClick={saveEmotionDraft}>儲存步驟 1、2 草稿</button></div>
+          <div className="flow-actions"><button className="ghost-button" type="button" onClick={() => setStep(1)}>返回修改</button><button className="primary-button" type="button" onClick={goToDrawStep}>下一步：抽牌</button></div>
         </section>
+      ) : null}
+
+      {!loading && step === 3 ? (
+        <ObservationDrawStep
+          draft={draft}
+          onBack={() => setStep(2)}
+          onComplete={handleDrawComplete}
+          onContinue={goToInterpretationStep}
+        />
+      ) : null}
+
+      {!loading && step === 4 ? (
+        <InterpretationStep
+          draft={draft}
+          onChange={(nextDraft) => { setDraft(nextDraft); setMessage(""); }}
+          onBack={() => setStep(3)}
+          onSave={saveInterpretationDraft}
+          message={message}
+        />
       ) : null}
     </main>
   );
