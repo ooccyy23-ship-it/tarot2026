@@ -907,6 +907,95 @@ a {
   overflow-wrap: anywhere;
 }
 
+.pending-list,
+.data-management-grid {
+  display: grid;
+  gap: 18px;
+}
+
+.pending-card {
+  padding: 22px;
+  border: 1px solid #d8e3ec;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 10px 24px rgba(111, 138, 163, 0.08);
+}
+
+.pending-card-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 20px;
+  align-items: start;
+}
+
+.pending-card h2,
+.data-action-card h2,
+.safety-note h2 {
+  margin: 5px 0 8px;
+}
+
+.pending-card p {
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+}
+
+.pending-due {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.pending-due small {
+  color: var(--text-soft);
+}
+
+.verification-result-form {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #dbe5ed;
+}
+
+.data-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.data-management-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.data-action-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 22px;
+  margin-top: 0;
+}
+
+.data-action-card.danger-zone {
+  grid-column: 1 / -1;
+  border-color: #e5c4c0;
+  background: #fff9f8;
+}
+
+.safety-note {
+  margin-top: 18px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 .app-shell {
   width: min(100% - 32px, 900px);
   margin: 0 auto;
@@ -1285,7 +1374,10 @@ a {
   .choice-grid,
   .confirmation-sections,
   .history-filters,
-  .history-card-main {
+  .history-card-main,
+  .pending-card-summary,
+  .data-summary-grid,
+  .data-management-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1309,6 +1401,14 @@ a {
   .history-actions,
   .detail-toolbar {
     align-items: stretch;
+  }
+
+  .pending-due {
+    justify-items: start;
+  }
+
+  .data-action-card.danger-zone {
+    grid-column: auto;
   }
 
   .interpretation-entry header {

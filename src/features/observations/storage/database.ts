@@ -5,7 +5,7 @@ import type { Observation } from "../types/observation";
 const DB_NAME = "tarot-observation-db";
 const DB_VERSION = 1;
 
-type SettingRecord = { key: string; value: unknown; updatedAt: string };
+export type SettingRecord = { key: string; value: unknown; updatedAt: string };
 type StoreName = "observations" | "questionGroups" | "settings";
 
 function requestToPromise<T>(request: IDBRequest<T>): Promise<T> {
@@ -125,4 +125,18 @@ export function saveSetting(key: string, value: unknown): Promise<void> {
 
 export function deleteSetting(key: string): Promise<void> {
   return deleteByKey("settings", key);
+}
+
+export function listSettings(): Promise<SettingRecord[]> {
+  return getAll<SettingRecord>("settings");
+}
+
+export async function clearAllData(): Promise<void> {
+  const database = await openDatabase();
+  const transaction = database.transaction(["observations", "questionGroups", "settings"], "readwrite");
+  transaction.objectStore("observations").clear();
+  transaction.objectStore("questionGroups").clear();
+  transaction.objectStore("settings").clear();
+  await transactionDone(transaction);
+  database.close();
 }
