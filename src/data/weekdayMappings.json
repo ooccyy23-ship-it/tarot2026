@@ -1,0 +1,2746 @@
+{
+  "monday": [
+    {
+      "sequence": 1,
+      "cardNumber": 42,
+      "cardName": "聖杯7"
+    },
+    {
+      "sequence": 2,
+      "cardNumber": 8,
+      "cardName": "力量"
+    },
+    {
+      "sequence": 3,
+      "cardNumber": 65,
+      "cardName": "星幣2"
+    },
+    {
+      "sequence": 4,
+      "cardNumber": 19,
+      "cardName": "太陽"
+    },
+    {
+      "sequence": 5,
+      "cardNumber": 53,
+      "cardName": "寶劍4"
+    },
+    {
+      "sequence": 6,
+      "cardNumber": 27,
+      "cardName": "權杖6"
+    },
+    {
+      "sequence": 7,
+      "cardNumber": 70,
+      "cardName": "星幣7"
+    },
+    {
+      "sequence": 8,
+      "cardNumber": 46,
+      "cardName": "聖杯侍者"
+    },
+    {
+      "sequence": 9,
+      "cardNumber": 0,
+      "cardName": "愚者"
+    },
+    {
+      "sequence": 10,
+      "cardNumber": 11,
+      "cardName": "正義"
+    },
+    {
+      "sequence": 11,
+      "cardNumber": 57,
+      "cardName": "寶劍8"
+    },
+    {
+      "sequence": 12,
+      "cardNumber": 23,
+      "cardName": "權杖2"
+    },
+    {
+      "sequence": 13,
+      "cardNumber": 36,
+      "cardName": "聖杯1"
+    },
+    {
+      "sequence": 14,
+      "cardNumber": 62,
+      "cardName": "寶劍皇后"
+    },
+    {
+      "sequence": 15,
+      "cardNumber": 10,
+      "cardName": "命運之輪"
+    },
+    {
+      "sequence": 16,
+      "cardNumber": 67,
+      "cardName": "星幣4"
+    },
+    {
+      "sequence": 17,
+      "cardNumber": 71,
+      "cardName": "星幣8"
+    },
+    {
+      "sequence": 18,
+      "cardNumber": 33,
+      "cardName": "權杖騎士"
+    },
+    {
+      "sequence": 19,
+      "cardNumber": 12,
+      "cardName": "吊人"
+    },
+    {
+      "sequence": 20,
+      "cardNumber": 48,
+      "cardName": "聖杯皇后"
+    },
+    {
+      "sequence": 21,
+      "cardNumber": 64,
+      "cardName": "星幣1"
+    },
+    {
+      "sequence": 22,
+      "cardNumber": 7,
+      "cardName": "戰車"
+    },
+    {
+      "sequence": 23,
+      "cardNumber": 35,
+      "cardName": "權杖國王"
+    },
+    {
+      "sequence": 24,
+      "cardNumber": 31,
+      "cardName": "權杖10"
+    },
+    {
+      "sequence": 25,
+      "cardNumber": 17,
+      "cardName": "星星"
+    },
+    {
+      "sequence": 26,
+      "cardNumber": 69,
+      "cardName": "星幣6"
+    },
+    {
+      "sequence": 27,
+      "cardNumber": 41,
+      "cardName": "聖杯6"
+    },
+    {
+      "sequence": 28,
+      "cardNumber": 6,
+      "cardName": "戀人"
+    },
+    {
+      "sequence": 29,
+      "cardNumber": 73,
+      "cardName": "星幣10"
+    },
+    {
+      "sequence": 30,
+      "cardNumber": 54,
+      "cardName": "寶劍5"
+    },
+    {
+      "sequence": 31,
+      "cardNumber": 44,
+      "cardName": "聖杯9"
+    },
+    {
+      "sequence": 32,
+      "cardNumber": 40,
+      "cardName": "聖杯5"
+    },
+    {
+      "sequence": 33,
+      "cardNumber": 25,
+      "cardName": "權杖4"
+    },
+    {
+      "sequence": 34,
+      "cardNumber": 56,
+      "cardName": "寶劍7"
+    },
+    {
+      "sequence": 35,
+      "cardNumber": 77,
+      "cardName": "星幣國王"
+    },
+    {
+      "sequence": 36,
+      "cardNumber": 3,
+      "cardName": "皇后"
+    },
+    {
+      "sequence": 37,
+      "cardNumber": 39,
+      "cardName": "聖杯4"
+    },
+    {
+      "sequence": 38,
+      "cardNumber": 21,
+      "cardName": "世界"
+    },
+    {
+      "sequence": 39,
+      "cardNumber": 59,
+      "cardName": "寶劍10"
+    },
+    {
+      "sequence": 40,
+      "cardNumber": 14,
+      "cardName": "節制"
+    },
+    {
+      "sequence": 41,
+      "cardNumber": 43,
+      "cardName": "聖杯8"
+    },
+    {
+      "sequence": 42,
+      "cardNumber": 76,
+      "cardName": "星幣皇后"
+    },
+    {
+      "sequence": 43,
+      "cardNumber": 9,
+      "cardName": "隱士"
+    },
+    {
+      "sequence": 44,
+      "cardNumber": 30,
+      "cardName": "權杖9"
+    },
+    {
+      "sequence": 45,
+      "cardNumber": 55,
+      "cardName": "寶劍6"
+    },
+    {
+      "sequence": 46,
+      "cardNumber": 32,
+      "cardName": "權杖侍者"
+    },
+    {
+      "sequence": 47,
+      "cardNumber": 58,
+      "cardName": "寶劍9"
+    },
+    {
+      "sequence": 48,
+      "cardNumber": 34,
+      "cardName": "權杖皇后"
+    },
+    {
+      "sequence": 49,
+      "cardNumber": 68,
+      "cardName": "星幣5"
+    },
+    {
+      "sequence": 50,
+      "cardNumber": 4,
+      "cardName": "皇帝"
+    },
+    {
+      "sequence": 51,
+      "cardNumber": 29,
+      "cardName": "權杖8"
+    },
+    {
+      "sequence": 52,
+      "cardNumber": 52,
+      "cardName": "寶劍3"
+    },
+    {
+      "sequence": 53,
+      "cardNumber": 16,
+      "cardName": "高塔"
+    },
+    {
+      "sequence": 54,
+      "cardNumber": 74,
+      "cardName": "星幣侍者"
+    },
+    {
+      "sequence": 55,
+      "cardNumber": 38,
+      "cardName": "聖杯3"
+    },
+    {
+      "sequence": 56,
+      "cardNumber": 1,
+      "cardName": "魔術師"
+    },
+    {
+      "sequence": 57,
+      "cardNumber": 63,
+      "cardName": "寶劍國王"
+    },
+    {
+      "sequence": 58,
+      "cardNumber": 20,
+      "cardName": "審判"
+    },
+    {
+      "sequence": 59,
+      "cardNumber": 45,
+      "cardName": "聖杯10"
+    },
+    {
+      "sequence": 60,
+      "cardNumber": 61,
+      "cardName": "寶劍騎士"
+    },
+    {
+      "sequence": 61,
+      "cardNumber": 15,
+      "cardName": "惡魔"
+    },
+    {
+      "sequence": 62,
+      "cardNumber": 49,
+      "cardName": "聖杯國王"
+    },
+    {
+      "sequence": 63,
+      "cardNumber": 26,
+      "cardName": "權杖5"
+    },
+    {
+      "sequence": 64,
+      "cardNumber": 66,
+      "cardName": "星幣3"
+    },
+    {
+      "sequence": 65,
+      "cardNumber": 13,
+      "cardName": "死神"
+    },
+    {
+      "sequence": 66,
+      "cardNumber": 47,
+      "cardName": "聖杯騎士"
+    },
+    {
+      "sequence": 67,
+      "cardNumber": 60,
+      "cardName": "寶劍侍者"
+    },
+    {
+      "sequence": 68,
+      "cardNumber": 24,
+      "cardName": "權杖3"
+    },
+    {
+      "sequence": 69,
+      "cardNumber": 72,
+      "cardName": "星幣9"
+    },
+    {
+      "sequence": 70,
+      "cardNumber": 5,
+      "cardName": "教皇"
+    },
+    {
+      "sequence": 71,
+      "cardNumber": 51,
+      "cardName": "寶劍2"
+    },
+    {
+      "sequence": 72,
+      "cardNumber": 18,
+      "cardName": "月亮"
+    },
+    {
+      "sequence": 73,
+      "cardNumber": 37,
+      "cardName": "聖杯2"
+    },
+    {
+      "sequence": 74,
+      "cardNumber": 75,
+      "cardName": "星幣騎士"
+    },
+    {
+      "sequence": 75,
+      "cardNumber": 2,
+      "cardName": "女教皇"
+    },
+    {
+      "sequence": 76,
+      "cardNumber": 28,
+      "cardName": "權杖7"
+    },
+    {
+      "sequence": 77,
+      "cardNumber": 50,
+      "cardName": "寶劍1"
+    },
+    {
+      "sequence": 78,
+      "cardNumber": 22,
+      "cardName": "權杖1"
+    }
+  ],
+  "tuesday": [
+    {
+      "sequence": 1,
+      "cardNumber": 53,
+      "cardName": "寶劍4"
+    },
+    {
+      "sequence": 2,
+      "cardNumber": 12,
+      "cardName": "吊人"
+    },
+    {
+      "sequence": 3,
+      "cardNumber": 46,
+      "cardName": "聖杯侍者"
+    },
+    {
+      "sequence": 4,
+      "cardNumber": 65,
+      "cardName": "星幣2"
+    },
+    {
+      "sequence": 5,
+      "cardNumber": 31,
+      "cardName": "權杖10"
+    },
+    {
+      "sequence": 6,
+      "cardNumber": 7,
+      "cardName": "戰車"
+    },
+    {
+      "sequence": 7,
+      "cardNumber": 70,
+      "cardName": "星幣7"
+    },
+    {
+      "sequence": 8,
+      "cardNumber": 48,
+      "cardName": "聖杯皇后"
+    },
+    {
+      "sequence": 9,
+      "cardNumber": 23,
+      "cardName": "權杖2"
+    },
+    {
+      "sequence": 10,
+      "cardNumber": 63,
+      "cardName": "寶劍國王"
+    },
+    {
+      "sequence": 11,
+      "cardNumber": 6,
+      "cardName": "戀人"
+    },
+    {
+      "sequence": 12,
+      "cardNumber": 57,
+      "cardName": "寶劍8"
+    },
+    {
+      "sequence": 13,
+      "cardNumber": 34,
+      "cardName": "權杖皇后"
+    },
+    {
+      "sequence": 14,
+      "cardNumber": 42,
+      "cardName": "聖杯7"
+    },
+    {
+      "sequence": 15,
+      "cardNumber": 18,
+      "cardName": "月亮"
+    },
+    {
+      "sequence": 16,
+      "cardNumber": 37,
+      "cardName": "聖杯2"
+    },
+    {
+      "sequence": 17,
+      "cardNumber": 4,
+      "cardName": "皇帝"
+    },
+    {
+      "sequence": 18,
+      "cardNumber": 71,
+      "cardName": "星幣8"
+    },
+    {
+      "sequence": 19,
+      "cardNumber": 27,
+      "cardName": "權杖6"
+    },
+    {
+      "sequence": 20,
+      "cardNumber": 59,
+      "cardName": "寶劍10"
+    },
+    {
+      "sequence": 21,
+      "cardNumber": 11,
+      "cardName": "正義"
+    },
+    {
+      "sequence": 22,
+      "cardNumber": 76,
+      "cardName": "星幣皇后"
+    },
+    {
+      "sequence": 23,
+      "cardNumber": 40,
+      "cardName": "聖杯5"
+    },
+    {
+      "sequence": 24,
+      "cardNumber": 54,
+      "cardName": "寶劍5"
+    },
+    {
+      "sequence": 25,
+      "cardNumber": 39,
+      "cardName": "聖杯4"
+    },
+    {
+      "sequence": 26,
+      "cardNumber": 1,
+      "cardName": "魔術師"
+    },
+    {
+      "sequence": 27,
+      "cardNumber": 30,
+      "cardName": "權杖9"
+    },
+    {
+      "sequence": 28,
+      "cardNumber": 60,
+      "cardName": "寶劍侍者"
+    },
+    {
+      "sequence": 29,
+      "cardNumber": 24,
+      "cardName": "權杖3"
+    },
+    {
+      "sequence": 30,
+      "cardNumber": 47,
+      "cardName": "聖杯騎士"
+    },
+    {
+      "sequence": 31,
+      "cardNumber": 75,
+      "cardName": "星幣騎士"
+    },
+    {
+      "sequence": 32,
+      "cardNumber": 52,
+      "cardName": "寶劍3"
+    },
+    {
+      "sequence": 33,
+      "cardNumber": 68,
+      "cardName": "星幣5"
+    },
+    {
+      "sequence": 34,
+      "cardNumber": 35,
+      "cardName": "權杖國王"
+    },
+    {
+      "sequence": 35,
+      "cardNumber": 8,
+      "cardName": "力量"
+    },
+    {
+      "sequence": 36,
+      "cardNumber": 43,
+      "cardName": "聖杯8"
+    },
+    {
+      "sequence": 37,
+      "cardNumber": 21,
+      "cardName": "世界"
+    },
+    {
+      "sequence": 38,
+      "cardNumber": 64,
+      "cardName": "星幣1"
+    },
+    {
+      "sequence": 39,
+      "cardNumber": 0,
+      "cardName": "愚者"
+    },
+    {
+      "sequence": 40,
+      "cardNumber": 55,
+      "cardName": "寶劍6"
+    },
+    {
+      "sequence": 41,
+      "cardNumber": 17,
+      "cardName": "星星"
+    },
+    {
+      "sequence": 42,
+      "cardNumber": 73,
+      "cardName": "星幣10"
+    },
+    {
+      "sequence": 43,
+      "cardNumber": 44,
+      "cardName": "聖杯9"
+    },
+    {
+      "sequence": 44,
+      "cardNumber": 13,
+      "cardName": "死神"
+    },
+    {
+      "sequence": 45,
+      "cardNumber": 51,
+      "cardName": "寶劍2"
+    },
+    {
+      "sequence": 46,
+      "cardNumber": 10,
+      "cardName": "命運之輪"
+    },
+    {
+      "sequence": 47,
+      "cardNumber": 66,
+      "cardName": "星幣3"
+    },
+    {
+      "sequence": 48,
+      "cardNumber": 29,
+      "cardName": "權杖8"
+    },
+    {
+      "sequence": 49,
+      "cardNumber": 22,
+      "cardName": "權杖1"
+    },
+    {
+      "sequence": 50,
+      "cardNumber": 77,
+      "cardName": "星幣國王"
+    },
+    {
+      "sequence": 51,
+      "cardNumber": 16,
+      "cardName": "高塔"
+    },
+    {
+      "sequence": 52,
+      "cardNumber": 56,
+      "cardName": "寶劍7"
+    },
+    {
+      "sequence": 53,
+      "cardNumber": 33,
+      "cardName": "權杖騎士"
+    },
+    {
+      "sequence": 54,
+      "cardNumber": 69,
+      "cardName": "星幣6"
+    },
+    {
+      "sequence": 55,
+      "cardNumber": 45,
+      "cardName": "聖杯10"
+    },
+    {
+      "sequence": 56,
+      "cardNumber": 19,
+      "cardName": "太陽"
+    },
+    {
+      "sequence": 57,
+      "cardNumber": 61,
+      "cardName": "寶劍騎士"
+    },
+    {
+      "sequence": 58,
+      "cardNumber": 38,
+      "cardName": "聖杯3"
+    },
+    {
+      "sequence": 59,
+      "cardNumber": 3,
+      "cardName": "皇后"
+    },
+    {
+      "sequence": 60,
+      "cardNumber": 72,
+      "cardName": "星幣9"
+    },
+    {
+      "sequence": 61,
+      "cardNumber": 26,
+      "cardName": "權杖5"
+    },
+    {
+      "sequence": 62,
+      "cardNumber": 58,
+      "cardName": "寶劍9"
+    },
+    {
+      "sequence": 63,
+      "cardNumber": 32,
+      "cardName": "權杖侍者"
+    },
+    {
+      "sequence": 64,
+      "cardNumber": 14,
+      "cardName": "節制"
+    },
+    {
+      "sequence": 65,
+      "cardNumber": 41,
+      "cardName": "聖杯6"
+    },
+    {
+      "sequence": 66,
+      "cardNumber": 9,
+      "cardName": "隱士"
+    },
+    {
+      "sequence": 67,
+      "cardNumber": 62,
+      "cardName": "寶劍皇后"
+    },
+    {
+      "sequence": 68,
+      "cardNumber": 25,
+      "cardName": "權杖4"
+    },
+    {
+      "sequence": 69,
+      "cardNumber": 74,
+      "cardName": "星幣侍者"
+    },
+    {
+      "sequence": 70,
+      "cardNumber": 36,
+      "cardName": "聖杯1"
+    },
+    {
+      "sequence": 71,
+      "cardNumber": 2,
+      "cardName": "女教皇"
+    },
+    {
+      "sequence": 72,
+      "cardNumber": 50,
+      "cardName": "寶劍1"
+    },
+    {
+      "sequence": 73,
+      "cardNumber": 15,
+      "cardName": "惡魔"
+    },
+    {
+      "sequence": 74,
+      "cardNumber": 67,
+      "cardName": "星幣4"
+    },
+    {
+      "sequence": 75,
+      "cardNumber": 28,
+      "cardName": "權杖7"
+    },
+    {
+      "sequence": 76,
+      "cardNumber": 49,
+      "cardName": "聖杯國王"
+    },
+    {
+      "sequence": 77,
+      "cardNumber": 5,
+      "cardName": "教皇"
+    },
+    {
+      "sequence": 78,
+      "cardNumber": 20,
+      "cardName": "審判"
+    }
+  ],
+  "wednesday": [
+    {
+      "sequence": 1,
+      "cardNumber": 56,
+      "cardName": "寶劍7"
+    },
+    {
+      "sequence": 2,
+      "cardNumber": 12,
+      "cardName": "吊人"
+    },
+    {
+      "sequence": 3,
+      "cardNumber": 67,
+      "cardName": "星幣4"
+    },
+    {
+      "sequence": 4,
+      "cardNumber": 5,
+      "cardName": "教皇"
+    },
+    {
+      "sequence": 5,
+      "cardNumber": 31,
+      "cardName": "權杖10"
+    },
+    {
+      "sequence": 6,
+      "cardNumber": 77,
+      "cardName": "星幣國王"
+    },
+    {
+      "sequence": 7,
+      "cardNumber": 24,
+      "cardName": "權杖3"
+    },
+    {
+      "sequence": 8,
+      "cardNumber": 45,
+      "cardName": "聖杯10"
+    },
+    {
+      "sequence": 9,
+      "cardNumber": 2,
+      "cardName": "女教皇"
+    },
+    {
+      "sequence": 10,
+      "cardNumber": 49,
+      "cardName": "聖杯國王"
+    },
+    {
+      "sequence": 11,
+      "cardNumber": 63,
+      "cardName": "寶劍國王"
+    },
+    {
+      "sequence": 12,
+      "cardNumber": 14,
+      "cardName": "節制"
+    },
+    {
+      "sequence": 13,
+      "cardNumber": 38,
+      "cardName": "聖杯3"
+    },
+    {
+      "sequence": 14,
+      "cardNumber": 75,
+      "cardName": "星幣騎士"
+    },
+    {
+      "sequence": 15,
+      "cardNumber": 28,
+      "cardName": "權杖7"
+    },
+    {
+      "sequence": 16,
+      "cardNumber": 50,
+      "cardName": "寶劍1"
+    },
+    {
+      "sequence": 17,
+      "cardNumber": 4,
+      "cardName": "皇帝"
+    },
+    {
+      "sequence": 18,
+      "cardNumber": 68,
+      "cardName": "星幣5"
+    },
+    {
+      "sequence": 19,
+      "cardNumber": 73,
+      "cardName": "星幣10"
+    },
+    {
+      "sequence": 20,
+      "cardNumber": 17,
+      "cardName": "星星"
+    },
+    {
+      "sequence": 21,
+      "cardNumber": 3,
+      "cardName": "皇后"
+    },
+    {
+      "sequence": 22,
+      "cardNumber": 74,
+      "cardName": "星幣侍者"
+    },
+    {
+      "sequence": 23,
+      "cardNumber": 29,
+      "cardName": "權杖8"
+    },
+    {
+      "sequence": 24,
+      "cardNumber": 48,
+      "cardName": "聖杯皇后"
+    },
+    {
+      "sequence": 25,
+      "cardNumber": 15,
+      "cardName": "惡魔"
+    },
+    {
+      "sequence": 26,
+      "cardNumber": 60,
+      "cardName": "寶劍侍者"
+    },
+    {
+      "sequence": 27,
+      "cardNumber": 36,
+      "cardName": "聖杯1"
+    },
+    {
+      "sequence": 28,
+      "cardNumber": 8,
+      "cardName": "力量"
+    },
+    {
+      "sequence": 29,
+      "cardNumber": 55,
+      "cardName": "寶劍6"
+    },
+    {
+      "sequence": 30,
+      "cardNumber": 26,
+      "cardName": "權杖5"
+    },
+    {
+      "sequence": 31,
+      "cardNumber": 71,
+      "cardName": "星幣8"
+    },
+    {
+      "sequence": 32,
+      "cardNumber": 32,
+      "cardName": "權杖侍者"
+    },
+    {
+      "sequence": 33,
+      "cardNumber": 54,
+      "cardName": "寶劍5"
+    },
+    {
+      "sequence": 34,
+      "cardNumber": 10,
+      "cardName": "命運之輪"
+    },
+    {
+      "sequence": 35,
+      "cardNumber": 64,
+      "cardName": "星幣1"
+    },
+    {
+      "sequence": 36,
+      "cardNumber": 43,
+      "cardName": "聖杯8"
+    },
+    {
+      "sequence": 37,
+      "cardNumber": 21,
+      "cardName": "世界"
+    },
+    {
+      "sequence": 38,
+      "cardNumber": 46,
+      "cardName": "聖杯侍者"
+    },
+    {
+      "sequence": 39,
+      "cardNumber": 52,
+      "cardName": "寶劍3"
+    },
+    {
+      "sequence": 40,
+      "cardNumber": 61,
+      "cardName": "寶劍騎士"
+    },
+    {
+      "sequence": 41,
+      "cardNumber": 33,
+      "cardName": "權杖騎士"
+    },
+    {
+      "sequence": 42,
+      "cardNumber": 9,
+      "cardName": "隱士"
+    },
+    {
+      "sequence": 43,
+      "cardNumber": 51,
+      "cardName": "寶劍2"
+    },
+    {
+      "sequence": 44,
+      "cardNumber": 70,
+      "cardName": "星幣7"
+    },
+    {
+      "sequence": 45,
+      "cardNumber": 22,
+      "cardName": "權杖1"
+    },
+    {
+      "sequence": 46,
+      "cardNumber": 1,
+      "cardName": "魔術師"
+    },
+    {
+      "sequence": 47,
+      "cardNumber": 58,
+      "cardName": "寶劍9"
+    },
+    {
+      "sequence": 48,
+      "cardNumber": 69,
+      "cardName": "星幣6"
+    },
+    {
+      "sequence": 49,
+      "cardNumber": 19,
+      "cardName": "太陽"
+    },
+    {
+      "sequence": 50,
+      "cardNumber": 40,
+      "cardName": "聖杯5"
+    },
+    {
+      "sequence": 51,
+      "cardNumber": 7,
+      "cardName": "戰車"
+    },
+    {
+      "sequence": 52,
+      "cardNumber": 62,
+      "cardName": "寶劍皇后"
+    },
+    {
+      "sequence": 53,
+      "cardNumber": 25,
+      "cardName": "權杖4"
+    },
+    {
+      "sequence": 54,
+      "cardNumber": 47,
+      "cardName": "聖杯騎士"
+    },
+    {
+      "sequence": 55,
+      "cardNumber": 30,
+      "cardName": "權杖9"
+    },
+    {
+      "sequence": 56,
+      "cardNumber": 76,
+      "cardName": "星幣皇后"
+    },
+    {
+      "sequence": 57,
+      "cardNumber": 13,
+      "cardName": "死神"
+    },
+    {
+      "sequence": 58,
+      "cardNumber": 35,
+      "cardName": "權杖國王"
+    },
+    {
+      "sequence": 59,
+      "cardNumber": 0,
+      "cardName": "愚者"
+    },
+    {
+      "sequence": 60,
+      "cardNumber": 41,
+      "cardName": "聖杯6"
+    },
+    {
+      "sequence": 61,
+      "cardNumber": 18,
+      "cardName": "月亮"
+    },
+    {
+      "sequence": 62,
+      "cardNumber": 42,
+      "cardName": "聖杯7"
+    },
+    {
+      "sequence": 63,
+      "cardNumber": 27,
+      "cardName": "權杖6"
+    },
+    {
+      "sequence": 64,
+      "cardNumber": 66,
+      "cardName": "星幣3"
+    },
+    {
+      "sequence": 65,
+      "cardNumber": 39,
+      "cardName": "聖杯4"
+    },
+    {
+      "sequence": 66,
+      "cardNumber": 53,
+      "cardName": "寶劍4"
+    },
+    {
+      "sequence": 67,
+      "cardNumber": 11,
+      "cardName": "正義"
+    },
+    {
+      "sequence": 68,
+      "cardNumber": 34,
+      "cardName": "權杖皇后"
+    },
+    {
+      "sequence": 69,
+      "cardNumber": 72,
+      "cardName": "星幣9"
+    },
+    {
+      "sequence": 70,
+      "cardNumber": 16,
+      "cardName": "高塔"
+    },
+    {
+      "sequence": 71,
+      "cardNumber": 44,
+      "cardName": "聖杯9"
+    },
+    {
+      "sequence": 72,
+      "cardNumber": 59,
+      "cardName": "寶劍10"
+    },
+    {
+      "sequence": 73,
+      "cardNumber": 20,
+      "cardName": "審判"
+    },
+    {
+      "sequence": 74,
+      "cardNumber": 65,
+      "cardName": "星幣2"
+    },
+    {
+      "sequence": 75,
+      "cardNumber": 6,
+      "cardName": "戀人"
+    },
+    {
+      "sequence": 76,
+      "cardNumber": 37,
+      "cardName": "聖杯2"
+    },
+    {
+      "sequence": 77,
+      "cardNumber": 57,
+      "cardName": "寶劍8"
+    },
+    {
+      "sequence": 78,
+      "cardNumber": 23,
+      "cardName": "權杖2"
+    }
+  ],
+  "thursday": [
+    {
+      "sequence": 1,
+      "cardNumber": 42,
+      "cardName": "聖杯7"
+    },
+    {
+      "sequence": 2,
+      "cardNumber": 5,
+      "cardName": "教皇"
+    },
+    {
+      "sequence": 3,
+      "cardNumber": 76,
+      "cardName": "星幣皇后"
+    },
+    {
+      "sequence": 4,
+      "cardNumber": 21,
+      "cardName": "世界"
+    },
+    {
+      "sequence": 5,
+      "cardNumber": 11,
+      "cardName": "正義"
+    },
+    {
+      "sequence": 6,
+      "cardNumber": 60,
+      "cardName": "寶劍侍者"
+    },
+    {
+      "sequence": 7,
+      "cardNumber": 33,
+      "cardName": "權杖騎士"
+    },
+    {
+      "sequence": 8,
+      "cardNumber": 18,
+      "cardName": "月亮"
+    },
+    {
+      "sequence": 9,
+      "cardNumber": 2,
+      "cardName": "女教皇"
+    },
+    {
+      "sequence": 10,
+      "cardNumber": 74,
+      "cardName": "星幣侍者"
+    },
+    {
+      "sequence": 11,
+      "cardNumber": 37,
+      "cardName": "聖杯2"
+    },
+    {
+      "sequence": 12,
+      "cardNumber": 50,
+      "cardName": "寶劍1"
+    },
+    {
+      "sequence": 13,
+      "cardNumber": 8,
+      "cardName": "力量"
+    },
+    {
+      "sequence": 14,
+      "cardNumber": 66,
+      "cardName": "星幣3"
+    },
+    {
+      "sequence": 15,
+      "cardNumber": 41,
+      "cardName": "聖杯6"
+    },
+    {
+      "sequence": 16,
+      "cardNumber": 9,
+      "cardName": "隱士"
+    },
+    {
+      "sequence": 17,
+      "cardNumber": 77,
+      "cardName": "星幣國王"
+    },
+    {
+      "sequence": 18,
+      "cardNumber": 20,
+      "cardName": "審判"
+    },
+    {
+      "sequence": 19,
+      "cardNumber": 53,
+      "cardName": "寶劍4"
+    },
+    {
+      "sequence": 20,
+      "cardNumber": 36,
+      "cardName": "聖杯1"
+    },
+    {
+      "sequence": 21,
+      "cardNumber": 61,
+      "cardName": "寶劍騎士"
+    },
+    {
+      "sequence": 22,
+      "cardNumber": 16,
+      "cardName": "高塔"
+    },
+    {
+      "sequence": 23,
+      "cardNumber": 49,
+      "cardName": "聖杯國王"
+    },
+    {
+      "sequence": 24,
+      "cardNumber": 38,
+      "cardName": "聖杯3"
+    },
+    {
+      "sequence": 25,
+      "cardNumber": 56,
+      "cardName": "寶劍7"
+    },
+    {
+      "sequence": 26,
+      "cardNumber": 43,
+      "cardName": "聖杯8"
+    },
+    {
+      "sequence": 27,
+      "cardNumber": 13,
+      "cardName": "死神"
+    },
+    {
+      "sequence": 28,
+      "cardNumber": 68,
+      "cardName": "星幣5"
+    },
+    {
+      "sequence": 29,
+      "cardNumber": 52,
+      "cardName": "寶劍3"
+    },
+    {
+      "sequence": 30,
+      "cardNumber": 4,
+      "cardName": "皇帝"
+    },
+    {
+      "sequence": 31,
+      "cardNumber": 34,
+      "cardName": "權杖皇后"
+    },
+    {
+      "sequence": 32,
+      "cardNumber": 23,
+      "cardName": "權杖2"
+    },
+    {
+      "sequence": 33,
+      "cardNumber": 59,
+      "cardName": "寶劍10"
+    },
+    {
+      "sequence": 34,
+      "cardNumber": 46,
+      "cardName": "聖杯侍者"
+    },
+    {
+      "sequence": 35,
+      "cardNumber": 70,
+      "cardName": "星幣7"
+    },
+    {
+      "sequence": 36,
+      "cardNumber": 10,
+      "cardName": "命運之輪"
+    },
+    {
+      "sequence": 37,
+      "cardNumber": 0,
+      "cardName": "愚者"
+    },
+    {
+      "sequence": 38,
+      "cardNumber": 57,
+      "cardName": "寶劍8"
+    },
+    {
+      "sequence": 39,
+      "cardNumber": 63,
+      "cardName": "寶劍國王"
+    },
+    {
+      "sequence": 40,
+      "cardNumber": 27,
+      "cardName": "權杖6"
+    },
+    {
+      "sequence": 41,
+      "cardNumber": 54,
+      "cardName": "寶劍5"
+    },
+    {
+      "sequence": 42,
+      "cardNumber": 17,
+      "cardName": "星星"
+    },
+    {
+      "sequence": 43,
+      "cardNumber": 45,
+      "cardName": "聖杯10"
+    },
+    {
+      "sequence": 44,
+      "cardNumber": 6,
+      "cardName": "戀人"
+    },
+    {
+      "sequence": 45,
+      "cardNumber": 62,
+      "cardName": "寶劍皇后"
+    },
+    {
+      "sequence": 46,
+      "cardNumber": 29,
+      "cardName": "權杖8"
+    },
+    {
+      "sequence": 47,
+      "cardNumber": 72,
+      "cardName": "星幣9"
+    },
+    {
+      "sequence": 48,
+      "cardNumber": 40,
+      "cardName": "聖杯5"
+    },
+    {
+      "sequence": 49,
+      "cardNumber": 24,
+      "cardName": "權杖3"
+    },
+    {
+      "sequence": 50,
+      "cardNumber": 69,
+      "cardName": "星幣6"
+    },
+    {
+      "sequence": 51,
+      "cardNumber": 22,
+      "cardName": "權杖1"
+    },
+    {
+      "sequence": 52,
+      "cardNumber": 67,
+      "cardName": "星幣4"
+    },
+    {
+      "sequence": 53,
+      "cardNumber": 71,
+      "cardName": "星幣8"
+    },
+    {
+      "sequence": 54,
+      "cardNumber": 30,
+      "cardName": "權杖9"
+    },
+    {
+      "sequence": 55,
+      "cardNumber": 15,
+      "cardName": "惡魔"
+    },
+    {
+      "sequence": 56,
+      "cardNumber": 48,
+      "cardName": "聖杯皇后"
+    },
+    {
+      "sequence": 57,
+      "cardNumber": 7,
+      "cardName": "戰車"
+    },
+    {
+      "sequence": 58,
+      "cardNumber": 39,
+      "cardName": "聖杯4"
+    },
+    {
+      "sequence": 59,
+      "cardNumber": 12,
+      "cardName": "吊人"
+    },
+    {
+      "sequence": 60,
+      "cardNumber": 55,
+      "cardName": "寶劍6"
+    },
+    {
+      "sequence": 61,
+      "cardNumber": 25,
+      "cardName": "權杖4"
+    },
+    {
+      "sequence": 62,
+      "cardNumber": 64,
+      "cardName": "星幣1"
+    },
+    {
+      "sequence": 63,
+      "cardNumber": 28,
+      "cardName": "權杖7"
+    },
+    {
+      "sequence": 64,
+      "cardNumber": 44,
+      "cardName": "聖杯9"
+    },
+    {
+      "sequence": 65,
+      "cardNumber": 1,
+      "cardName": "魔術師"
+    },
+    {
+      "sequence": 66,
+      "cardNumber": 19,
+      "cardName": "太陽"
+    },
+    {
+      "sequence": 67,
+      "cardNumber": 31,
+      "cardName": "權杖10"
+    },
+    {
+      "sequence": 68,
+      "cardNumber": 73,
+      "cardName": "星幣10"
+    },
+    {
+      "sequence": 69,
+      "cardNumber": 58,
+      "cardName": "寶劍9"
+    },
+    {
+      "sequence": 70,
+      "cardNumber": 32,
+      "cardName": "權杖侍者"
+    },
+    {
+      "sequence": 71,
+      "cardNumber": 14,
+      "cardName": "節制"
+    },
+    {
+      "sequence": 72,
+      "cardNumber": 51,
+      "cardName": "寶劍2"
+    },
+    {
+      "sequence": 73,
+      "cardNumber": 3,
+      "cardName": "皇后"
+    },
+    {
+      "sequence": 74,
+      "cardNumber": 65,
+      "cardName": "星幣2"
+    },
+    {
+      "sequence": 75,
+      "cardNumber": 35,
+      "cardName": "權杖國王"
+    },
+    {
+      "sequence": 76,
+      "cardNumber": 47,
+      "cardName": "聖杯騎士"
+    },
+    {
+      "sequence": 77,
+      "cardNumber": 26,
+      "cardName": "權杖5"
+    },
+    {
+      "sequence": 78,
+      "cardNumber": 75,
+      "cardName": "星幣騎士"
+    }
+  ],
+  "friday": [
+    {
+      "sequence": 1,
+      "cardNumber": 32,
+      "cardName": "權杖侍者"
+    },
+    {
+      "sequence": 2,
+      "cardNumber": 15,
+      "cardName": "惡魔"
+    },
+    {
+      "sequence": 3,
+      "cardNumber": 61,
+      "cardName": "寶劍騎士"
+    },
+    {
+      "sequence": 4,
+      "cardNumber": 5,
+      "cardName": "教皇"
+    },
+    {
+      "sequence": 5,
+      "cardNumber": 77,
+      "cardName": "星幣國王"
+    },
+    {
+      "sequence": 6,
+      "cardNumber": 20,
+      "cardName": "審判"
+    },
+    {
+      "sequence": 7,
+      "cardNumber": 39,
+      "cardName": "聖杯4"
+    },
+    {
+      "sequence": 8,
+      "cardNumber": 44,
+      "cardName": "聖杯9"
+    },
+    {
+      "sequence": 9,
+      "cardNumber": 64,
+      "cardName": "星幣1"
+    },
+    {
+      "sequence": 10,
+      "cardNumber": 6,
+      "cardName": "戀人"
+    },
+    {
+      "sequence": 11,
+      "cardNumber": 35,
+      "cardName": "權杖國王"
+    },
+    {
+      "sequence": 12,
+      "cardNumber": 70,
+      "cardName": "星幣7"
+    },
+    {
+      "sequence": 13,
+      "cardNumber": 46,
+      "cardName": "聖杯侍者"
+    },
+    {
+      "sequence": 14,
+      "cardNumber": 23,
+      "cardName": "權杖2"
+    },
+    {
+      "sequence": 15,
+      "cardNumber": 58,
+      "cardName": "寶劍9"
+    },
+    {
+      "sequence": 16,
+      "cardNumber": 27,
+      "cardName": "權杖6"
+    },
+    {
+      "sequence": 17,
+      "cardNumber": 68,
+      "cardName": "星幣5"
+    },
+    {
+      "sequence": 18,
+      "cardNumber": 43,
+      "cardName": "聖杯8"
+    },
+    {
+      "sequence": 19,
+      "cardNumber": 11,
+      "cardName": "正義"
+    },
+    {
+      "sequence": 20,
+      "cardNumber": 56,
+      "cardName": "寶劍7"
+    },
+    {
+      "sequence": 21,
+      "cardNumber": 29,
+      "cardName": "權杖8"
+    },
+    {
+      "sequence": 22,
+      "cardNumber": 0,
+      "cardName": "愚者"
+    },
+    {
+      "sequence": 23,
+      "cardNumber": 55,
+      "cardName": "寶劍6"
+    },
+    {
+      "sequence": 24,
+      "cardNumber": 21,
+      "cardName": "世界"
+    },
+    {
+      "sequence": 25,
+      "cardNumber": 73,
+      "cardName": "星幣10"
+    },
+    {
+      "sequence": 26,
+      "cardNumber": 31,
+      "cardName": "權杖10"
+    },
+    {
+      "sequence": 27,
+      "cardNumber": 52,
+      "cardName": "寶劍3"
+    },
+    {
+      "sequence": 28,
+      "cardNumber": 7,
+      "cardName": "戰車"
+    },
+    {
+      "sequence": 29,
+      "cardNumber": 45,
+      "cardName": "聖杯10"
+    },
+    {
+      "sequence": 30,
+      "cardNumber": 14,
+      "cardName": "節制"
+    },
+    {
+      "sequence": 31,
+      "cardNumber": 66,
+      "cardName": "星幣3"
+    },
+    {
+      "sequence": 32,
+      "cardNumber": 34,
+      "cardName": "權杖皇后"
+    },
+    {
+      "sequence": 33,
+      "cardNumber": 22,
+      "cardName": "權杖1"
+    },
+    {
+      "sequence": 34,
+      "cardNumber": 1,
+      "cardName": "魔術師"
+    },
+    {
+      "sequence": 35,
+      "cardNumber": 74,
+      "cardName": "星幣侍者"
+    },
+    {
+      "sequence": 36,
+      "cardNumber": 48,
+      "cardName": "聖杯皇后"
+    },
+    {
+      "sequence": 37,
+      "cardNumber": 13,
+      "cardName": "死神"
+    },
+    {
+      "sequence": 38,
+      "cardNumber": 40,
+      "cardName": "聖杯5"
+    },
+    {
+      "sequence": 39,
+      "cardNumber": 69,
+      "cardName": "星幣6"
+    },
+    {
+      "sequence": 40,
+      "cardNumber": 9,
+      "cardName": "隱士"
+    },
+    {
+      "sequence": 41,
+      "cardNumber": 57,
+      "cardName": "寶劍8"
+    },
+    {
+      "sequence": 42,
+      "cardNumber": 28,
+      "cardName": "權杖7"
+    },
+    {
+      "sequence": 43,
+      "cardNumber": 62,
+      "cardName": "寶劍皇后"
+    },
+    {
+      "sequence": 44,
+      "cardNumber": 18,
+      "cardName": "月亮"
+    },
+    {
+      "sequence": 45,
+      "cardNumber": 75,
+      "cardName": "星幣騎士"
+    },
+    {
+      "sequence": 46,
+      "cardNumber": 3,
+      "cardName": "皇后"
+    },
+    {
+      "sequence": 47,
+      "cardNumber": 53,
+      "cardName": "寶劍4"
+    },
+    {
+      "sequence": 48,
+      "cardNumber": 49,
+      "cardName": "聖杯國王"
+    },
+    {
+      "sequence": 49,
+      "cardNumber": 51,
+      "cardName": "寶劍2"
+    },
+    {
+      "sequence": 50,
+      "cardNumber": 10,
+      "cardName": "命運之輪"
+    },
+    {
+      "sequence": 51,
+      "cardNumber": 63,
+      "cardName": "寶劍國王"
+    },
+    {
+      "sequence": 52,
+      "cardNumber": 36,
+      "cardName": "聖杯1"
+    },
+    {
+      "sequence": 53,
+      "cardNumber": 2,
+      "cardName": "女教皇"
+    },
+    {
+      "sequence": 54,
+      "cardNumber": 50,
+      "cardName": "寶劍1"
+    },
+    {
+      "sequence": 55,
+      "cardNumber": 26,
+      "cardName": "權杖5"
+    },
+    {
+      "sequence": 56,
+      "cardNumber": 72,
+      "cardName": "星幣9"
+    },
+    {
+      "sequence": 57,
+      "cardNumber": 16,
+      "cardName": "高塔"
+    },
+    {
+      "sequence": 58,
+      "cardNumber": 47,
+      "cardName": "聖杯騎士"
+    },
+    {
+      "sequence": 59,
+      "cardNumber": 8,
+      "cardName": "力量"
+    },
+    {
+      "sequence": 60,
+      "cardNumber": 37,
+      "cardName": "聖杯2"
+    },
+    {
+      "sequence": 61,
+      "cardNumber": 59,
+      "cardName": "寶劍10"
+    },
+    {
+      "sequence": 62,
+      "cardNumber": 30,
+      "cardName": "權杖9"
+    },
+    {
+      "sequence": 63,
+      "cardNumber": 41,
+      "cardName": "聖杯6"
+    },
+    {
+      "sequence": 64,
+      "cardNumber": 67,
+      "cardName": "星幣4"
+    },
+    {
+      "sequence": 65,
+      "cardNumber": 4,
+      "cardName": "皇帝"
+    },
+    {
+      "sequence": 66,
+      "cardNumber": 71,
+      "cardName": "星幣8"
+    },
+    {
+      "sequence": 67,
+      "cardNumber": 24,
+      "cardName": "權杖3"
+    },
+    {
+      "sequence": 68,
+      "cardNumber": 54,
+      "cardName": "寶劍5"
+    },
+    {
+      "sequence": 69,
+      "cardNumber": 17,
+      "cardName": "星星"
+    },
+    {
+      "sequence": 70,
+      "cardNumber": 42,
+      "cardName": "聖杯7"
+    },
+    {
+      "sequence": 71,
+      "cardNumber": 76,
+      "cardName": "星幣皇后"
+    },
+    {
+      "sequence": 72,
+      "cardNumber": 12,
+      "cardName": "吊人"
+    },
+    {
+      "sequence": 73,
+      "cardNumber": 60,
+      "cardName": "寶劍侍者"
+    },
+    {
+      "sequence": 74,
+      "cardNumber": 33,
+      "cardName": "權杖騎士"
+    },
+    {
+      "sequence": 75,
+      "cardNumber": 19,
+      "cardName": "太陽"
+    },
+    {
+      "sequence": 76,
+      "cardNumber": 65,
+      "cardName": "星幣2"
+    },
+    {
+      "sequence": 77,
+      "cardNumber": 25,
+      "cardName": "權杖4"
+    },
+    {
+      "sequence": 78,
+      "cardNumber": 38,
+      "cardName": "聖杯3"
+    }
+  ],
+  "saturday": [
+    {
+      "sequence": 1,
+      "cardNumber": 63,
+      "cardName": "寶劍國王"
+    },
+    {
+      "sequence": 2,
+      "cardNumber": 24,
+      "cardName": "權杖3"
+    },
+    {
+      "sequence": 3,
+      "cardNumber": 7,
+      "cardName": "戰車"
+    },
+    {
+      "sequence": 4,
+      "cardNumber": 49,
+      "cardName": "聖杯國王"
+    },
+    {
+      "sequence": 5,
+      "cardNumber": 22,
+      "cardName": "權杖1"
+    },
+    {
+      "sequence": 6,
+      "cardNumber": 54,
+      "cardName": "寶劍5"
+    },
+    {
+      "sequence": 7,
+      "cardNumber": 13,
+      "cardName": "死神"
+    },
+    {
+      "sequence": 8,
+      "cardNumber": 35,
+      "cardName": "權杖國王"
+    },
+    {
+      "sequence": 9,
+      "cardNumber": 76,
+      "cardName": "星幣皇后"
+    },
+    {
+      "sequence": 10,
+      "cardNumber": 18,
+      "cardName": "月亮"
+    },
+    {
+      "sequence": 11,
+      "cardNumber": 42,
+      "cardName": "聖杯7"
+    },
+    {
+      "sequence": 12,
+      "cardNumber": 66,
+      "cardName": "星幣3"
+    },
+    {
+      "sequence": 13,
+      "cardNumber": 3,
+      "cardName": "皇后"
+    },
+    {
+      "sequence": 14,
+      "cardNumber": 26,
+      "cardName": "權杖5"
+    },
+    {
+      "sequence": 15,
+      "cardNumber": 60,
+      "cardName": "寶劍侍者"
+    },
+    {
+      "sequence": 16,
+      "cardNumber": 38,
+      "cardName": "聖杯3"
+    },
+    {
+      "sequence": 17,
+      "cardNumber": 10,
+      "cardName": "命運之輪"
+    },
+    {
+      "sequence": 18,
+      "cardNumber": 56,
+      "cardName": "寶劍7"
+    },
+    {
+      "sequence": 19,
+      "cardNumber": 73,
+      "cardName": "星幣10"
+    },
+    {
+      "sequence": 20,
+      "cardNumber": 30,
+      "cardName": "權杖9"
+    },
+    {
+      "sequence": 21,
+      "cardNumber": 5,
+      "cardName": "教皇"
+    },
+    {
+      "sequence": 22,
+      "cardNumber": 39,
+      "cardName": "聖杯4"
+    },
+    {
+      "sequence": 23,
+      "cardNumber": 64,
+      "cardName": "星幣1"
+    },
+    {
+      "sequence": 24,
+      "cardNumber": 11,
+      "cardName": "正義"
+    },
+    {
+      "sequence": 25,
+      "cardNumber": 43,
+      "cardName": "聖杯8"
+    },
+    {
+      "sequence": 26,
+      "cardNumber": 58,
+      "cardName": "寶劍9"
+    },
+    {
+      "sequence": 27,
+      "cardNumber": 9,
+      "cardName": "隱士"
+    },
+    {
+      "sequence": 28,
+      "cardNumber": 32,
+      "cardName": "權杖侍者"
+    },
+    {
+      "sequence": 29,
+      "cardNumber": 51,
+      "cardName": "寶劍2"
+    },
+    {
+      "sequence": 30,
+      "cardNumber": 17,
+      "cardName": "星星"
+    },
+    {
+      "sequence": 31,
+      "cardNumber": 72,
+      "cardName": "星幣9"
+    },
+    {
+      "sequence": 32,
+      "cardNumber": 46,
+      "cardName": "聖杯侍者"
+    },
+    {
+      "sequence": 33,
+      "cardNumber": 37,
+      "cardName": "聖杯2"
+    },
+    {
+      "sequence": 34,
+      "cardNumber": 2,
+      "cardName": "女教皇"
+    },
+    {
+      "sequence": 35,
+      "cardNumber": 61,
+      "cardName": "寶劍騎士"
+    },
+    {
+      "sequence": 36,
+      "cardNumber": 15,
+      "cardName": "惡魔"
+    },
+    {
+      "sequence": 37,
+      "cardNumber": 44,
+      "cardName": "聖杯9"
+    },
+    {
+      "sequence": 38,
+      "cardNumber": 71,
+      "cardName": "星幣8"
+    },
+    {
+      "sequence": 39,
+      "cardNumber": 27,
+      "cardName": "權杖6"
+    },
+    {
+      "sequence": 40,
+      "cardNumber": 53,
+      "cardName": "寶劍4"
+    },
+    {
+      "sequence": 41,
+      "cardNumber": 0,
+      "cardName": "愚者"
+    },
+    {
+      "sequence": 42,
+      "cardNumber": 34,
+      "cardName": "權杖皇后"
+    },
+    {
+      "sequence": 43,
+      "cardNumber": 75,
+      "cardName": "星幣騎士"
+    },
+    {
+      "sequence": 44,
+      "cardNumber": 20,
+      "cardName": "審判"
+    },
+    {
+      "sequence": 45,
+      "cardNumber": 48,
+      "cardName": "聖杯皇后"
+    },
+    {
+      "sequence": 46,
+      "cardNumber": 65,
+      "cardName": "星幣2"
+    },
+    {
+      "sequence": 47,
+      "cardNumber": 23,
+      "cardName": "權杖2"
+    },
+    {
+      "sequence": 48,
+      "cardNumber": 57,
+      "cardName": "寶劍8"
+    },
+    {
+      "sequence": 49,
+      "cardNumber": 68,
+      "cardName": "星幣5"
+    },
+    {
+      "sequence": 50,
+      "cardNumber": 41,
+      "cardName": "聖杯6"
+    },
+    {
+      "sequence": 51,
+      "cardNumber": 12,
+      "cardName": "吊人"
+    },
+    {
+      "sequence": 52,
+      "cardNumber": 77,
+      "cardName": "星幣國王"
+    },
+    {
+      "sequence": 53,
+      "cardNumber": 28,
+      "cardName": "權杖7"
+    },
+    {
+      "sequence": 54,
+      "cardNumber": 59,
+      "cardName": "寶劍10"
+    },
+    {
+      "sequence": 55,
+      "cardNumber": 4,
+      "cardName": "皇帝"
+    },
+    {
+      "sequence": 56,
+      "cardNumber": 36,
+      "cardName": "聖杯1"
+    },
+    {
+      "sequence": 57,
+      "cardNumber": 67,
+      "cardName": "星幣4"
+    },
+    {
+      "sequence": 58,
+      "cardNumber": 21,
+      "cardName": "世界"
+    },
+    {
+      "sequence": 59,
+      "cardNumber": 55,
+      "cardName": "寶劍6"
+    },
+    {
+      "sequence": 60,
+      "cardNumber": 14,
+      "cardName": "節制"
+    },
+    {
+      "sequence": 61,
+      "cardNumber": 40,
+      "cardName": "聖杯5"
+    },
+    {
+      "sequence": 62,
+      "cardNumber": 74,
+      "cardName": "星幣侍者"
+    },
+    {
+      "sequence": 63,
+      "cardNumber": 6,
+      "cardName": "戀人"
+    },
+    {
+      "sequence": 64,
+      "cardNumber": 29,
+      "cardName": "權杖8"
+    },
+    {
+      "sequence": 65,
+      "cardNumber": 19,
+      "cardName": "太陽"
+    },
+    {
+      "sequence": 66,
+      "cardNumber": 52,
+      "cardName": "寶劍3"
+    },
+    {
+      "sequence": 67,
+      "cardNumber": 33,
+      "cardName": "權杖騎士"
+    },
+    {
+      "sequence": 68,
+      "cardNumber": 70,
+      "cardName": "星幣7"
+    },
+    {
+      "sequence": 69,
+      "cardNumber": 1,
+      "cardName": "魔術師"
+    },
+    {
+      "sequence": 70,
+      "cardNumber": 47,
+      "cardName": "聖杯騎士"
+    },
+    {
+      "sequence": 71,
+      "cardNumber": 16,
+      "cardName": "高塔"
+    },
+    {
+      "sequence": 72,
+      "cardNumber": 62,
+      "cardName": "寶劍皇后"
+    },
+    {
+      "sequence": 73,
+      "cardNumber": 25,
+      "cardName": "權杖4"
+    },
+    {
+      "sequence": 74,
+      "cardNumber": 50,
+      "cardName": "寶劍1"
+    },
+    {
+      "sequence": 75,
+      "cardNumber": 8,
+      "cardName": "力量"
+    },
+    {
+      "sequence": 76,
+      "cardNumber": 45,
+      "cardName": "聖杯10"
+    },
+    {
+      "sequence": 77,
+      "cardNumber": 69,
+      "cardName": "星幣6"
+    },
+    {
+      "sequence": 78,
+      "cardNumber": 31,
+      "cardName": "權杖10"
+    }
+  ],
+  "sunday": [
+    {
+      "sequence": 1,
+      "cardNumber": 14,
+      "cardName": "節制"
+    },
+    {
+      "sequence": 2,
+      "cardNumber": 68,
+      "cardName": "星幣5"
+    },
+    {
+      "sequence": 3,
+      "cardNumber": 41,
+      "cardName": "聖杯6"
+    },
+    {
+      "sequence": 4,
+      "cardNumber": 22,
+      "cardName": "權杖1"
+    },
+    {
+      "sequence": 5,
+      "cardNumber": 73,
+      "cardName": "星幣10"
+    },
+    {
+      "sequence": 6,
+      "cardNumber": 7,
+      "cardName": "戰車"
+    },
+    {
+      "sequence": 7,
+      "cardNumber": 32,
+      "cardName": "權杖侍者"
+    },
+    {
+      "sequence": 8,
+      "cardNumber": 56,
+      "cardName": "寶劍7"
+    },
+    {
+      "sequence": 9,
+      "cardNumber": 12,
+      "cardName": "吊人"
+    },
+    {
+      "sequence": 10,
+      "cardNumber": 33,
+      "cardName": "權杖騎士"
+    },
+    {
+      "sequence": 11,
+      "cardNumber": 69,
+      "cardName": "星幣6"
+    },
+    {
+      "sequence": 12,
+      "cardNumber": 25,
+      "cardName": "權杖4"
+    },
+    {
+      "sequence": 13,
+      "cardNumber": 51,
+      "cardName": "寶劍2"
+    },
+    {
+      "sequence": 14,
+      "cardNumber": 4,
+      "cardName": "皇帝"
+    },
+    {
+      "sequence": 15,
+      "cardNumber": 37,
+      "cardName": "聖杯2"
+    },
+    {
+      "sequence": 16,
+      "cardNumber": 66,
+      "cardName": "星幣3"
+    },
+    {
+      "sequence": 17,
+      "cardNumber": 52,
+      "cardName": "寶劍3"
+    },
+    {
+      "sequence": 18,
+      "cardNumber": 3,
+      "cardName": "皇后"
+    },
+    {
+      "sequence": 19,
+      "cardNumber": 24,
+      "cardName": "權杖3"
+    },
+    {
+      "sequence": 20,
+      "cardNumber": 65,
+      "cardName": "星幣2"
+    },
+    {
+      "sequence": 21,
+      "cardNumber": 11,
+      "cardName": "正義"
+    },
+    {
+      "sequence": 22,
+      "cardNumber": 39,
+      "cardName": "聖杯4"
+    },
+    {
+      "sequence": 23,
+      "cardNumber": 77,
+      "cardName": "星幣國王"
+    },
+    {
+      "sequence": 24,
+      "cardNumber": 19,
+      "cardName": "太陽"
+    },
+    {
+      "sequence": 25,
+      "cardNumber": 61,
+      "cardName": "寶劍騎士"
+    },
+    {
+      "sequence": 26,
+      "cardNumber": 8,
+      "cardName": "力量"
+    },
+    {
+      "sequence": 27,
+      "cardNumber": 44,
+      "cardName": "聖杯9"
+    },
+    {
+      "sequence": 28,
+      "cardNumber": 71,
+      "cardName": "星幣8"
+    },
+    {
+      "sequence": 29,
+      "cardNumber": 16,
+      "cardName": "高塔"
+    },
+    {
+      "sequence": 30,
+      "cardNumber": 45,
+      "cardName": "聖杯10"
+    },
+    {
+      "sequence": 31,
+      "cardNumber": 20,
+      "cardName": "審判"
+    },
+    {
+      "sequence": 32,
+      "cardNumber": 48,
+      "cardName": "聖杯皇后"
+    },
+    {
+      "sequence": 33,
+      "cardNumber": 31,
+      "cardName": "權杖10"
+    },
+    {
+      "sequence": 34,
+      "cardNumber": 76,
+      "cardName": "星幣皇后"
+    },
+    {
+      "sequence": 35,
+      "cardNumber": 54,
+      "cardName": "寶劍5"
+    },
+    {
+      "sequence": 36,
+      "cardNumber": 9,
+      "cardName": "隱士"
+    },
+    {
+      "sequence": 37,
+      "cardNumber": 42,
+      "cardName": "聖杯7"
+    },
+    {
+      "sequence": 38,
+      "cardNumber": 57,
+      "cardName": "寶劍8"
+    },
+    {
+      "sequence": 39,
+      "cardNumber": 1,
+      "cardName": "魔術師"
+    },
+    {
+      "sequence": 40,
+      "cardNumber": 43,
+      "cardName": "聖杯8"
+    },
+    {
+      "sequence": 41,
+      "cardNumber": 28,
+      "cardName": "權杖7"
+    },
+    {
+      "sequence": 42,
+      "cardNumber": 55,
+      "cardName": "寶劍6"
+    },
+    {
+      "sequence": 43,
+      "cardNumber": 17,
+      "cardName": "星星"
+    },
+    {
+      "sequence": 44,
+      "cardNumber": 62,
+      "cardName": "寶劍皇后"
+    },
+    {
+      "sequence": 45,
+      "cardNumber": 30,
+      "cardName": "權杖9"
+    },
+    {
+      "sequence": 46,
+      "cardNumber": 58,
+      "cardName": "寶劍9"
+    },
+    {
+      "sequence": 47,
+      "cardNumber": 29,
+      "cardName": "權杖8"
+    },
+    {
+      "sequence": 48,
+      "cardNumber": 26,
+      "cardName": "權杖5"
+    },
+    {
+      "sequence": 49,
+      "cardNumber": 60,
+      "cardName": "寶劍侍者"
+    },
+    {
+      "sequence": 50,
+      "cardNumber": 13,
+      "cardName": "死神"
+    },
+    {
+      "sequence": 51,
+      "cardNumber": 35,
+      "cardName": "權杖國王"
+    },
+    {
+      "sequence": 52,
+      "cardNumber": 70,
+      "cardName": "星幣7"
+    },
+    {
+      "sequence": 53,
+      "cardNumber": 18,
+      "cardName": "月亮"
+    },
+    {
+      "sequence": 54,
+      "cardNumber": 63,
+      "cardName": "寶劍國王"
+    },
+    {
+      "sequence": 55,
+      "cardNumber": 10,
+      "cardName": "命運之輪"
+    },
+    {
+      "sequence": 56,
+      "cardNumber": 47,
+      "cardName": "聖杯騎士"
+    },
+    {
+      "sequence": 57,
+      "cardNumber": 74,
+      "cardName": "星幣侍者"
+    },
+    {
+      "sequence": 58,
+      "cardNumber": 21,
+      "cardName": "世界"
+    },
+    {
+      "sequence": 59,
+      "cardNumber": 38,
+      "cardName": "聖杯3"
+    },
+    {
+      "sequence": 60,
+      "cardNumber": 5,
+      "cardName": "教皇"
+    },
+    {
+      "sequence": 61,
+      "cardNumber": 72,
+      "cardName": "星幣9"
+    },
+    {
+      "sequence": 62,
+      "cardNumber": 36,
+      "cardName": "聖杯1"
+    },
+    {
+      "sequence": 63,
+      "cardNumber": 67,
+      "cardName": "星幣4"
+    },
+    {
+      "sequence": 64,
+      "cardNumber": 40,
+      "cardName": "聖杯5"
+    },
+    {
+      "sequence": 65,
+      "cardNumber": 6,
+      "cardName": "戀人"
+    },
+    {
+      "sequence": 66,
+      "cardNumber": 49,
+      "cardName": "聖杯國王"
+    },
+    {
+      "sequence": 67,
+      "cardNumber": 27,
+      "cardName": "權杖6"
+    },
+    {
+      "sequence": 68,
+      "cardNumber": 53,
+      "cardName": "寶劍4"
+    },
+    {
+      "sequence": 69,
+      "cardNumber": 34,
+      "cardName": "權杖皇后"
+    },
+    {
+      "sequence": 70,
+      "cardNumber": 46,
+      "cardName": "聖杯侍者"
+    },
+    {
+      "sequence": 71,
+      "cardNumber": 75,
+      "cardName": "星幣騎士"
+    },
+    {
+      "sequence": 72,
+      "cardNumber": 2,
+      "cardName": "女教皇"
+    },
+    {
+      "sequence": 73,
+      "cardNumber": 64,
+      "cardName": "星幣1"
+    },
+    {
+      "sequence": 74,
+      "cardNumber": 15,
+      "cardName": "惡魔"
+    },
+    {
+      "sequence": 75,
+      "cardNumber": 50,
+      "cardName": "寶劍1"
+    },
+    {
+      "sequence": 76,
+      "cardNumber": 23,
+      "cardName": "權杖2"
+    },
+    {
+      "sequence": 77,
+      "cardNumber": 59,
+      "cardName": "寶劍10"
+    },
+    {
+      "sequence": 78,
+      "cardNumber": 0,
+      "cardName": "愚者"
+    }
+  ]
+}
