@@ -3,18 +3,24 @@
   font-family: "Segoe UI", "Noto Sans TC", sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #223043;
+  color: #403d34;
   background:
-    radial-gradient(circle at top, rgba(183, 204, 227, 0.45), transparent 35%),
-    linear-gradient(180deg, #eef4f9 0%, #f7fafc 100%);
-  --panel-bg: rgba(255, 255, 255, 0.9);
-  --panel-border: #d6e0ea;
-  --text-soft: #58708b;
-  --accent: #567ea3;
-  --accent-strong: #3f678b;
-  --success: #2f7d66;
-  --warning: #a36b2f;
-  --error: #a34b4b;
+    radial-gradient(circle at top, rgba(232, 213, 140, 0.42), transparent 36%),
+    linear-gradient(180deg, #f1ece2 0%, #f8f4ec 100%);
+  --color-primary: #7895a3;
+  --color-dark: #9b4e22;
+  --color-light: #e8d58c;
+  --color-secondary: #656753;
+  --color-accent: #d9902f;
+  --color-background: #f1ece2;
+  --panel-bg: rgba(255, 253, 248, 0.94);
+  --panel-border: #d8cdb9;
+  --text-soft: #656753;
+  --accent: #9b4e22;
+  --accent-strong: #7c3e1b;
+  --success: #656753;
+  --warning: #d9902f;
+  --error: #9b4e22;
 }
 
 * {
@@ -1488,4 +1494,217 @@ a {
   .evidence-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Warm observation palette */
+body,
+.site-shell {
+  color: #403d34;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(232, 213, 140, 0.4), transparent 32%),
+    linear-gradient(180deg, var(--color-background) 0%, #f8f4ec 100%);
+}
+
+.site-header {
+  border-bottom-color: rgba(120, 149, 163, 0.34);
+  background: rgba(248, 244, 236, 0.94);
+}
+
+.brand,
+.page-hero h1,
+.page-title h1,
+h2,
+h3,
+.summary-card strong,
+.sequence-card strong,
+.locked-result-card strong,
+.draw-context-summary strong,
+.draw-question-label strong,
+.interpretation-entry header > strong {
+  color: var(--color-dark);
+}
+
+.brand-mark {
+  background: var(--color-dark);
+  color: #fffdf8;
+}
+
+.top-nav a {
+  color: var(--color-secondary);
+}
+
+.top-nav a:hover,
+.top-nav a.is-active {
+  background: rgba(232, 213, 140, 0.52);
+  color: #633417;
+}
+
+.page-hero {
+  border-color: rgba(120, 149, 163, 0.36);
+  background: linear-gradient(135deg, rgba(255, 253, 248, 0.96), rgba(232, 213, 140, 0.35));
+  box-shadow: 0 18px 42px rgba(101, 103, 83, 0.12);
+}
+
+.panel,
+.summary-card,
+.history-card,
+.history-filter-panel,
+.detail-section,
+.pending-card,
+.confirmation-sections > section,
+.sequence-card,
+.coin-card,
+.final-card,
+.locked-result-card,
+.interpretation-entry,
+.question-preview,
+.custom-group-form {
+  border-color: var(--panel-border);
+  background: var(--panel-bg);
+  box-shadow: 0 10px 26px rgba(101, 103, 83, 0.08);
+}
+
+.eyebrow,
+.summary-card a,
+.details-panel summary {
+  color: var(--color-dark);
+}
+
+.empty-icon,
+.interpretation-entry header > span,
+.draw-question-label,
+.sequence-summary li,
+.confirmation-card-grid article {
+  background: rgba(232, 213, 140, 0.48);
+  color: #67461f;
+}
+
+.stepper li {
+  border-color: #d8cdb9;
+  background: rgba(255, 253, 248, 0.78);
+  color: var(--color-secondary);
+}
+
+.stepper li > span {
+  background: rgba(120, 149, 163, 0.18);
+}
+
+.stepper li.current {
+  border-color: var(--color-primary);
+  background: rgba(232, 213, 140, 0.3);
+  color: #633417;
+}
+
+.stepper li.current > span,
+.stepper li.completed > span {
+  background: var(--color-primary);
+  color: #26373d;
+}
+
+.text-input,
+.select-input,
+.text-area {
+  border-color: #cfc3ad;
+  background: #fffdf8;
+}
+
+.text-input:focus,
+.select-input:focus,
+.text-area:focus {
+  border-color: var(--color-accent);
+  outline-color: rgba(217, 144, 47, 0.22);
+}
+
+.readonly-input,
+.privacy-note,
+.notice-text {
+  background: rgba(120, 149, 163, 0.13);
+  color: #515847;
+}
+
+.primary-button {
+  background: var(--color-dark);
+  color: #fffdf8;
+}
+
+.primary-button:hover {
+  background: #7c3e1b;
+}
+
+.secondary-button {
+  background: var(--color-light);
+  color: #573518;
+}
+
+.ghost-button {
+  background: rgba(120, 149, 163, 0.18);
+  color: #41545c;
+}
+
+.danger-button {
+  background: rgba(155, 78, 34, 0.13);
+  color: #783b19;
+}
+
+.status-chip,
+.status-chip.not_applicable {
+  border-color: rgba(120, 149, 163, 0.48);
+  background: rgba(120, 149, 163, 0.15);
+  color: #42565f;
+}
+
+.status-chip.draft,
+.status-chip.pending {
+  border-color: rgba(217, 144, 47, 0.5);
+  background: rgba(232, 213, 140, 0.4);
+  color: #704b19;
+}
+
+.status-chip.overdue {
+  border-color: rgba(155, 78, 34, 0.45);
+  background: rgba(155, 78, 34, 0.12);
+  color: #783b19;
+}
+
+.status-chip.verified {
+  border-color: rgba(101, 103, 83, 0.48);
+  background: rgba(101, 103, 83, 0.13);
+  color: #505240;
+}
+
+.status-message.info {
+  border-color: rgba(120, 149, 163, 0.4);
+  background: rgba(120, 149, 163, 0.13);
+}
+
+.status-message.success {
+  border-color: rgba(101, 103, 83, 0.42);
+  background: rgba(101, 103, 83, 0.12);
+  color: #4d503c;
+}
+
+.status-message.warning {
+  border-color: rgba(217, 144, 47, 0.44);
+  background: rgba(232, 213, 140, 0.34);
+  color: #704b19;
+}
+
+.status-message.error,
+.form-error,
+.data-action-card.danger-zone {
+  border-color: rgba(155, 78, 34, 0.38);
+  background: rgba(155, 78, 34, 0.08);
+  color: #783b19;
+}
+
+.coin-visual {
+  border-color: rgba(120, 149, 163, 0.4);
+  background: linear-gradient(180deg, #fffdf8 0%, rgba(232, 213, 140, 0.46) 100%);
+  color: #67461f;
+}
+
+.choice-card.is-selected {
+  border-color: var(--color-accent);
+  background: rgba(232, 213, 140, 0.28);
+  box-shadow: inset 0 0 0 1px var(--color-accent);
 }
