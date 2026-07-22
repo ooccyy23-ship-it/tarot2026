@@ -79,9 +79,11 @@ async function deleteByKey(storeName: StoreName, key: IDBValidKey): Promise<void
 
 export async function initializeDatabase(): Promise<void> {
   const existing = await listQuestionGroups();
-  if (existing.length > 0) return;
+  const existingIds = new Set(existing.map((group) => group.id));
   const defaults = defaultQuestionGroups as QuestionGroup[];
-  for (const group of defaults) await saveQuestionGroup(group);
+  for (const group of defaults) {
+    if (!existingIds.has(group.id)) await saveQuestionGroup(group);
+  }
 }
 
 export function listObservations(): Promise<Observation[]> {
