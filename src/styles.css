@@ -1473,11 +1473,53 @@ a {
   color: #855124;
 }
 
-.final-results {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+.final-results-panel .section-heading {
+  margin-bottom: 24px;
 }
 
-.final-card p,
+.final-results {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.final-card {
+  display: grid;
+  gap: 12px;
+  min-height: 190px;
+  border-radius: 24px;
+  text-align: left;
+}
+
+.final-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.final-card-chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(232, 213, 140, 0.48);
+  color: #7a4a1e;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.final-card-name {
+  color: var(--color-dark);
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+
+.final-card-meta {
+  display: grid;
+  gap: 8px;
+  color: #5c5343;
+  font-size: 0.97rem;
+}
+
 .copy-preview p {
   margin: 6px 0 0;
 }
@@ -1486,8 +1528,24 @@ a {
   margin: 18px 0;
 }
 
+.final-copy-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.final-copy-preview p {
+  margin: 0;
+}
+
 .actions-row {
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.final-actions-row {
+  margin-top: 14px;
 }
 
 @keyframes coin-spin {
@@ -1642,7 +1700,6 @@ a {
   }
 
   .settings-grid,
-  .final-results,
   .actions-row {
     grid-template-columns: 1fr;
   }
@@ -1673,6 +1730,19 @@ a {
     font-size: 2rem;
   }
 
+  .final-results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .final-card {
+    min-height: auto;
+  }
+
+  .final-copy-preview {
+    display: grid;
+    gap: 6px;
+  }
+
   .sequence-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -1692,6 +1762,10 @@ a {
 @media (max-width: 430px) {
   .summary-grid,
   .stepper {
+    grid-template-columns: 1fr;
+  }
+
+  .final-results {
     grid-template-columns: 1fr;
   }
 
