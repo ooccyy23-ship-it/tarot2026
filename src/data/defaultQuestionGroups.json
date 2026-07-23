@@ -76,5 +76,87 @@
     "active": true,
     "createdAt": "2026-07-23T00:00:00.000Z",
     "updatedAt": "2026-07-23T00:00:00.000Z"
+  },
+  {
+    "id": "relationship-7-day-interaction-quality-b",
+    "category": "關係行動驗證",
+    "title": "7天題組 B：互動品質驗證牌陣",
+    "description": "重點不是有沒有聯絡，而是驗證7天內實際發生的聯絡與互動品質。",
+    "questions": [
+      {
+        "id": "q1",
+        "order": 1,
+        "title": "7天內，雙方是否產生互動？"
+      },
+      {
+        "id": "q2",
+        "order": 2,
+        "title": "互動時，對方展現出的態度偏向？",
+        "description": "例如：主動、被動、保留、熱情或冷淡。"
+      },
+      {
+        "id": "q3",
+        "order": 3,
+        "title": "互動過程是否順利？",
+        "description": "例如：很順利、普通、有誤會或中斷。"
+      },
+      {
+        "id": "q4",
+        "order": 4,
+        "title": "7天內是否出現值得記錄的重要事件？",
+        "description": "例如：分享心事、約見面、爭執、關心或特殊互動。"
+      },
+      {
+        "id": "q5",
+        "order": 5,
+        "title": "整體互動品質如何？",
+        "description": "例如：很好、良好、普通、不佳或很差。"
+      }
+    ],
+    "source": "custom",
+    "active": true,
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z"
+  },
+  {
+    "id": "relationship-7-day-action-development-c",
+    "category": "關係行動驗證",
+    "title": "7天題組 C：行動發展驗證牌陣",
+    "description": "驗證未來7天內，雙方互動是否出現實際行動、形成新契機，並相較上一筆觀測有所推進。",
+    "questions": [
+      {
+        "id": "q1",
+        "order": 1,
+        "title": "7天內，對方是否會主動採取行動？"
+      },
+      {
+        "id": "q2",
+        "order": 2,
+        "title": "最可能出現哪一種行動？",
+        "description": "例如：主動聊天、主動邀約、分享生活、關心近況或其他。"
+      },
+      {
+        "id": "q3",
+        "order": 3,
+        "title": "7天內是否會出現新的互動契機？",
+        "description": "例如：偶遇、聚會、社群互動、第三人促成或無。"
+      },
+      {
+        "id": "q4",
+        "order": 4,
+        "title": "本次互動是否比上一個 Case 更進一步？",
+        "description": "用於和上一筆觀測比較，例如比較 Case005 與 Case006 的互動是否更進一步。"
+      },
+      {
+        "id": "q5",
+        "order": 5,
+        "title": "7天後，本次關係發展結果為何？",
+        "description": "例如：明顯前進、小幅前進、無明顯變化或後退。"
+      }
+    ],
+    "source": "custom",
+    "active": true,
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z"
   }
 ]
