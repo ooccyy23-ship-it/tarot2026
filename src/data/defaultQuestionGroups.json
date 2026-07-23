@@ -39,124 +39,122 @@
   {
     "id": "relationship-7-day-contact-verification-a",
     "category": "關係行動驗證",
-    "title": "7天題組 A：主動聯絡驗證牌陣",
-    "description": "建議作為主題組。驗證未來7天內是否出現由對方主動發起、可觀察的聯絡與後續互動。",
+    "title": "7天題組 A：主動聯繫驗證牌陣（Communication）",
+    "description": "研究目的：驗證未來7天內，對方是否主動建立或維持聯繫。研究核心：Communication（聯繫）。",
     "questions": [
       {
         "id": "q1",
         "order": 1,
-        "title": "7天內，對方是否會主動聯絡我？"
+        "title": "未來7天內，對方是否會主動向我建立直接聯繫？"
       },
       {
         "id": "q2",
         "order": 2,
-        "title": "若有聯絡，第一次聯絡最可能以什麼形式出現？",
-        "description": "例如：LINE、電話、社群、面對面或其他。"
+        "title": "若有主動聯繫，第一次最可能透過哪一種方式？",
+        "description": "LINE、電話、社群、面對面或其他。"
       },
       {
         "id": "q3",
         "order": 3,
-        "title": "第一次聯絡的主要內容偏向什麼？",
-        "description": "例如：關心、分享生活、工作、約見面或一般聊天。"
+        "title": "第一次聯繫的主要內容最偏向哪一類？",
+        "description": "日常聊天、關心近況、工作事項、邀約或其他。"
       },
       {
         "id": "q4",
         "order": 4,
-        "title": "7天內，對方是否會主動延續互動？",
-        "description": "不是只有一次訊息，而是持續聊天或再次互動。"
+        "title": "第一次聯繫後，對方是否會主動延續互動？"
       },
       {
         "id": "q5",
         "order": 5,
-        "title": "7天結束時，雙方互動狀態如何？",
-        "description": "例如：明顯增加、小幅增加、持平、減少或中斷。"
+        "title": "7天結束時，雙方聯繫狀態為何？",
+        "description": "增加、持平、減少或中斷。"
       }
     ],
     "source": "custom",
     "active": true,
     "createdAt": "2026-07-23T00:00:00.000Z",
-    "updatedAt": "2026-07-23T00:00:00.000Z"
+    "updatedAt": "2026-07-23T13:48:00.000Z"
   },
   {
     "id": "relationship-7-day-interaction-quality-b",
     "category": "關係行動驗證",
-    "title": "7天題組 B：互動品質驗證牌陣",
-    "description": "重點不是有沒有聯絡，而是驗證7天內實際發生的聯絡與互動品質。",
+    "title": "7天題組 B：現實互動驗證牌陣（Interaction）",
+    "description": "研究目的：不是研究聯絡，而是驗證未來7天內雙方的現實互動是否增加。即使沒有LINE，見面、社群互動、第三人互動或同場活動都屬於可觀察互動。研究核心：Interaction（互動）。",
     "questions": [
       {
         "id": "q1",
         "order": 1,
-        "title": "7天內，雙方是否產生互動？"
+        "title": "未來7天內，雙方是否會產生任何可觀察的互動？"
       },
       {
         "id": "q2",
         "order": 2,
-        "title": "互動時，對方展現出的態度偏向？",
-        "description": "例如：主動、被動、保留、熱情或冷淡。"
+        "title": "最主要的互動形式為何？",
+        "description": "見面、LINE、社群、第三人或其他。"
       },
       {
         "id": "q3",
         "order": 3,
-        "title": "互動過程是否順利？",
-        "description": "例如：很順利、普通、有誤會或中斷。"
+        "title": "本次互動是否呈現正向交流？"
       },
       {
         "id": "q4",
         "order": 4,
-        "title": "7天內是否出現值得記錄的重要事件？",
-        "description": "例如：分享心事、約見面、爭執、關心或特殊互動。"
+        "title": "本次互動是否出現新的發展契機？",
+        "description": "例如：新話題、新安排、新共識或新互動模式。"
       },
       {
         "id": "q5",
         "order": 5,
-        "title": "整體互動品質如何？",
-        "description": "例如：很好、良好、普通、不佳或很差。"
+        "title": "7天後，雙方互動程度相較現在如何？",
+        "description": "增加、持平或減少。"
       }
     ],
     "source": "custom",
     "active": true,
     "createdAt": "2026-07-23T00:00:00.000Z",
-    "updatedAt": "2026-07-23T00:00:00.000Z"
+    "updatedAt": "2026-07-23T13:52:00.000Z"
   },
   {
     "id": "relationship-7-day-action-development-c",
     "category": "關係行動驗證",
-    "title": "7天題組 C：行動發展驗證牌陣",
-    "description": "驗證未來7天內，雙方互動是否出現實際行動、形成新契機，並相較上一筆觀測有所推進。",
+    "title": "7天題組 C：關係推進驗證牌陣（Progress）",
+    "description": "研究目的：不是研究有沒有聊天，而是驗證未來7天內關係是否真正往前推進。研究核心：Progress（關係推進）。",
     "questions": [
       {
         "id": "q1",
         "order": 1,
-        "title": "7天內，對方是否會主動採取行動？"
+        "title": "未來7天內，雙方關係是否會出現可觀察的進展？"
       },
       {
         "id": "q2",
         "order": 2,
-        "title": "最可能出現哪一種行動？",
-        "description": "例如：主動聊天、主動邀約、分享生活、關心近況或其他。"
+        "title": "若有進展，最主要體現在哪一方面？",
+        "description": "信任、距離、見面、聊天或合作。"
       },
       {
         "id": "q3",
         "order": 3,
-        "title": "7天內是否會出現新的互動契機？",
-        "description": "例如：偶遇、聚會、社群互動、第三人促成或無。"
+        "title": "未來7天，最大的推進因素是什麼？",
+        "description": "由牌驗證。"
       },
       {
         "id": "q4",
         "order": 4,
-        "title": "本次互動是否比上一個 Case 更進一步？",
-        "description": "用於和上一筆觀測比較，例如比較 Case005 與 Case006 的互動是否更進一步。"
+        "title": "未來7天，最大的阻礙因素是什麼？",
+        "description": "由牌驗證。"
       },
       {
         "id": "q5",
         "order": 5,
-        "title": "7天後，本次關係發展結果為何？",
-        "description": "例如：明顯前進、小幅前進、無明顯變化或後退。"
+        "title": "7天結束時，本次關係整體發展結果為何？",
+        "description": "明顯前進、小幅前進、停滯或退步。"
       }
     ],
     "source": "custom",
     "active": true,
     "createdAt": "2026-07-23T00:00:00.000Z",
-    "updatedAt": "2026-07-23T00:00:00.000Z"
+    "updatedAt": "2026-07-23T13:54:00.000Z"
   }
 ]

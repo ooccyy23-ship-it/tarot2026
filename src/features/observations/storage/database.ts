@@ -43,6 +43,17 @@ export function openDatabase(): Promise<IDBDatabase> {
   });
 }
 
+export function shouldRefreshDefaultQuestionGroup(
+  existing: QuestionGroup | undefined,
+  incoming: QuestionGroup,
+): boolean {
+  if (!existing) return true;
+  const existingUpdatedAt = Date.parse(existing.updatedAt);
+  const incomingUpdatedAt = Date.parse(incoming.updatedAt);
+  return Number.isFinite(incomingUpdatedAt)
+    && (!Number.isFinite(existingUpdatedAt) || incomingUpdatedAt > existingUpdatedAt);
+}
+
 async function getAll<T>(storeName: StoreName): Promise<T[]> {
   const database = await openDatabase();
   const transaction = database.transaction(storeName, "readonly");
@@ -79,10 +90,12 @@ async function deleteByKey(storeName: StoreName, key: IDBValidKey): Promise<void
 
 export async function initializeDatabase(): Promise<void> {
   const existing = await listQuestionGroups();
-  const existingIds = new Set(existing.map((group) => group.id));
+  const existingById = new Map(existing.map((group) => [group.id, group]));
   const defaults = defaultQuestionGroups as QuestionGroup[];
   for (const group of defaults) {
-    if (!existingIds.has(group.id)) await saveQuestionGroup(group);
+    if (shouldRefreshDefaultQuestionGroup(existingById.get(group.id), group)) {
+      await saveQuestionGroup(group);
+    }
   }
 }
 
