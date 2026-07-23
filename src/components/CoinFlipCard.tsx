@@ -22,12 +22,16 @@ export function CoinFlipCard({
       : "反面"
     : isFlipping
       ? "翻轉中"
-      : "尚未開始";
+      : "?";
+  const actionLabel = isFlipping ? "停止抽牌" : "開始抽牌";
+  const orientationLabel = card.orientationResult?.orientation === "upright" ? "正位" : "逆位";
 
   return (
     <article className={`coin-card ${!canInteract && !locked ? "is-disabled" : ""}`}>
-      <p className="coin-title">第{card.order}張牌</p>
-      <p className="coin-sequence">序號 {card.formattedSequence}</p>
+      <div className="coin-card-header">
+        <p className="coin-title">第{card.order}張牌</p>
+        <p className="coin-sequence">序號 {card.formattedSequence}</p>
+      </div>
 
       <div className={`coin-visual ${isFlipping ? "is-flipping" : ""} ${locked ? "is-locked" : ""}`}>
         <span>{resultLabel}</span>
@@ -35,18 +39,18 @@ export function CoinFlipCard({
 
       {locked ? (
         <div className="coin-meta">
-          <span>{card.orientationResult?.orientation === "upright" ? "正位" : "逆位"}</span>
-          <span>{card.orientationResult?.durationMs} ms</span>
+          <span>{orientationLabel}</span>
+          <span>{card.orientationResult?.coinSide === "heads" ? "正面" : "反面"}</span>
         </div>
       ) : null}
 
       <button
-        className="secondary-button"
+        className="secondary-button coin-action-button"
         type="button"
         disabled={!canInteract && !isFlipping}
         onClick={isFlipping ? onStop : onStart}
       >
-        {isFlipping ? "停止" : "開始翻轉"}
+        {actionLabel}
       </button>
     </article>
   );

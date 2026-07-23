@@ -22,16 +22,16 @@ export function DrawSettings({
   onSubmit,
 }: DrawSettingsProps) {
   return (
-    <section className="panel">
+    <section className="panel draw-panel draw-settings-panel">
       <div className="section-heading">
         <p className="eyebrow">步驟 1</p>
         <h2>抽牌設定</h2>
       </div>
       <div className="settings-grid">
         <label className="field">
-          <span>抽牌時間</span>
+          <span className="field-label">抽牌時間</span>
           <input
-            className="text-input"
+            className="text-input draw-input"
             type="text"
             inputMode="numeric"
             maxLength={5}
@@ -43,9 +43,9 @@ export function DrawSettings({
         </label>
 
         <label className="field">
-          <span>對照表星期</span>
+          <span className="field-label">對照表星期</span>
           <select
-            className="select-input"
+            className="select-input draw-input"
             value={weekday}
             onChange={(event) => onWeekdayChange(event.target.value as WeekdayKey)}
           >
@@ -64,9 +64,11 @@ export function DrawSettings({
       ) : null}
       {error ? <StatusMessage tone="error" message={error} /> : null}
 
-      <button className="primary-button" type="button" onClick={onSubmit}>
-        計算五個序號
-      </button>
+      <div className="draw-settings-actions">
+        <button className="primary-button draw-submit-button" type="button" onClick={onSubmit}>
+          計算五個序號
+        </button>
+      </div>
     </section>
   );
 }

@@ -152,8 +152,9 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
 
       <SequenceResults sequenceResult={sequenceResult} validationIssues={validationIssues} />
 
-      <section className="panel">
-        <div className="section-heading"><p className="eyebrow">正逆位</p><h2>五次硬幣逐張操作</h2></div>
+      <section className="panel draw-panel coin-operation-panel">
+        <div className="section-heading"><p className="eyebrow">步驟 3</p><h2>正逆位五次硬幣操作</h2></div>
+        <p className="section-description">請依序抽出 5 次硬幣，決定每張牌的正逆位。</p>
         {validationIssues.length > 0 ? <StatusMessage tone="warning" message="序號無效時，不載入牌卡結果，也不啟用硬幣操作。" /> : null}
         {validationIssues.length === 0 && cards.length === 0 ? <p className="placeholder-text">序號有效後，這裡會依序顯示五張待揭示的牌。</p> : null}
         {cards.length > 0 ? (
@@ -163,7 +164,9 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
               const canInteract = Boolean(previousCardLocked) && !card.orientationResult?.locked;
               const question = [...questions].sort((a, b) => a.order - b.order)[index];
               return (
-                <div className="draw-question-card" key={card.sequenceKey}>
+                <div className="coin-step" key={card.sequenceKey}>
+                  {index > 0 ? <div className="coin-step-arrow" aria-hidden="true">›</div> : null}
+                  <div className="draw-question-card">
                   {question ? <div className="draw-question-label"><span>問題 {index + 1}</span><strong>{question.title}</strong></div> : null}
                   <CoinFlipCard
                     card={card}
@@ -176,11 +179,16 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
                     }}
                     onStop={() => handleStopFlip(index)}
                   />
+                  </div>
                 </div>
               );
             })}
           </div>
         ) : null}
+        <div className="coin-lock-note">
+          <span className="coin-lock-icon" aria-hidden="true">🔒</span>
+          <span>完成五次抽牌後，將顯示正逆位結果與對應牌。</span>
+        </div>
       </section>
 
       {allCoinsCompleted ? <FinalResults drawTime={timeInput} weekday={weekday} cards={cards} onCopy={handleCopy} onRestart={handleRestart} /> : null}

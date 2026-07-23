@@ -16,7 +16,7 @@ const cards = [
 
 export function SequenceResults({ sequenceResult, validationIssues }: SequenceResultsProps) {
   return (
-    <section className="panel">
+    <section className="panel draw-panel sequence-results-panel">
       <div className="section-heading">
         <p className="eyebrow">步驟 2</p>
         <h2>五序號計算結果</h2>

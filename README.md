@@ -102,6 +102,12 @@ src/
   types/
 ```
 
+## 雙機同步
+
+如果你是在家裡與公司兩台不能直接連線的電腦之間交替開發，請搭配閱讀：
+
+- [SYNC_GUIDE.md](./SYNC_GUIDE.md)
+
 ## 授權
 
 [MIT License](./LICENSE)

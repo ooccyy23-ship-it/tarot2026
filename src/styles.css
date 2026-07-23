@@ -588,6 +588,40 @@ a {
   margin-top: 0;
 }
 
+.draw-panel {
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top, rgba(255, 252, 246, 0.98), rgba(247, 239, 226, 0.9)),
+    var(--panel-bg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 10px 30px rgba(115, 88, 43, 0.08);
+}
+
+.draw-panel .section-heading {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.draw-panel .section-heading .eyebrow {
+  margin: 0;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+
+.draw-panel .section-heading h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+}
+
+.draw-settings-panel .settings-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 24px;
+  margin-bottom: 8px;
+}
+
 .draw-context-summary {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -616,6 +650,7 @@ a {
 .draw-question-card {
   display: grid;
   min-width: 0;
+  height: 100%;
 }
 
 .draw-question-label {
@@ -640,6 +675,94 @@ a {
 
 .draw-question-card .coin-card {
   border-radius: 0 0 20px 20px;
+}
+
+.field-label {
+  color: #4d3b29;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.draw-input {
+  min-height: 58px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  border-color: #d8c6ac;
+  box-shadow: inset 0 1px 2px rgba(120, 94, 56, 0.05);
+  font-size: 1.05rem;
+}
+
+.draw-settings-actions {
+  display: flex;
+  align-items: flex-end;
+}
+
+.draw-submit-button {
+  min-width: 172px;
+  min-height: 56px;
+  padding-inline: 26px;
+  border-radius: 18px;
+  box-shadow: 0 8px 22px rgba(155, 78, 34, 0.18);
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.sequence-results-panel .status-message {
+  border-radius: 16px;
+}
+
+.sequence-card {
+  display: grid;
+  justify-items: center;
+  min-height: 108px;
+  border-radius: 22px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+.sequence-card span {
+  font-size: 0.95rem;
+}
+
+.sequence-card strong {
+  margin-top: 4px;
+  font-size: clamp(2rem, 3vw, 2.4rem);
+}
+
+.coin-operation-panel .section-description {
+  margin-top: -4px;
+  margin-bottom: 18px;
+  font-size: 1.02rem;
+}
+
+.coin-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: center;
+  gap: 18px;
+}
+
+.coin-step {
+  position: relative;
+  min-width: 0;
+}
+
+.coin-step-arrow {
+  position: absolute;
+  top: 50%;
+  left: -17px;
+  z-index: 2;
+  transform: translateY(-50%);
+  color: #7d5329;
+  font-size: 2.5rem;
+  line-height: 1;
+}
+
+.coin-card {
+  justify-items: center;
+  gap: 14px;
+  min-height: 100%;
+  padding: 16px 18px 18px;
+  border-radius: 22px;
+  text-align: center;
 }
 
 .interpretation-card-grid,
@@ -1240,34 +1363,37 @@ a {
   font-weight: 700;
 }
 
-.coin-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.coin-card {
-  display: grid;
-  gap: 12px;
-}
-
 .coin-card.is-disabled {
   opacity: 0.58;
 }
 
+.coin-card-header {
+  display: grid;
+  gap: 4px;
+}
+
 .coin-sequence {
   margin: 0;
-  font-size: 1.2rem;
+  font-size: 1.45rem;
   font-weight: 700;
 }
 
 .coin-visual {
   display: grid;
   place-items: center;
+  width: min(100%, 120px);
+  aspect-ratio: 1;
   min-height: 120px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #f8fbfe 0%, #dce8f3 100%);
-  border: 1px solid #cfe0ee;
-  font-size: 1.1rem;
-  color: #32506d;
+  background:
+    radial-gradient(circle at 30% 30%, #fff4d6 0%, #f4d48a 55%, #ddb863 100%);
+  border: 3px solid #d8b97a;
+  box-shadow:
+    inset 0 0 0 8px rgba(255, 247, 226, 0.58),
+    0 10px 20px rgba(154, 118, 57, 0.16);
+  font-size: 3.6rem;
+  font-weight: 700;
+  color: #9d6a2e;
 }
 
 .coin-visual.is-flipping {
@@ -1275,13 +1401,51 @@ a {
 }
 
 .coin-visual.is-locked {
-  background: linear-gradient(180deg, #edf7f3 0%, #d6ebdf 100%);
+  background:
+    radial-gradient(circle at 30% 30%, #fff7e2 0%, #eecf7f 55%, #d2ad55 100%);
 }
 
 .coin-meta {
   display: flex;
   justify-content: space-between;
+  width: 100%;
   gap: 12px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.coin-action-button {
+  width: min(100%, 150px);
+  min-height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #f4d770 0%, #e8c95f 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 249, 216, 0.8);
+  color: #5d4216;
+  font-weight: 700;
+}
+
+.coin-action-button:hover {
+  background: linear-gradient(180deg, #f1d15f 0%, #deb949 100%);
+}
+
+.coin-lock-note {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  min-height: 56px;
+  padding: 12px 18px;
+  border: 1px solid #dcc9a7;
+  border-radius: 18px;
+  background: rgba(245, 235, 216, 0.55);
+  color: #7a5427;
+  font-weight: 600;
+  text-align: center;
+}
+
+.coin-lock-icon {
+  font-size: 1rem;
 }
 
 .final-results {
@@ -1453,10 +1617,31 @@ a {
   }
 
   .settings-grid,
-  .coin-grid,
   .final-results,
   .actions-row {
     grid-template-columns: 1fr;
+  }
+
+  .draw-settings-panel .settings-grid {
+    gap: 16px;
+  }
+
+  .draw-settings-actions {
+    align-items: stretch;
+  }
+
+  .coin-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .coin-step-arrow {
+    position: static;
+    transform: none;
+    display: grid;
+    justify-content: center;
+    margin: 6px 0;
+    font-size: 2rem;
   }
 
   .sequence-grid {
