@@ -27,3 +27,8 @@ Thumbs.db
 
 # local tool metadata
 .codex/
+
+# local Firebase configuration
+.env
+.env.local
+.env.*.local

@@ -1,0 +1,50 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function isValidSessionTransition() {
+      let before = resource.data.status;
+      let after = request.resource.data.status;
+      return (before == 'draft' && (after == 'drawing' || after == 'invalid'))
+        || (before == 'drawing' && (after == 'observing' || after == 'invalid'))
+        || (before == 'observing' && (after == 'validation_due' || after == 'invalid'))
+        || (before == 'validation_due' && (after == 'completed' || after == 'invalid'));
+    }
+
+    match /users/{userId}/sevenDaySessions/{sessionId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && request.resource.data.ownerId == userId
+        && request.resource.data.sessionId == sessionId
+        && request.resource.data.sessionType == 'seven_day_three_sets'
+        && request.resource.data.subject == '小峰'
+        && request.resource.data.relationshipScope == '我和小峰之間的感情互動'
+        && request.resource.data.status == 'draft'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isOwner(userId)
+        && resource.data.ownerId == userId
+        && request.resource.data.ownerId == userId
+        && request.resource.data.sessionId == resource.data.sessionId
+        && request.resource.data.sessionType == resource.data.sessionType
+        && request.resource.data.subject == resource.data.subject
+        && request.resource.data.relationshipScope == resource.data.relationshipScope
+        && request.resource.data.updatedAt == request.time
+        && isValidSessionTransition();
+      allow delete: if false;
+    }
+
+    match /users/{userId}/sevenDaySessionCounters/{dateKey} {
+      allow read, create, update: if isOwner(userId);
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
