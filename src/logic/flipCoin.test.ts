@@ -36,4 +36,27 @@ describe("flipCoin", () => {
     expect(secondResult).toBe(firstResult);
     expect(secondResult.coinSide).toBe("heads");
   });
+
+  it("stop timing does not affect the result logic when the random source is the same", () => {
+    const shortDuration = finalizeCoinFlip(
+      "2026-07-23T10:00:00.000Z",
+      null,
+      createCryptoMock(2),
+      "2026-07-23T10:00:01.000Z",
+    );
+
+    const longDuration = finalizeCoinFlip(
+      "2026-07-23T10:00:00.000Z",
+      null,
+      createCryptoMock(2),
+      "2026-07-23T10:00:08.000Z",
+    );
+
+    expect(shortDuration.coinSide).toBe("heads");
+    expect(longDuration.coinSide).toBe("heads");
+    expect(shortDuration.orientation).toBe("upright");
+    expect(longDuration.orientation).toBe("upright");
+    expect(shortDuration.durationMs).toBe(1000);
+    expect(longDuration.durationMs).toBe(8000);
+  });
 });

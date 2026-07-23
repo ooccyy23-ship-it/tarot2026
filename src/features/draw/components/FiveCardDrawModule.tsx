@@ -42,6 +42,7 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
   }, [fixedTime, fixedWeekday]);
 
   const allCoinsCompleted = cards.length === 5 && cards.every((card) => card.orientationResult?.locked);
+  const showDebugPanel = import.meta.env.DEV;
 
   useEffect(() => {
     if (!allCoinsCompleted || !sequenceResult || !onComplete || completionSent.current) return;
@@ -193,6 +194,30 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
 
       {allCoinsCompleted ? <FinalResults drawTime={timeInput} weekday={weekday} cards={cards} onCopy={handleCopy} onRestart={handleRestart} /> : null}
       {copyMessage ? <StatusMessage tone="info" message={copyMessage} /> : null}
+      {showDebugPanel && cards.length > 0 ? (
+        <section className="panel draw-debug-panel">
+          <div className="section-heading">
+            <p className="eyebrow">開發除錯</p>
+            <h2>硬幣結果檢查</h2>
+          </div>
+          <p className="section-description">這個區塊只會在本機開發模式顯示，用來確認停止時間與結果記錄。</p>
+          <div className="debug-grid">
+            {cards.map((card) => {
+              const orientationResult = card.orientationResult;
+              return (
+                <article className="debug-card" key={card.sequenceKey}>
+                  <strong>第{card.order}張牌｜序號 {card.formattedSequence}</strong>
+                  <span>開始時間：{orientationResult?.startedAt ?? "尚未開始"}</span>
+                  <span>停止時間：{orientationResult?.stoppedAt ?? "尚未停止"}</span>
+                  <span>耗時：{orientationResult ? `${orientationResult.durationMs} ms` : "未產生"}</span>
+                  <span>硬幣：{orientationResult ? (orientationResult.coinSide === "heads" ? "正面" : "反面") : "未產生"}</span>
+                  <span>正逆位：{orientationResult ? (orientationResult.orientation === "upright" ? "正位" : "逆位") : "未產生"}</span>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }
