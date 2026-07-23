@@ -35,5 +35,46 @@
     "active": true,
     "createdAt": "2026-07-23T00:00:00.000Z",
     "updatedAt": "2026-07-23T00:00:00.000Z"
+  },
+  {
+    "id": "relationship-7-day-contact-verification-a",
+    "category": "關係行動驗證",
+    "title": "7天題組 A：主動聯絡驗證牌陣",
+    "description": "建議作為主題組。驗證未來7天內是否出現由對方主動發起、可觀察的聯絡與後續互動。",
+    "questions": [
+      {
+        "id": "q1",
+        "order": 1,
+        "title": "7天內，對方是否會主動聯絡我？"
+      },
+      {
+        "id": "q2",
+        "order": 2,
+        "title": "若有聯絡，第一次聯絡最可能以什麼形式出現？",
+        "description": "例如：LINE、電話、社群、面對面或其他。"
+      },
+      {
+        "id": "q3",
+        "order": 3,
+        "title": "第一次聯絡的主要內容偏向什麼？",
+        "description": "例如：關心、分享生活、工作、約見面或一般聊天。"
+      },
+      {
+        "id": "q4",
+        "order": 4,
+        "title": "7天內，對方是否會主動延續互動？",
+        "description": "不是只有一次訊息，而是持續聊天或再次互動。"
+      },
+      {
+        "id": "q5",
+        "order": 5,
+        "title": "7天結束時，雙方互動狀態如何？",
+        "description": "例如：明顯增加、小幅增加、持平、減少或中斷。"
+      }
+    ],
+    "source": "custom",
+    "active": true,
+    "createdAt": "2026-07-23T00:00:00.000Z",
+    "updatedAt": "2026-07-23T00:00:00.000Z"
   }
 ]
