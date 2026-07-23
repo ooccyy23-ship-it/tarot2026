@@ -35,6 +35,15 @@ export function DashboardPage() {
         <article className="summary-card"><span>最近一次觀測</span><strong className="summary-date">{latest ? `${latest.observationDate} ${latest.drawTime}` : "尚無紀錄"}</strong><a href="#/history">查看詳情</a></article>
       </section>
 
+      <section className="panel deck-guide-callout">
+        <div>
+          <p className="eyebrow">Design Guide</p>
+          <h2>把牌卡設計稿轉成可用資料與詳情頁</h2>
+          <p>已先整理 4 張聖杯宮廷牌的設計指南，包含色盤、關鍵元素與 prompt 參考。</p>
+        </div>
+        <a className="secondary-button button-link" href="#/deck">查看牌卡指南</a>
+      </section>
+
       {loaded && observations.length === 0 ? (
         <section className="panel empty-state">
           <div className="empty-icon" aria-hidden="true">＋</div>

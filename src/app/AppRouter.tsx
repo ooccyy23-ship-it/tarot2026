@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import DrawToolPage from "../App";
 import { DashboardPage } from "../pages/DashboardPage";
 import { DataManagementPage } from "../pages/DataManagementPage";
+import { DeckDesignPage } from "../pages/DeckDesignPage";
 import { NewObservationPage } from "../pages/NewObservationPage";
 import { ObservationDetailPage } from "../pages/ObservationDetailPage";
 import { ObservationHistoryPage } from "../pages/ObservationHistoryPage";
 import { PendingVerificationPage } from "../pages/PendingVerificationPage";
 import { AppLayout } from "./AppLayout";
 
-const routes = ["/", "/new", "/history", "/pending", "/data", "/draw"] as const;
+const routes = ["/", "/new", "/history", "/pending", "/data", "/deck", "/draw"] as const;
 export type AppRoute = (typeof routes)[number];
 
 function getRoute(): string {
@@ -43,6 +44,9 @@ export function AppRouter() {
       break;
     case "/data":
       page = <DataManagementPage />;
+      break;
+    case "/deck":
+      page = <DeckDesignPage />;
       break;
     case "/draw":
       page = <DrawToolPage />;
