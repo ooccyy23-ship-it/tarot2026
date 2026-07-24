@@ -4,6 +4,9 @@ import { useAuth } from "../features/auth/useAuth";
 import { CompletedDrawSummary } from "../features/draw/components/CompletedDrawSummary";
 import { FiveCardDrawModule } from "../features/draw/components/FiveCardDrawModule";
 import { getResearchSessionStatusLabel } from "../features/researchSessions/constants/researchSessionLabels";
+import { ResearchEventSection } from "../features/researchSessions/components/ResearchEventSection";
+import { ResearchValidationSection } from "../features/researchSessions/components/ResearchValidationSection";
+import { ResearchSessionStepBar } from "../features/researchSessions/components/ResearchSessionStepBar";
 import {
   buildLockedResearchSetResult,
   createResearchDrawContext,
@@ -13,7 +16,13 @@ import {
   type ResearchDrawContext,
 } from "../features/researchSessions/logic/researchSessionDraw";
 import { getSevenDaySessionService } from "../features/researchSessions/storage/sevenDaySessionService";
+import { getResearchEventService } from "../features/researchSessions/storage/researchEventService";
+import { getResearchValidationService } from "../features/researchSessions/storage/researchValidationService";
+import type { ResearchQuestionValidationInput } from "../features/researchSessions/logic/researchSessionValidation";
+import type { ResearchEventInput } from "../features/researchSessions/logic/researchSessionEvents";
 import type {
+  ResearchEventRecord,
+  ResearchQuestionValidationRecord,
   ResearchSession,
   ResearchSetCode,
 } from "../features/researchSessions/types/researchSession";
@@ -27,10 +36,12 @@ function localDateInput(now = new Date()): string {
   ].join("-");
 }
 
-export function SevenDayResearchPage() {
+export function SevenDayResearchPage({ sessionId }: { sessionId?: string }) {
   const { user, initializing, actionLoading, signInWithGoogle } = useAuth();
   const [sessions, setSessions] = useState<ResearchSession[]>([]);
   const [activeSession, setActiveSession] = useState<ResearchSession | null>(null);
+  const [events, setEvents] = useState<ResearchEventRecord[]>([]);
+  const [validations, setValidations] = useState<ResearchQuestionValidationRecord[]>([]);
   const [startDate, setStartDate] = useState(localDateInput);
   const [drawContext, setDrawContext] = useState<ResearchDrawContext | null>(null);
   const [loading, setLoading] = useState(false);
@@ -46,27 +57,39 @@ export function SevenDayResearchPage() {
       const listed = await service.list();
       setSessions(listed);
       const selectedId = preferredSessionId
+        ?? sessionId
         ?? activeSession?.sessionId
         ?? listed.find((item) => item.status !== "invalid" && item.status !== "completed")?.sessionId
         ?? listed[0]?.sessionId;
       if (!selectedId) {
         setActiveSession(null);
+        setEvents([]);
+        setValidations([]);
         return;
       }
-      setActiveSession(await service.get(selectedId) ?? null);
+      const [session, sessionEvents, sessionValidations] = await Promise.all([
+        service.get(selectedId),
+        getResearchEventService().list(selectedId),
+        getResearchValidationService().list(selectedId),
+      ]);
+      setActiveSession(session ?? null);
+      setEvents(sessionEvents);
+      setValidations(sessionValidations);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "讀取研究 Session 失敗。");
     } finally {
       setLoading(false);
     }
-  }, [activeSession?.sessionId, user]);
+  }, [activeSession?.sessionId, sessionId, user]);
 
   useEffect(() => {
     setSessions([]);
     setActiveSession(null);
+    setEvents([]);
+    setValidations([]);
     setDrawContext(null);
-    if (user) void loadSessions();
-  }, [user?.uid]);
+    if (user) void loadSessions(sessionId);
+  }, [sessionId, user?.uid]);
 
   const runWrite = useCallback(async (operation: () => Promise<void>) => {
     if (writeInFlight.current) return;
@@ -120,6 +143,47 @@ export function SevenDayResearchPage() {
     });
   };
 
+  const handleEventSave = async (
+    input: ResearchEventInput,
+    eventId?: string,
+  ): Promise<void> => {
+    if (!activeSession) throw new Error("缺少目前的研究 Session。");
+    await runWrite(async () => {
+      const eventService = getResearchEventService();
+      if (eventId) {
+        await eventService.update(activeSession.sessionId, eventId, input);
+      } else {
+        await eventService.create(activeSession.sessionId, input);
+      }
+      setEvents(await eventService.list(activeSession.sessionId));
+    });
+  };
+
+  const handleEnterValidation = () => runWrite(async () => {
+    if (!activeSession) return;
+    await getSevenDaySessionService().updateStatus(activeSession.sessionId, "validation_due");
+    await loadSessions(activeSession.sessionId);
+  });
+
+  const handleValidationSave = async (
+    setId: ResearchSetCode,
+    questionIndex: number,
+    input: ResearchQuestionValidationInput,
+  ): Promise<void> => {
+    if (!activeSession) throw new Error("請先選擇研究 Session。");
+    await runWrite(async () => {
+      const service = getResearchValidationService();
+      await service.save(activeSession.sessionId, setId, questionIndex, input);
+      setValidations(await service.list(activeSession.sessionId));
+    });
+  };
+
+  const handleValidationComplete = () => runWrite(async () => {
+    if (!activeSession) return;
+    await getResearchValidationService().complete(activeSession.sessionId);
+    await loadSessions(activeSession.sessionId);
+  });
+
   const currentConfig = useMemo(() => (
     activeSession?.status === "drawing"
       ? getResearchSetConfig(activeSession.currentSet)
@@ -159,12 +223,13 @@ export function SevenDayResearchPage() {
           <h1>三題組研究 Session</h1>
           <p>A 主動聯繫 → B 現實互動 → C 關係推進；每組各自取得時間並產生五張牌。</p>
         </div>
+        {sessionId ? <a className="secondary-button" href="#/research">返回研究列表</a> : null}
       </header>
 
-      {error ? <StatusMessage tone="error" message={error} /> : null}
+      {error ? <StatusMessage tone="error" message={`資料寫入失敗：${error}`} /> : null}
 
-      <section className="research-session-layout">
-        <aside className="panel research-session-sidebar">
+      <section className={`research-session-layout ${sessionId ? "detail-only" : ""}`}>
+        {!sessionId ? <aside className="panel research-session-sidebar">
           <div className="section-heading">
             <p className="eyebrow">Sessions</p>
             <h2>研究紀錄</h2>
@@ -190,7 +255,7 @@ export function SevenDayResearchPage() {
               </button>
             ))}
           </div>
-        </aside>
+        </aside> : null}
 
         <div className="research-session-main">
           {!activeSession ? (
@@ -211,6 +276,8 @@ export function SevenDayResearchPage() {
                 </span>
               </section>
 
+              <ResearchSessionStepBar session={activeSession} />
+
               <ol className="research-set-progress" aria-label="題組完成進度">
                 {(["A", "B", "C"] as const).map((setId) => {
                   const config = getResearchSetConfig(setId);
@@ -225,7 +292,83 @@ export function SevenDayResearchPage() {
                 })}
               </ol>
 
-              {activeSession.groupDrawResults.map((setResult) => (
+              {(["A", "B", "C"] as const).map((setId) => {
+                const config = getResearchSetConfig(setId);
+                const lockedResult = activeSession.groupDrawResults.find(
+                  (result) => result.setId === setId,
+                );
+                const isCurrent = activeSession.status === "drawing"
+                  && activeSession.currentSet === setId;
+                return (
+                  <section className="research-set-detail" id={`research-set-${setId}`} key={setId}>
+                    <div className="section-heading research-set-detail-heading">
+                      <div>
+                        <p className="eyebrow">題組 {setId}</p>
+                        <h2>{config.questionGroup.title}</h2>
+                      </div>
+                      <span className={`status-chip ${lockedResult ? "completed" : isCurrent ? "drawing" : "draft"}`}>
+                        {lockedResult ? "題組鎖定" : isCurrent ? "抽牌進行中" : "尚未開放"}
+                      </span>
+                    </div>
+
+                    {lockedResult ? (
+                      <CompletedDrawSummary
+                        result={researchSetResultToDrawResult(lockedResult)}
+                        questions={lockedResult.questionGroupSnapshot.questions}
+                      />
+                    ) : isCurrent ? (
+                      <div className="research-current-set">
+                        <div className="panel research-current-set-header">
+                          <div>
+                            <h3>{config.questionGroup.title}</h3>
+                            <p>{config.questionGroup.description}</p>
+                          </div>
+                          {!drawContext ? (
+                            <button
+                              className="primary-button"
+                              type="button"
+                              disabled={loading}
+                              onClick={() => setDrawContext(createResearchDrawContext())}
+                            >
+                              取得現在時間並開始
+                            </button>
+                          ) : (
+                            <button
+                              className="ghost-button"
+                              type="button"
+                              disabled={loading}
+                              onClick={() => {
+                                if (window.confirm("更換開始時間會清除本題組尚未儲存的操作，確定嗎？")) {
+                                  setDrawContext(createResearchDrawContext());
+                                }
+                              }}
+                            >
+                              更換開始時間
+                            </button>
+                          )}
+                        </div>
+                        {drawContext ? (
+                          <FiveCardDrawModule
+                            key={`${activeSession.sessionId}-${setId}-${drawContext.drawTimestamp}`}
+                            fixedTime={drawContext.drawTime}
+                            fixedWeekday={drawContext.weekday}
+                            questions={currentQuestions}
+                            lockAfterComplete
+                            onComplete={(result) => handleSetComplete(setId, result)}
+                          />
+                        ) : null}
+                      </div>
+                    ) : (
+                      <div className="panel research-set-unavailable">
+                        <strong>尚未開放</strong>
+                        <p>請先完成前一個題組並鎖定結果。</p>
+                      </div>
+                    )}
+                  </section>
+                );
+              })}
+
+              {/* Legacy locked-set rendering retained in history; integrated sections render above.
                 <section className="research-locked-set" key={setResult.setId}>
                   <div className="section-heading">
                     <p className="eyebrow">題組 {setResult.setId}・已鎖定</p>
@@ -236,7 +379,7 @@ export function SevenDayResearchPage() {
                     questions={setResult.questionGroupSnapshot.questions}
                   />
                 </section>
-              ))}
+              */}
 
               {activeSession.status === "draft" ? (
                 <section className="panel empty-state">
@@ -248,7 +391,7 @@ export function SevenDayResearchPage() {
                 </section>
               ) : null}
 
-              {activeSession.status === "drawing" && currentConfig ? (
+              {/* Legacy current-set rendering replaced by the integrated A/B/C sections.
                 <section className="research-current-set">
                   <div className="panel research-current-set-header">
                     <div>
@@ -291,13 +434,47 @@ export function SevenDayResearchPage() {
                     />
                   ) : null}
                 </section>
-              ) : null}
+              */}
 
               {activeSession.status === "observing" ? (
                 <section className="panel empty-state">
                   <h2>三個題組已全部完成</h2>
-                  <p>15 張牌均已鎖定，Session 已自動進入「觀測中」。本階段不建立事件與驗證功能。</p>
+                  <p>15 張牌均已鎖定，Session 已進入「觀測中」，可開始記錄研究期間內的現實事件。</p>
+                  <button
+                    className="secondary-button"
+                    type="button"
+                    disabled={loading}
+                    onClick={() => void handleEnterValidation().catch(() => undefined)}
+                  >
+                    檢查期限並進入最終驗證
+                  </button>
                 </section>
+              ) : null}
+
+              {activeSession.status === "observing"
+              || activeSession.status === "validation_due"
+              || activeSession.status === "completed"
+              || activeSession.status === "invalid" ? (
+                <ResearchEventSection
+                  key={activeSession.sessionId}
+                  session={activeSession}
+                  events={events}
+                  saving={loading}
+                  onSave={handleEventSave}
+                />
+              ) : null}
+
+              {activeSession.status === "validation_due"
+              || activeSession.status === "completed" ? (
+                <ResearchValidationSection
+                  key={`${activeSession.sessionId}-validation`}
+                  session={activeSession}
+                  events={events}
+                  validations={validations}
+                  saving={loading}
+                  onSave={handleValidationSave}
+                  onComplete={handleValidationComplete}
+                />
               ) : null}
             </>
           )}

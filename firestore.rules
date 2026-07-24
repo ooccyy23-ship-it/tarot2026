@@ -6,6 +6,17 @@ service cloud.firestore {
       return request.auth != null && request.auth.uid == userId;
     }
 
+    function requestTaipeiDate() {
+      let localTime = request.time + duration.value(8, 'h');
+      return string(localTime.year())
+        + '-' + (localTime.month() < 10 ? '0' : '') + string(localTime.month())
+        + '-' + (localTime.day() < 10 ? '0' : '') + string(localTime.day());
+    }
+
+    function validationDateReached(deadline) {
+      return requestTaipeiDate() >= deadline;
+    }
+
     function isValidSessionTransition() {
       let before = resource.data.status;
       let after = request.resource.data.status;
@@ -16,14 +27,43 @@ service cloud.firestore {
           && after == 'observing'
           && request.resource.data.completedSets.size() == 3
         )
-        || (before == 'observing' && (after == 'validation_due' || after == 'invalid'))
-        || (before == 'validation_due' && (after == 'completed' || after == 'invalid'));
+        || (
+          before == 'observing'
+          && after == 'validation_due'
+          && validationDateReached(resource.data.validationDeadline)
+        )
+        || (before == 'observing' && after == 'invalid')
+        || (
+          before == 'validation_due'
+          && after == 'completed'
+          && request.resource.data.validatedQuestionIds.size() == 15
+          && validationDateReached(resource.data.validationDeadline)
+          && request.resource.data.completedAt == request.time
+        )
+        || (before == 'validation_due' && after == 'invalid');
     }
 
     function isDrawingProgress() {
       return resource.data.status == 'drawing'
         && request.resource.data.status == 'drawing'
         && request.resource.data.completedSets.size() == resource.data.completedSets.size() + 1;
+    }
+
+    function isValidationProgress() {
+      return resource.data.status == 'validation_due'
+        && request.resource.data.status == 'validation_due'
+        && request.resource.data.validatedQuestionIds is list
+        && request.resource.data.validatedQuestionIds.hasOnly([
+          'A-1', 'A-2', 'A-3', 'A-4', 'A-5',
+          'B-1', 'B-2', 'B-3', 'B-4', 'B-5',
+          'C-1', 'C-2', 'C-3', 'C-4', 'C-5'
+        ])
+        && request.resource.data.validatedQuestionIds.size()
+          == (
+            ('validatedQuestionIds' in resource.data)
+              ? resource.data.validatedQuestionIds.size()
+              : 0
+          ) + 1;
     }
 
     match /users/{userId}/sevenDaySessions/{sessionId} {
@@ -35,6 +75,8 @@ service cloud.firestore {
         && request.resource.data.subject == '小峰'
         && request.resource.data.relationshipScope == '我和小峰之間的感情互動'
         && request.resource.data.status == 'draft'
+        && request.resource.data.completedAt == null
+        && request.resource.data.validatedQuestionIds == []
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time;
       allow update: if isOwner(userId)
@@ -51,9 +93,10 @@ service cloud.firestore {
           'completedSets',
           'updatedAt',
           'completedAt',
-          'invalidReason'
+          'invalidReason',
+          'validatedQuestionIds'
         ])
-        && (isValidSessionTransition() || isDrawingProgress());
+        && (isValidSessionTransition() || isDrawingProgress() || isValidationProgress());
       allow delete: if false;
     }
 
@@ -68,6 +111,186 @@ service cloud.firestore {
         && request.resource.data.cards.size() == 5
         && request.resource.data.lockedAt == request.time;
       allow update, delete: if false;
+    }
+
+    match /users/{userId}/sevenDaySessions/{sessionId}/events/{eventId} {
+      function sessionData() {
+        return get(
+          /databases/$(database)/documents/users/$(userId)/sevenDaySessions/$(sessionId)
+        ).data;
+      }
+
+      function editableSession() {
+        return sessionData().status in ['observing', 'validation_due'];
+      }
+
+      function validEventData() {
+        let event = request.resource.data;
+        return event.ownerId == userId
+          && event.sessionId == sessionId
+          && event.eventId == eventId
+          && event.eventType in [
+            '直接訊息',
+            '電話',
+            '面對面互動',
+            '社群互動',
+            '第三人相關事件',
+            '主動邀約',
+            '關心或分享',
+            '爭執或誤解',
+            '具體行動',
+            '無互動紀錄',
+            '其他'
+          ]
+          && event.description is string
+          && event.description.size() > 0
+          && event.eventDate is string
+          && event.eventDate >= sessionData().startDate
+          && event.eventDate <= sessionData().validationDeadline
+          && (!('eventTime' in event) || event.eventTime is string)
+          && event.isDirectInteraction is bool
+          && event.initiatedByXiaofeng is bool
+          && event.hasConcreteAction is bool
+          && event.relatedSets is list
+          && event.relatedSets.hasOnly(['A', 'B', 'C'])
+          && event.relatedQuestionIds is list
+          && event.relatedQuestionIds.hasOnly([
+            'communication-q1',
+            'communication-q2',
+            'communication-q3',
+            'communication-q4',
+            'communication-q5',
+            'interaction-q1',
+            'interaction-q2',
+            'interaction-q3',
+            'interaction-q4',
+            'interaction-q5',
+            'progress-q1',
+            'progress-q2',
+            'progress-q3',
+            'progress-q4',
+            'progress-q5'
+          ])
+          && (
+            event.eventType != '無互動紀錄'
+            || (
+              event.isDirectInteraction == false
+              && event.initiatedByXiaofeng == false
+              && event.hasConcreteAction == false
+            )
+          );
+      }
+
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && editableSession()
+        && validEventData()
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isOwner(userId)
+        && editableSession()
+        && resource.data.ownerId == userId
+        && resource.data.sessionId == sessionId
+        && resource.data.eventId == eventId
+        && request.resource.data.ownerId == resource.data.ownerId
+        && request.resource.data.sessionId == resource.data.sessionId
+        && request.resource.data.eventId == resource.data.eventId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'eventDate',
+          'eventTime',
+          'eventType',
+          'description',
+          'isDirectInteraction',
+          'initiatedByXiaofeng',
+          'hasConcreteAction',
+          'relatedSets',
+          'relatedQuestionIds',
+          'updatedAt'
+        ])
+        && validEventData();
+      allow delete: if false;
+    }
+
+    match /users/{userId}/sevenDaySessions/{sessionId}/validations/{validationId} {
+      function validationSessionData() {
+        return get(
+          /databases/$(database)/documents/users/$(userId)/sevenDaySessions/$(sessionId)
+        ).data;
+      }
+
+      function validationSetData() {
+        return get(
+          /databases/$(database)/documents/users/$(userId)/sevenDaySessions/$(sessionId)/sets/$(request.resource.data.setId)
+        ).data;
+      }
+
+      function validValidationScore() {
+        let status = request.resource.data.validationStatus;
+        let score = request.resource.data.validationScore;
+        return (status == 'matched' && score == 1)
+          || (status == 'partial' && score == 0.5)
+          || (status == 'not_matched' && score == 0)
+          || (status in ['undetermined', 'not_applicable'] && score == null);
+      }
+
+      function validValidationData() {
+        let validation = request.resource.data;
+        let card = validationSetData().cards[validation.questionIndex - 1];
+        return validation.setId in ['A', 'B', 'C']
+          && validation.questionIndex is int
+          && validation.questionIndex >= 1
+          && validation.questionIndex <= 5
+          && validationId
+            == validation.setId + '-' + string(validation.questionIndex)
+          && validation.questionText == card.questionText
+          && validation.cardSnapshot == card
+          && validation.validationStatus in [
+            'matched',
+            'partial',
+            'not_matched',
+            'undetermined',
+            'not_applicable'
+          ]
+          && validValidationScore()
+          && validation.evidence is string
+          && validation.evidence.trim().size() > 0
+          && (!('note' in validation) || validation.note is string);
+      }
+
+      function validationSessionEditable() {
+        return validationSessionData().status == 'validation_due'
+          && validationSessionData().completedSets.size() == 3
+          && validationDateReached(validationSessionData().validationDeadline);
+      }
+
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && validationSessionEditable()
+        && validValidationData()
+        && request.resource.data.validatedAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && getAfter(
+          /databases/$(database)/documents/users/$(userId)/sevenDaySessions/$(sessionId)
+        ).data.validatedQuestionIds.hasAll([validationId]);
+      allow update: if isOwner(userId)
+        && validationSessionEditable()
+        && resource.data.setId == request.resource.data.setId
+        && resource.data.questionIndex == request.resource.data.questionIndex
+        && resource.data.questionText == request.resource.data.questionText
+        && resource.data.cardSnapshot == request.resource.data.cardSnapshot
+        && resource.data.validatedAt == request.resource.data.validatedAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'validationStatus',
+          'validationScore',
+          'evidence',
+          'note',
+          'updatedAt'
+        ])
+        && validValidationData();
+      allow delete: if false;
     }
 
     match /users/{userId}/sevenDaySessionCounters/{dateKey} {
