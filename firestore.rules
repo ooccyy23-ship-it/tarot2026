@@ -2,8 +2,15 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Firebase Authentication UID of the single account allowed to use this
+    // private system. A Firebase UID is an identifier, not a private credential.
+    function isAllowedUser() {
+      return request.auth != null
+        && request.auth.uid == 'JGvYos4FHLgTD7YQxT4dn4WVryd2';
+    }
+
     function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
+      return isAllowedUser() && request.auth.uid == userId;
     }
 
     function requestTaipeiDate() {
