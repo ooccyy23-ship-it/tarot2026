@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { AuthStatus } from "../features/auth/components/AuthStatus";
 import type { AppRoute } from "./AppRouter";
 
 const navigation: Array<{ route: AppRoute; label: string }> = [
@@ -23,18 +24,21 @@ export function AppLayout({ currentRoute, children }: { currentRoute: string; ch
             <small>現實驗證 v2</small>
           </span>
         </a>
-        <nav className="top-nav" aria-label="主要導覽">
-          {navigation.map((item) => (
-            <a
-              key={item.route}
-              className={activeRoute === item.route ? "is-active" : ""}
-              href={`#${item.route}`}
-              aria-current={activeRoute === item.route ? "page" : undefined}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+        <div className="header-controls">
+          <nav className="top-nav" aria-label="主要導覽">
+            {navigation.map((item) => (
+              <a
+                key={item.route}
+                className={activeRoute === item.route ? "is-active" : ""}
+                href={`#${item.route}`}
+                aria-current={activeRoute === item.route ? "page" : undefined}
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+          <AuthStatus />
+        </div>
       </header>
       <div className="page-container">{children}</div>
     </div>
