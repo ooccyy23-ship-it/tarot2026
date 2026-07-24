@@ -37,11 +37,11 @@ export function DashboardPage() {
 
       <section className="panel deck-guide-callout">
         <div>
-          <p className="eyebrow">Design Guide</p>
-          <h2>把牌卡設計稿轉成可用資料與詳情頁</h2>
-          <p>已先整理 4 張聖杯宮廷牌的設計指南，包含色盤、關鍵元素與 prompt 參考。</p>
+          <p className="eyebrow">7 Day Research</p>
+          <h2>開始 7 天三題組研究</h2>
+          <p>依序完成主動聯繫、現實互動與關係推進三組抽牌，共 15 張牌。</p>
         </div>
-        <a className="secondary-button button-link" href="#/deck">查看牌卡指南</a>
+        <a className="secondary-button button-link" href="#/research">進入 7 天研究</a>
       </section>
 
       {loaded && observations.length === 0 ? (

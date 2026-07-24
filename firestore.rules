@@ -10,9 +10,20 @@ service cloud.firestore {
       let before = resource.data.status;
       let after = request.resource.data.status;
       return (before == 'draft' && (after == 'drawing' || after == 'invalid'))
-        || (before == 'drawing' && (after == 'observing' || after == 'invalid'))
+        || (before == 'drawing' && after == 'invalid')
+        || (
+          before == 'drawing'
+          && after == 'observing'
+          && request.resource.data.completedSets.size() == 3
+        )
         || (before == 'observing' && (after == 'validation_due' || after == 'invalid'))
         || (before == 'validation_due' && (after == 'completed' || after == 'invalid'));
+    }
+
+    function isDrawingProgress() {
+      return resource.data.status == 'drawing'
+        && request.resource.data.status == 'drawing'
+        && request.resource.data.completedSets.size() == resource.data.completedSets.size() + 1;
     }
 
     match /users/{userId}/sevenDaySessions/{sessionId} {
@@ -34,8 +45,29 @@ service cloud.firestore {
         && request.resource.data.subject == resource.data.subject
         && request.resource.data.relationshipScope == resource.data.relationshipScope
         && request.resource.data.updatedAt == request.time
-        && isValidSessionTransition();
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'status',
+          'currentSet',
+          'completedSets',
+          'updatedAt',
+          'completedAt',
+          'invalidReason'
+        ])
+        && (isValidSessionTransition() || isDrawingProgress());
       allow delete: if false;
+    }
+
+    match /users/{userId}/sevenDaySessions/{sessionId}/sets/{setId} {
+      allow read: if isOwner(userId);
+      allow create: if isOwner(userId)
+        && setId in ['A', 'B', 'C']
+        && request.resource.data.ownerId == userId
+        && request.resource.data.setId == setId
+        && request.resource.data.isLocked == true
+        && request.resource.data.sequences.size() == 5
+        && request.resource.data.cards.size() == 5
+        && request.resource.data.lockedAt == request.time;
+      allow update, delete: if false;
     }
 
     match /users/{userId}/sevenDaySessionCounters/{dateKey} {

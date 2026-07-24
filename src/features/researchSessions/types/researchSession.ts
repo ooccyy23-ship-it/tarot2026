@@ -1,5 +1,5 @@
-import type { DrawResult } from "../../observations/types/observation";
 import type { QuestionGroup } from "../../questionGroups/types/questionGroup";
+import type { WeekdayKey } from "../../../types/tarot";
 
 export type ResearchQuestionGroupKey = "communication" | "interaction" | "progress";
 export type ResearchSetCode = "A" | "B" | "C";
@@ -26,12 +26,39 @@ export type SevenDayQuestionGroupConfig = {
   questionGroup: QuestionGroup;
 };
 
+export type ResearchSessionDrawCard = {
+  questionIndex: number;
+  questionId: string;
+  questionText: string;
+  sequence: number;
+  cardId: number | string;
+  cardNameZh: string;
+  cardNameEn: string;
+  orientation: "upright" | "reversed";
+  orientationLabel: "正位" | "逆位";
+  imageUrl: string;
+  coinSide: "heads" | "tails";
+  startedAt: string;
+  stoppedAt: string;
+  durationMs: number;
+};
+
 export type SessionQuestionGroupDrawResult = {
+  setId: ResearchSetCode;
+  setName: string;
+  researchCore: SevenDayQuestionGroupConfig["dimension"];
   groupKey: ResearchQuestionGroupKey;
+  questions: string[];
   questionGroupId: string;
   questionGroupSnapshot: QuestionGroup;
-  drawResult?: DrawResult;
-  completedAt?: string;
+  drawDate: string;
+  drawTime: string;
+  drawTimestamp: string;
+  weekday: WeekdayKey;
+  sequences: number[];
+  cards: ResearchSessionDrawCard[];
+  isLocked: true;
+  lockedAt: string;
 };
 
 export type ResearchEventRecord = {

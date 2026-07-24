@@ -12,8 +12,13 @@ import {
   type Firestore,
 } from "firebase/firestore";
 import { calculateValidationDueDate } from "../logic/researchSessionCalculations";
+import { advanceResearchDrawProgress } from "../logic/researchSessionDraw";
 import { assertResearchSessionTransition } from "../logic/researchSessionState";
-import type { ResearchSession, ResearchSessionStatus } from "../types/researchSession";
+import type {
+  ResearchSession,
+  ResearchSessionStatus,
+  SessionQuestionGroupDrawResult,
+} from "../types/researchSession";
 
 const SESSION_COLLECTION = "sevenDaySessions";
 const COUNTER_COLLECTION = "sevenDaySessionCounters";
@@ -26,6 +31,11 @@ type SessionCounter = {
 export type CreateSevenDaySessionResult = {
   session: ResearchSession;
   created: boolean;
+};
+
+export type SaveLockedSetResult = {
+  session: ResearchSession;
+  saved: boolean;
 };
 
 function requireOwnerId(ownerId: string): string {
@@ -41,6 +51,28 @@ function dateKey(startDate: string): string {
 
 function toDate(value: unknown): Date | null {
   return value instanceof Timestamp ? value.toDate() : null;
+}
+
+function toIsoDate(value: unknown): string {
+  if (value instanceof Timestamp) return value.toDate().toISOString();
+  return typeof value === "string" ? value : "";
+}
+
+function toLockedSetResult(data: DocumentData): SessionQuestionGroupDrawResult {
+  if (
+    !["A", "B", "C"].includes(data.setId)
+    || data.isLocked !== true
+    || !Array.isArray(data.cards)
+    || data.cards.length !== 5
+    || !Array.isArray(data.sequences)
+    || data.sequences.length !== 5
+  ) {
+    throw new Error("研究題組的鎖定結果格式不正確。");
+  }
+  return {
+    ...data,
+    lockedAt: toIsoDate(data.lockedAt),
+  } as SessionQuestionGroupDrawResult;
 }
 
 function toResearchSession(data: DocumentData, documentId: string): ResearchSession {
@@ -80,6 +112,22 @@ function assertOwnedSession(session: ResearchSession, ownerId: string): void {
 
 export class SevenDaySessionRepository {
   constructor(private readonly database: Firestore) {}
+
+  private async getLockedSets(ownerId: string, sessionId: string): Promise<SessionQuestionGroupDrawResult[]> {
+    const setsSnapshot = await getDocsFromServer(
+      collection(
+        this.database,
+        "users",
+        ownerId,
+        SESSION_COLLECTION,
+        sessionId,
+        "sets",
+      ),
+    );
+    return setsSnapshot.docs
+      .map((item) => toLockedSetResult(item.data()))
+      .sort((a, b) => a.setId.localeCompare(b.setId));
+  }
 
   async create(ownerIdInput: string, startDate: string): Promise<CreateSevenDaySessionResult> {
     const ownerId = requireOwnerId(ownerIdInput);
@@ -156,13 +204,15 @@ export class SevenDaySessionRepository {
 
   async get(ownerIdInput: string, sessionId: string): Promise<ResearchSession | undefined> {
     const ownerId = requireOwnerId(ownerIdInput);
-    const snapshot = await getDocFromServer(
-      doc(this.database, "users", ownerId, SESSION_COLLECTION, sessionId),
-    );
+    const sessionRef = doc(this.database, "users", ownerId, SESSION_COLLECTION, sessionId);
+    const snapshot = await getDocFromServer(sessionRef);
     if (!snapshot.exists()) return undefined;
     const session = toResearchSession(snapshot.data(), snapshot.id);
     assertOwnedSession(session, ownerId);
-    return session;
+    return {
+      ...session,
+      groupDrawResults: await this.getLockedSets(ownerId, sessionId),
+    };
   }
 
   async list(ownerIdInput: string): Promise<ResearchSession[]> {
@@ -200,6 +250,72 @@ export class SevenDaySessionRepository {
     });
   }
 
+  async saveLockedSet(
+    ownerIdInput: string,
+    sessionId: string,
+    result: SessionQuestionGroupDrawResult,
+  ): Promise<SaveLockedSetResult> {
+    const ownerId = requireOwnerId(ownerIdInput);
+    if (!result.isLocked || result.cards.length !== 5 || result.sequences.length !== 5) {
+      throw new Error("只有完整且已鎖定的五張牌結果可以保存。");
+    }
+    const sessionRef = doc(this.database, "users", ownerId, SESSION_COLLECTION, sessionId);
+    const setRef = doc(sessionRef, "sets", result.setId);
+
+    return runTransaction(this.database, async (transaction) => {
+      const sessionSnapshot = await transaction.get(sessionRef);
+      if (!sessionSnapshot.exists()) throw new Error("找不到指定的 Session。");
+      const current = toResearchSession(sessionSnapshot.data(), sessionSnapshot.id);
+      assertOwnedSession(current, ownerId);
+
+      const existingSet = await transaction.get(setRef);
+      if (existingSet.exists()) {
+        const lockedSet = toLockedSetResult(existingSet.data());
+        return {
+          saved: false,
+          session: {
+            ...current,
+            groupDrawResults: [
+              ...current.groupDrawResults.filter((item) => item.setId !== lockedSet.setId),
+              lockedSet,
+            ].sort((a, b) => a.setId.localeCompare(b.setId)),
+          },
+        };
+      }
+
+      const progress = advanceResearchDrawProgress(
+        current.status,
+        current.completedSets,
+        result.setId,
+      );
+      const timestamp = serverTimestamp();
+
+      transaction.set(setRef, {
+        ...result,
+        ownerId,
+        lockedAt: timestamp,
+      });
+      transaction.update(sessionRef, {
+        completedSets: progress.completedSets,
+        currentSet: progress.currentSet,
+        status: progress.status,
+        updatedAt: timestamp,
+      });
+
+      return {
+        saved: true,
+        session: {
+          ...current,
+          completedSets: progress.completedSets,
+          currentSet: progress.currentSet,
+          status: progress.status,
+          groupDrawResults: [...current.groupDrawResults, result],
+          updatedAt: null,
+        },
+      };
+    });
+  }
+
   async markInvalid(ownerIdInput: string, sessionId: string, reason: string): Promise<void> {
     const ownerId = requireOwnerId(ownerIdInput);
     const invalidReason = reason.trim();
@@ -222,5 +338,6 @@ export class SevenDaySessionRepository {
 
 export const sevenDaySessionFirestorePaths = {
   sessions: "users/{uid}/sevenDaySessions/{sessionId}",
+  sets: "users/{uid}/sevenDaySessions/{sessionId}/sets/{A|B|C}",
   counters: "users/{uid}/sevenDaySessionCounters/{YYYYMMDD}",
 } as const;
