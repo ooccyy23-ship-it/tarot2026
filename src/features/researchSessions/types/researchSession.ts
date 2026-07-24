@@ -61,15 +61,34 @@ export type SessionQuestionGroupDrawResult = {
   lockedAt: string;
 };
 
+export type ResearchEventType =
+  | "直接訊息"
+  | "電話"
+  | "面對面互動"
+  | "社群互動"
+  | "第三人相關事件"
+  | "主動邀約"
+  | "關心或分享"
+  | "爭執或誤解"
+  | "具體行動"
+  | "無互動紀錄"
+  | "其他";
+
 export type ResearchEventRecord = {
-  id: string;
-  occurredAt: string;
-  title: string;
-  description?: string;
-  evidenceSources?: string[];
-  relatedGroupKeys?: ResearchQuestionGroupKey[];
-  createdAt: string;
-  updatedAt: string;
+  eventId: string;
+  sessionId: string;
+  ownerId: string;
+  eventDate: string;
+  eventTime?: string;
+  eventType: ResearchEventType;
+  description: string;
+  isDirectInteraction: boolean;
+  initiatedByXiaofeng: boolean;
+  hasConcreteAction: boolean;
+  relatedSets: ResearchSetCode[];
+  relatedQuestionIds: string[];
+  createdAt: Date | null;
+  updatedAt: Date | null;
 };
 
 export type QuestionVerificationResult = {
@@ -84,6 +103,25 @@ export type QuestionGroupVerificationResult = {
   groupKey: ResearchQuestionGroupKey;
   questionGroupId: string;
   questions: QuestionVerificationResult[];
+};
+
+export type ResearchQuestionValidationRecord = {
+  setId: ResearchSetCode;
+  questionIndex: number;
+  questionText: string;
+  cardSnapshot: ResearchSessionDrawCard;
+  validationStatus: ResearchVerificationResult;
+  validationScore: number | null;
+  evidence: string;
+  note?: string;
+  validatedAt: Date | null;
+  updatedAt: Date | null;
+};
+
+export type ResearchValidationSummary = {
+  score: number;
+  validQuestionCount: number;
+  hitRate: number | null;
 };
 
 export type ResearchSession = {
@@ -102,6 +140,7 @@ export type ResearchSession = {
   groupDrawResults: SessionQuestionGroupDrawResult[];
   events: ResearchEventRecord[];
   verificationResults: QuestionGroupVerificationResult[];
+  validatedQuestionIds: string[];
   createdAt: Date | null;
   updatedAt: Date | null;
   completedAt: Date | null;

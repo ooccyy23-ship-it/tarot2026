@@ -99,6 +99,9 @@ function toResearchSession(data: DocumentData, documentId: string): ResearchSess
     groupDrawResults: Array.isArray(data.groupDrawResults) ? data.groupDrawResults : [],
     events: Array.isArray(data.events) ? data.events : [],
     verificationResults: Array.isArray(data.verificationResults) ? data.verificationResults : [],
+    validatedQuestionIds: Array.isArray(data.validatedQuestionIds)
+      ? data.validatedQuestionIds
+      : [],
     createdAt: toDate(data.createdAt),
     updatedAt: toDate(data.updatedAt),
     completedAt: toDate(data.completedAt),
@@ -178,6 +181,7 @@ export class SevenDaySessionRepository {
         groupDrawResults: [] as ResearchSession["groupDrawResults"],
         events: [] as ResearchSession["events"],
         verificationResults: [] as ResearchSession["verificationResults"],
+        validatedQuestionIds: [] as string[],
         createdAt: timestamp,
         updatedAt: timestamp,
         completedAt: null,
