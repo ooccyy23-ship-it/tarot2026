@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CoinFlipCard } from "../../../components/CoinFlipCard";
 import { DrawSettings } from "../../../components/DrawSettings";
 import { FinalResults } from "../../../components/FinalResults";
@@ -19,10 +19,18 @@ type Props = {
   fixedWeekday?: WeekdayKey;
   questions?: ObservationQuestion[];
   completedResult?: DrawResult | null;
-  onComplete?: (result: DrawResult) => void;
+  onComplete?: (result: DrawResult) => void | Promise<void>;
+  lockAfterComplete?: boolean;
 };
 
-export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], completedResult, onComplete }: Props) {
+export function FiveCardDrawModule({
+  fixedTime,
+  fixedWeekday,
+  questions = [],
+  completedResult,
+  onComplete,
+  lockAfterComplete = false,
+}: Props) {
   const embedded = fixedTime !== undefined && fixedWeekday !== undefined;
   const systemWeekday = useMemo(() => getSystemWeekday(), []);
   const [timeInput, setTimeInput] = useState(fixedTime ?? "");
@@ -34,7 +42,11 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
   const [activeFlipIndex, setActiveFlipIndex] = useState<number | null>(null);
   const [flipStarts, setFlipStarts] = useState<Record<number, string>>({});
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
+  const [completionSaving, setCompletionSaving] = useState(false);
+  const [completionError, setCompletionError] = useState<string | null>(null);
   const completionSent = useRef(false);
+  const completionAttempted = useRef(false);
+  const pendingCompletion = useRef<DrawResult | null>(null);
 
   useEffect(() => {
     if (fixedTime !== undefined) setTimeInput(fixedTime);
@@ -44,11 +56,32 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
   const allCoinsCompleted = cards.length === 5 && cards.every((card) => card.orientationResult?.locked);
   const showDebugPanel = import.meta.env.DEV;
 
+  const persistCompletion = useCallback(async (result: DrawResult) => {
+    if (!onComplete || completionSaving || completionSent.current) return;
+    setCompletionSaving(true);
+    setCompletionError(null);
+    try {
+      await onComplete(result);
+      completionSent.current = true;
+    } catch (reason) {
+      setCompletionError(reason instanceof Error ? reason.message : "抽牌結果保存失敗，請稍後重試。");
+    } finally {
+      setCompletionSaving(false);
+    }
+  }, [completionSaving, onComplete]);
+
   useEffect(() => {
-    if (!allCoinsCompleted || !sequenceResult || !onComplete || completionSent.current) return;
-    completionSent.current = true;
-    onComplete(buildDrawResult(timeInput, weekday, sequenceResult, cards, questions));
-  }, [allCoinsCompleted, cards, onComplete, questions, sequenceResult, timeInput, weekday]);
+    if (
+      !allCoinsCompleted
+      || !sequenceResult
+      || !onComplete
+      || completionAttempted.current
+    ) return;
+    const result = buildDrawResult(timeInput, weekday, sequenceResult, cards, questions);
+    pendingCompletion.current = result;
+    completionAttempted.current = true;
+    void persistCompletion(result);
+  }, [allCoinsCompleted, cards, onComplete, persistCompletion, questions, sequenceResult, timeInput, weekday]);
 
   if (completedResult) return <CompletedDrawSummary result={completedResult} questions={questions} />;
 
@@ -59,7 +92,11 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
     setActiveFlipIndex(null);
     setFlipStarts({});
     setCopyMessage(null);
+    setCompletionSaving(false);
+    setCompletionError(null);
     completionSent.current = false;
+    completionAttempted.current = false;
+    pendingCompletion.current = null;
   };
 
   const confirmResetIfNeeded = (): boolean => {
@@ -192,7 +229,31 @@ export function FiveCardDrawModule({ fixedTime, fixedWeekday, questions = [], co
         </div>
       </section>
 
-      {allCoinsCompleted ? <FinalResults drawTime={timeInput} weekday={weekday} cards={cards} onCopy={handleCopy} onRestart={handleRestart} /> : null}
+      {allCoinsCompleted ? (
+        <FinalResults
+          drawTime={timeInput}
+          weekday={weekday}
+          cards={cards}
+          onCopy={handleCopy}
+          onRestart={lockAfterComplete ? undefined : handleRestart}
+        />
+      ) : null}
+      {completionSaving ? <StatusMessage tone="info" message="正在將鎖定結果寫入 Firestore…" /> : null}
+      {completionError ? (
+        <section className="panel draw-save-error">
+          <StatusMessage tone="error" message={completionError} />
+          <button
+            className="primary-button"
+            type="button"
+            disabled={completionSaving}
+            onClick={() => {
+              if (pendingCompletion.current) void persistCompletion(pendingCompletion.current);
+            }}
+          >
+            重新嘗試保存
+          </button>
+        </section>
+      ) : null}
       {copyMessage ? <StatusMessage tone="info" message={copyMessage} /> : null}
       {showDebugPanel && cards.length > 0 ? (
         <section className="panel draw-debug-panel">

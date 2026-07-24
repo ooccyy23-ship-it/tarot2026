@@ -5,6 +5,7 @@ import type { AppRoute } from "./AppRouter";
 const navigation: Array<{ route: AppRoute; label: string }> = [
   { route: "/", label: "首頁" },
   { route: "/new", label: "新增觀測" },
+  { route: "/research", label: "7天研究" },
   { route: "/history", label: "歷史觀測" },
   { route: "/pending", label: "待驗證" },
   { route: "/data", label: "資料管理" },

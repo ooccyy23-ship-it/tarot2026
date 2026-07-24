@@ -1,9 +1,14 @@
 import type { Auth } from "firebase/auth";
 import { getFirebaseAuth, getFirestoreDatabase } from "../../../lib/firebase";
-import type { ResearchSession, ResearchSessionStatus } from "../types/researchSession";
+import type {
+  ResearchSession,
+  ResearchSessionStatus,
+  SessionQuestionGroupDrawResult,
+} from "../types/researchSession";
 import {
   SevenDaySessionRepository,
   type CreateSevenDaySessionResult,
+  type SaveLockedSetResult,
 } from "./sevenDaySessionRepository";
 
 export class SevenDaySessionService {
@@ -42,6 +47,13 @@ export class SevenDaySessionService {
     nextStatus: Exclude<ResearchSessionStatus, "invalid">,
   ): Promise<void> {
     return this.repository.updateStatus(this.ownerId(), sessionId, nextStatus);
+  }
+
+  saveLockedSet(
+    sessionId: string,
+    result: SessionQuestionGroupDrawResult,
+  ): Promise<SaveLockedSetResult> {
+    return this.repository.saveLockedSet(this.ownerId(), sessionId, result);
   }
 
   markInvalid(sessionId: string, reason: string): Promise<void> {

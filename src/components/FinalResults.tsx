@@ -6,7 +6,7 @@ type FinalResultsProps = {
   weekday: WeekdayKey;
   cards: DrawCard[];
   onCopy: () => void;
-  onRestart: () => void;
+  onRestart?: () => void;
 };
 
 export function FinalResults({
@@ -51,9 +51,11 @@ export function FinalResults({
         <button className="primary-button" type="button" onClick={onCopy}>
           複製完整結果
         </button>
-        <button className="ghost-button" type="button" onClick={onRestart}>
-          重新開始
-        </button>
+        {onRestart ? (
+          <button className="ghost-button" type="button" onClick={onRestart}>
+            重新開始
+          </button>
+        ) : null}
       </div>
     </section>
   );
