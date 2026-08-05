@@ -305,6 +305,70 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    match /tarotRecordGroups/{groupId} {
+      allow read: if isAllowedUser();
+      allow create: if isAllowedUser()
+        && request.resource.data.groupId == groupId
+        && request.resource.data.groupTitle is string
+        && request.resource.data.observationDate is string
+        && request.resource.data.observationTime is string
+        && request.resource.data.observationDateTime is string
+        && request.resource.data.recordCount == 5
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time;
+      allow update: if isAllowedUser()
+        && request.resource.data.groupId == resource.data.groupId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.recordCount is int
+        && request.resource.data.recordCount >= 0
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'recordCount',
+          'updatedAt'
+        ]);
+      allow delete: if isAllowedUser();
+    }
+
+    match /tarotRecords/{recordId} {
+      allow read: if isAllowedUser();
+      allow create: if isAllowedUser()
+        && request.resource.data.id == recordId
+        && request.resource.data.groupId is string
+        && request.resource.data.questionOrder is int
+        && request.resource.data.questionOrder >= 1
+        && request.resource.data.questionOrder <= 5
+        && request.resource.data.questionText is string
+        && request.resource.data.questionText.size() > 0
+        && request.resource.data.orientation in ['upright', 'reversed']
+        && request.resource.data.orientationLabel in ['正位', '逆位']
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.updatedAt == request.time
+        && getAfter(
+          /databases/$(database)/documents/tarotRecordGroups/$(request.resource.data.groupId)
+        ).data.groupId == request.resource.data.groupId;
+      allow update: if isAllowedUser()
+        && request.resource.data.id == resource.data.id
+        && request.resource.data.groupId == resource.data.groupId
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.updatedAt == request.time
+        && request.resource.data.questionText is string
+        && request.resource.data.questionText.size() > 0
+        && request.resource.data.orientation in ['upright', 'reversed']
+        && request.resource.data.orientationLabel in ['正位', '逆位']
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'questionText',
+          'cardName',
+          'normalizedCardName',
+          'arcanaType',
+          'suit',
+          'rank',
+          'orientation',
+          'orientationLabel',
+          'updatedAt'
+        ]);
+      allow delete: if isAllowedUser();
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
