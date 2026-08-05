@@ -55,3 +55,13 @@ export type DrawCard = {
   mapping: TarotCardMapping;
   orientationResult: OrientationResult | null;
 };
+
+export type SingleSequenceResult = {
+  hour: number;
+  minute: number;
+  sum: number;
+  sequence: number;
+  formattedSequence: string;
+  usedSubtraction: boolean;
+  explanation: string;
+};

@@ -1482,6 +1482,63 @@ a {
   color: var(--text-soft);
 }
 
+.draw-mode-tabs {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 20px;
+  padding: 6px;
+  border: 1px solid var(--panel-border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.draw-mode-tabs button {
+  min-height: 46px;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-soft);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
+.draw-mode-tabs button.is-active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(155, 78, 34, 0.18);
+}
+
+.draw-input:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  background: #f2eee7;
+}
+
+.single-sequence-card,
+.single-coin-wrap,
+.single-final-card {
+  width: min(100%, 360px);
+}
+
+.single-sequence-card {
+  margin-bottom: 14px;
+}
+
+.single-coin-wrap {
+  margin-top: 18px;
+}
+
+.single-final-card {
+  min-height: 0;
+}
+
+.single-final-panel .actions-row {
+  width: min(100%, 520px);
+}
+
 .eyebrow {
   margin: 0 0 8px;
   color: var(--accent-strong);
@@ -2378,6 +2435,16 @@ a {
   .panel {
     padding: 20px;
     border-radius: 20px;
+  }
+
+  .draw-mode-tabs {
+    display: grid;
+    width: 100%;
+  }
+
+  .draw-mode-tabs button {
+    min-width: 0;
+    padding-inline: 10px;
   }
 
   .settings-grid,

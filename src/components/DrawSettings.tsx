@@ -10,6 +10,8 @@ type DrawSettingsProps = {
   onTimeInputChange: (value: string) => void;
   onWeekdayChange: (value: WeekdayKey) => void;
   onSubmit: () => void;
+  submitLabel?: string;
+  disabled?: boolean;
 };
 
 export function DrawSettings({
@@ -20,6 +22,8 @@ export function DrawSettings({
   onTimeInputChange,
   onWeekdayChange,
   onSubmit,
+  submitLabel = "計算五個序號",
+  disabled = false,
 }: DrawSettingsProps) {
   return (
     <section className="panel draw-panel draw-settings-panel">
@@ -37,6 +41,7 @@ export function DrawSettings({
             maxLength={5}
             placeholder="請輸入 09:55"
             value={timeInput}
+            disabled={disabled}
             onChange={(event) => onTimeInputChange(event.target.value)}
           />
           <small>輸入 4 個數字後會自動顯示為 HH:MM。</small>
@@ -47,6 +52,7 @@ export function DrawSettings({
           <select
             className="select-input draw-input"
             value={weekday}
+            disabled={disabled}
             onChange={(event) => onWeekdayChange(event.target.value as WeekdayKey)}
           >
             {weekdayOptions.map((option) => (
@@ -65,8 +71,8 @@ export function DrawSettings({
       {error ? <StatusMessage tone="error" message={error} /> : null}
 
       <div className="draw-settings-actions">
-        <button className="primary-button draw-submit-button" type="button" onClick={onSubmit}>
-          計算五個序號
+        <button className="primary-button draw-submit-button" type="button" disabled={disabled} onClick={onSubmit}>
+          {submitLabel}
         </button>
       </div>
     </section>
