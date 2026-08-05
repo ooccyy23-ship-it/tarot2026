@@ -44,6 +44,7 @@ export function FiveCardDrawModule({
   const [activeFlipIndex, setActiveFlipIndex] = useState<number | null>(null);
   const [flipStarts, setFlipStarts] = useState<Record<number, string>>({});
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
+  const [observationDate, setObservationDate] = useState<Date | null>(null);
   const [completionSaving, setCompletionSaving] = useState(false);
   const [completionError, setCompletionError] = useState<string | null>(null);
   const completionSent = useRef(false);
@@ -94,6 +95,7 @@ export function FiveCardDrawModule({
     setActiveFlipIndex(null);
     setFlipStarts({});
     setCopyMessage(null);
+    setObservationDate(null);
     setCompletionSaving(false);
     setCompletionError(null);
     completionSent.current = false;
@@ -126,6 +128,7 @@ export function FiveCardDrawModule({
     setFlipStarts({});
     setCopyMessage(null);
     completionSent.current = false;
+    setObservationDate(nextValidationIssues.length > 0 ? null : new Date());
     setCards(nextValidationIssues.length > 0 ? [] : buildDrawCards(nextSequenceResult, weekday));
   };
 
@@ -155,14 +158,16 @@ export function FiveCardDrawModule({
     resetDrawState();
   };
 
-  const handleCopy = async () => {
-    if (!allCoinsCompleted) return;
+  const handleCopy = async (): Promise<boolean> => {
+    if (!allCoinsCompleted || !observationDate) return false;
     try {
-      await navigator.clipboard.writeText(buildCopyText(timeInput, weekday, cards));
-      setCopyMessage("完整結果已複製到剪貼簿。");
+      await navigator.clipboard.writeText(buildCopyText(timeInput, weekday, cards, observationDate));
+      setCopyMessage(null);
+      return true;
     } catch (error) {
       console.error(error);
-      setCopyMessage("複製失敗，請手動複製畫面內容。");
+      setCopyMessage("複製完整結果失敗，瀏覽器可能未允許剪貼簿權限，請確認權限後再試一次。");
+      return false;
     }
   };
 
@@ -241,9 +246,10 @@ export function FiveCardDrawModule({
         </div>
       </section>
 
-      {allCoinsCompleted ? (
+      {allCoinsCompleted && observationDate ? (
         <FinalResults
           drawTime={timeInput}
+          observationDate={observationDate}
           weekday={weekday}
           cards={cards}
           onCopy={handleCopy}

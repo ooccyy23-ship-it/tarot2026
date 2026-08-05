@@ -3,6 +3,7 @@ import { getWeekdayLabel } from "../../../logic/weekday";
 import type { DrawCard, SequenceKey, SequenceResult, WeekdayKey, WeekdayMappings } from "../../../types/tarot";
 import type { DrawResult } from "../../observations/types/observation";
 import type { ObservationQuestion } from "../../questionGroups/types/questionGroup";
+import { createObservationId, formatObservationDate } from "./observationMetadata";
 
 export const sequenceOrder: SequenceKey[] = ["s1", "s2", "s3", "s4", "s5"];
 export const weekdayOrder: WeekdayKey[] = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
@@ -87,10 +88,32 @@ export function buildDrawResult(
   };
 }
 
-export function buildCopyText(drawTime: string, weekday: WeekdayKey, cards: DrawCard[]): string {
-  const lines = cards.map((card) => {
+export function buildCopyText(
+  drawTime: string,
+  weekday: WeekdayKey,
+  cards: DrawCard[],
+  observationDate: Date,
+): string {
+  const observationId = createObservationId(observationDate, drawTime);
+  const cardBlocks = cards.map((card) => {
     const orientation = card.orientationResult?.orientation === "upright" ? "正位" : "逆位";
-    return `${card.order}. 序號${card.formattedSequence}｜${card.mapping.cardName}｜${orientation}`;
+    const coinSide = card.orientationResult?.coinSide === "heads" ? "正面" : "反面";
+    return [
+      `${card.order}. ${card.mapping.cardName}${orientation}`,
+      `   序號：${card.formattedSequence}`,
+      `   牌號：${card.mapping.cardNumber}`,
+      `   硬幣：${coinSide}`,
+    ].join("\n");
   });
-  return [`抽牌時間：${drawTime}`, `對照表：${getWeekdayLabel(weekday)}`, "", ...lines].join("\n");
+
+  return [
+    "塔羅觀測抽牌結果",
+    "",
+    `觀測編號：${observationId}`,
+    `觀測日期：${formatObservationDate(observationDate)}`,
+    `抽牌時間：${drawTime}`,
+    `星期對照：${getWeekdayLabel(weekday)}`,
+    "",
+    cardBlocks.join("\n\n"),
+  ].join("\n");
 }
