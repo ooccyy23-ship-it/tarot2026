@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { generateSequences } from "./generateSequences";
 import { validateSequences } from "./validateSequences";
+import type { SequenceResult } from "../types/tarot";
 
 describe("validateSequences", () => {
   it("01:09 should have sequence 3 equal to 0 and be invalid", () => {
@@ -33,5 +34,25 @@ describe("validateSequences", () => {
         }),
       ]),
     );
+  });
+
+  it("rejects all repeated values in a five-sequence result", () => {
+    const result: SequenceResult = {
+      hour: 20,
+      minute: 20,
+      values: { s1: 20, s2: 20, s3: 12, s4: 23, s5: 55 },
+      formattedValues: { s1: "20", s2: "20", s3: "12", s4: "23", s5: "55" },
+      explanations: { s1: "", s2: "", s3: [], s4: [], s5: "" },
+    };
+
+    const issues = validateSequences(result);
+
+    expect(issues).toHaveLength(2);
+    expect(issues.map((issue) => issue.sequence)).toEqual(["s1", "s2"]);
+    expect(issues.every((issue) => issue.reason === "序號重複：數值 20 共出現 2 次")).toBe(true);
+  });
+
+  it("accepts five unique values within 1 to 78", () => {
+    expect(validateSequences(generateSequences(9, 55))).toEqual([]);
   });
 });
