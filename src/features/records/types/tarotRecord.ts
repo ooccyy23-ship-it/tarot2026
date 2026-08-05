@@ -30,7 +30,35 @@ export type ParsedTarotRecord = {
   orientation: TarotOrientation;
   orientationLabel: TarotOrientationLabel;
   createdAt: string;
+  updatedAt?: string;
 };
+
+export type TarotRecordGroupSummary = {
+  groupId: string;
+  groupTitle: string;
+  observationDate: string;
+  observationTime: string;
+  observationDateTime: string;
+  recordCount: number;
+  createdAt: string;
+  updatedAt?: string;
+};
+
+export type TarotRecordFilters = {
+  keyword: string;
+  dateFrom: string;
+  dateTo: string;
+  groupId: string;
+  cardName: string;
+  orientation: TarotOrientation | "";
+  arcanaType: TarotArcanaType | "";
+  suit: TarotSuit | "";
+};
+
+export type TarotRecordEditableFields = Pick<
+  ParsedTarotRecord,
+  "questionText" | "cardName" | "orientation"
+>;
 
 export type TarotRecordParseIssueCode =
   | "missing_title"

@@ -185,7 +185,9 @@ export function validateParsedTarotGroup(group: ParsedTarotGroupDraft): TarotRec
   return issues;
 }
 
-function finalizeGroup(group: ParsedTarotGroupDraft): ParsedTarotGroup {
+export function finalizeParsedTarotGroup(group: ParsedTarotGroupDraft): ParsedTarotGroup {
+  const validationIssues = validateParsedTarotGroup(group);
+  if (validationIssues.length > 0) throw new TarotRecordParseError(validationIssues);
   const records: ParsedTarotRecord[] = group.records.map((record) => {
     const metadata = getTarotCardMetadata(record.cardName);
     if (!metadata) throw new Error(`第${record.questionOrder}題牌名無效。`);
@@ -208,7 +210,7 @@ export function parseTarotRecordText(input: string): ParsedTarotGroup {
   if (!result.group || result.issues.length > 0) throw new TarotRecordParseError(result.issues);
   const validationIssues = validateParsedTarotGroup(result.group);
   if (validationIssues.length > 0) throw new TarotRecordParseError(validationIssues);
-  return finalizeGroup(result.group);
+  return finalizeParsedTarotGroup(result.group);
 }
 
 export function updateDraftCardName(record: ParsedTarotRecordDraft, cardName: string): ParsedTarotRecordDraft {
