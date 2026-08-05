@@ -1,57 +1,36 @@
-import { useEffect, useState } from "react";
-import { listObservations } from "../features/observations/storage/database";
-import type { Observation } from "../features/observations/types/observation";
-
 export function DashboardPage() {
-  const [observations, setObservations] = useState<Observation[]>([]);
-  const [loaded, setLoaded] = useState(false);
-
-  useEffect(() => {
-    listObservations()
-      .then(setObservations)
-      .catch((error) => console.error("讀取首頁摘要失敗", error))
-      .finally(() => setLoaded(true));
-  }, []);
-
-  const pendingCount = observations.filter((item) => item.verification.status === "pending").length;
-  const completedCount = observations.filter((item) => item.drawResult?.completedAt).length;
-  const latest = [...observations].sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0];
-
   return (
     <main className="content-page">
       <header className="page-hero dashboard-hero">
         <div>
-          <p className="eyebrow">Tarot Observation v2</p>
-          <h1>把抽牌留在當下，也把答案交給現實。</h1>
-          <p>記錄抽牌前狀態、五張牌與後續驗證，讓每次觀測保有完整脈絡。</p>
+          <p className="eyebrow">Tarot Draw & Records</p>
+          <h1>專注抽牌，留下真正會使用的紀錄。</h1>
+          <p>使用時間序號完成單張或五張抽牌，並整理重要的五題牌組紀錄。</p>
         </div>
-        <a className="primary-button button-link" href="#/new">＋新增觀測</a>
+        <a className="primary-button button-link" href="#/draw">開始抽牌</a>
       </header>
 
-      <section className="summary-grid" aria-label="觀測摘要">
-        <article className="summary-card"><span>新增觀測</span><strong>開始一筆</strong><a href="#/new">進入流程</a></article>
-        <article className="summary-card"><span>待驗證紀錄數</span><strong>{loaded ? pendingCount : "—"}</strong><a href="#/pending">查看待驗證</a></article>
-        <article className="summary-card"><span>已完成觀測數</span><strong>{loaded ? completedCount : "—"}</strong><a href="#/history">查看歷史</a></article>
-        <article className="summary-card"><span>最近一次觀測</span><strong className="summary-date">{latest ? `${latest.observationDate} ${latest.drawTime}` : "尚無紀錄"}</strong><a href="#/history">查看詳情</a></article>
-      </section>
+      <section className="home-tool-grid" aria-label="主要功能">
+        <article className="home-tool-card home-tool-card-primary">
+          <span className="home-tool-number" aria-hidden="true">01</span>
+          <div>
+            <p className="eyebrow">Draw</p>
+            <h2>抽牌工具</h2>
+            <p>保留目前完整的時間推算、星期對照、五抽與單抽流程。</p>
+          </div>
+          <a className="primary-button button-link" href="#/draw">進入抽牌工具</a>
+        </article>
 
-      <section className="panel deck-guide-callout">
-        <div>
-          <p className="eyebrow">7 Day Research</p>
-          <h2>開始 7 天三題組研究</h2>
-          <p>依序完成主動聯繫、現實互動與關係推進三組抽牌，共 15 張牌。</p>
-        </div>
-        <a className="secondary-button button-link" href="#/research">進入 7 天研究</a>
+        <article className="home-tool-card">
+          <span className="home-tool-number" aria-hidden="true">02</span>
+          <div>
+            <p className="eyebrow">Records</p>
+            <h2>抽牌紀錄</h2>
+            <p>貼上、解析、搜尋與查看真正需要保留的五題抽牌資料。</p>
+          </div>
+          <a className="secondary-button button-link" href="#/records">查看抽牌紀錄</a>
+        </article>
       </section>
-
-      {loaded && observations.length === 0 ? (
-        <section className="panel empty-state">
-          <div className="empty-icon" aria-hidden="true">＋</div>
-          <h2>尚未建立觀測紀錄</h2>
-          <p>建立第一筆觀測後，將可在這裡查看進度。</p>
-          <a className="primary-button button-link" href="#/new">建立第一筆觀測</a>
-        </section>
-      ) : null}
     </main>
   );
 }
