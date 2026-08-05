@@ -8,6 +8,7 @@ const navigation: Array<{ route: AppRoute; label: string }> = [
   { route: "/research", label: "7天研究" },
   { route: "/history", label: "歷史觀測" },
   { route: "/pending", label: "待驗證" },
+  { route: "/records", label: "抽牌紀錄" },
   { route: "/data", label: "資料管理" },
   { route: "/deck", label: "牌卡指南" },
   { route: "/draw", label: "抽牌工具" },

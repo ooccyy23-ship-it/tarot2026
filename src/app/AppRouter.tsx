@@ -9,9 +9,10 @@ import { ObservationHistoryPage } from "../pages/ObservationHistoryPage";
 import { PendingVerificationPage } from "../pages/PendingVerificationPage";
 import { SevenDayResearchPage } from "../pages/SevenDayResearchPage";
 import { SevenDayResearchListPage } from "../pages/SevenDayResearchListPage";
+import { TarotRecordsPage } from "../pages/TarotRecordsPage";
 import { AppLayout } from "./AppLayout";
 
-const routes = ["/", "/new", "/research", "/history", "/pending", "/data", "/deck", "/draw"] as const;
+const routes = ["/", "/new", "/research", "/history", "/pending", "/records", "/data", "/deck", "/draw"] as const;
 export type AppRoute = (typeof routes)[number];
 
 function getRoute(): string {
@@ -53,6 +54,9 @@ export function AppRouter() {
       break;
     case "/pending":
       page = <PendingVerificationPage />;
+      break;
+    case "/records":
+      page = <TarotRecordsPage />;
       break;
     case "/data":
       page = <DataManagementPage />;
