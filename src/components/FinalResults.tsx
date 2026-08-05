@@ -1,21 +1,41 @@
+import { useEffect, useRef, useState } from "react";
+import { createObservationId, formatObservationDate } from "../features/draw/logic/observationMetadata";
 import { getWeekdayLabel } from "../logic/weekday";
 import type { DrawCard, WeekdayKey } from "../types/tarot";
 
 type FinalResultsProps = {
   drawTime: string;
+  observationDate: Date;
   weekday: WeekdayKey;
   cards: DrawCard[];
-  onCopy: () => void;
+  onCopy: () => Promise<boolean>;
   onRestart?: () => void;
 };
 
 export function FinalResults({
   drawTime,
+  observationDate,
   weekday,
   cards,
   onCopy,
   onRestart,
 }: FinalResultsProps) {
+  const [copied, setCopied] = useState(false);
+  const resetTimer = useRef<number | null>(null);
+  const observationId = createObservationId(observationDate, drawTime);
+
+  useEffect(() => () => {
+    if (resetTimer.current !== null) window.clearTimeout(resetTimer.current);
+  }, []);
+
+  const handleCopy = async () => {
+    const succeeded = await onCopy();
+    if (!succeeded) return;
+    setCopied(true);
+    if (resetTimer.current !== null) window.clearTimeout(resetTimer.current);
+    resetTimer.current = window.setTimeout(() => setCopied(false), 1500);
+  };
+
   return (
     <section className="panel draw-panel final-results-panel">
       <div className="section-heading">
@@ -43,13 +63,15 @@ export function FinalResults({
       </div>
 
       <div className="copy-preview final-copy-preview">
+        <p>觀測編號：{observationId}</p>
+        <p>觀測日期：{formatObservationDate(observationDate)}</p>
         <p>抽牌時間：{drawTime}</p>
-        <p>對照表：{getWeekdayLabel(weekday)}</p>
+        <p>星期對照：{getWeekdayLabel(weekday)}</p>
       </div>
 
       <div className="actions-row final-actions-row">
-        <button className="primary-button" type="button" onClick={onCopy}>
-          複製完整結果
+        <button className="primary-button" type="button" onClick={() => void handleCopy()}>
+          {copied ? "已複製完整結果" : "複製完整結果"}
         </button>
         {onRestart ? (
           <button className="ghost-button" type="button" onClick={onRestart}>
