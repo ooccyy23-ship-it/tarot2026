@@ -4,26 +4,20 @@ import type { AppRoute } from "./AppRouter";
 
 const navigation: Array<{ route: AppRoute; label: string }> = [
   { route: "/", label: "首頁" },
-  { route: "/new", label: "新增觀測" },
-  { route: "/research", label: "7天研究" },
-  { route: "/history", label: "歷史觀測" },
-  { route: "/pending", label: "待驗證" },
-  { route: "/records", label: "抽牌紀錄" },
-  { route: "/data", label: "資料管理" },
-  { route: "/deck", label: "牌卡指南" },
   { route: "/draw", label: "抽牌工具" },
+  { route: "/records", label: "抽牌紀錄" },
 ];
 
 export function AppLayout({ currentRoute, children }: { currentRoute: string; children: ReactNode }) {
-  const activeRoute = currentRoute.startsWith("/observations/") ? "/history" : currentRoute;
+  const activeRoute = currentRoute;
   return (
     <div className="site-shell">
       <header className="site-header">
-        <a className="brand" href="#/" aria-label="塔羅觀測與現實驗證系統首頁">
+        <a className="brand" href="#/" aria-label="塔羅抽牌與紀錄系統首頁">
           <span className="brand-mark">T</span>
           <span>
-            <strong>塔羅觀測系統</strong>
-            <small>現實驗證 v2</small>
+            <strong>塔羅抽牌系統</strong>
+            <small>抽牌與紀錄</small>
           </span>
         </a>
         <div className="header-controls">
