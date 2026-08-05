@@ -95,15 +95,9 @@ export function buildCopyText(
   observationDate: Date,
 ): string {
   const observationId = createObservationId(observationDate, drawTime);
-  const cardBlocks = cards.map((card) => {
+  const cardLines = cards.map((card) => {
     const orientation = card.orientationResult?.orientation === "upright" ? "正位" : "逆位";
-    const coinSide = card.orientationResult?.coinSide === "heads" ? "正面" : "反面";
-    return [
-      `${card.order}. ${card.mapping.cardName}${orientation}`,
-      `   序號：${card.formattedSequence}`,
-      `   牌號：${card.mapping.cardNumber}`,
-      `   硬幣：${coinSide}`,
-    ].join("\n");
+    return `${card.order}. 序號${card.formattedSequence}｜${card.mapping.cardName}${orientation}`;
   });
 
   return [
@@ -114,6 +108,6 @@ export function buildCopyText(
     `抽牌時間：${drawTime}`,
     `星期對照：${getWeekdayLabel(weekday)}`,
     "",
-    cardBlocks.join("\n\n"),
+    ...cardLines,
   ].join("\n");
 }

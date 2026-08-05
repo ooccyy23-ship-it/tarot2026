@@ -54,7 +54,7 @@ describe("draw flow adapter", () => {
     expect(() => buildDrawResult("09:55", "tuesday", sequenceResult, unlocked, questions)).toThrow();
   });
 
-  it("builds a plain-text result with observation metadata and card details", () => {
+  it("builds a compact plain-text result with observation metadata", () => {
     const text = buildCopyText("22:07", "wednesday", cards, new Date(2026, 7, 5, 22, 7));
 
     expect(text).toContain("塔羅觀測抽牌結果");
@@ -62,8 +62,9 @@ describe("draw flow adapter", () => {
     expect(text).toContain("觀測日期：2026/08/05（星期三）");
     expect(text).toContain("抽牌時間：22:07");
     expect(text).toContain("星期對照：星期三");
-    expect(text).toContain("1. 牌 1正位\n   序號：55\n   牌號：1\n   硬幣：正面");
-    expect(text).toContain("4. 牌 4逆位\n   序號：06\n   牌號：4\n   硬幣：反面");
-    expect(text).not.toContain("｜");
+    expect(text).toContain("1. 序號55｜牌 1正位");
+    expect(text).toContain("4. 序號06｜牌 4逆位");
+    expect(text).not.toContain("牌號：");
+    expect(text).not.toContain("硬幣：");
   });
 });
