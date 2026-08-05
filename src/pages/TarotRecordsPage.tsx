@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { tarotCardNames } from "../data/tarotCardCatalog";
+import { TarotRecordStatisticsSection } from "../features/records/components/TarotRecordStatisticsSection";
 import {
   DEFAULT_TAROT_RECORD_FILTERS,
   filterTarotRecords,
@@ -198,7 +199,7 @@ export function TarotRecordsPage() {
     <main className="content-page records-page">
       <header className="page-title records-page-title">
         <div><p className="eyebrow">Tarot Records</p><h1>抽牌紀錄資料庫</h1><p>匯入完整五題紀錄，並在同一頁搜尋、篩選與維護已儲存資料。</p></div>
-        <span className="status-chip verified">第二階段</span>
+        <span className="status-chip verified">第三階段</span>
       </header>
 
       {error ? <p className="status-message error" role="alert">{error}</p> : null}
@@ -288,7 +289,7 @@ export function TarotRecordsPage() {
         </div>
       </section>
 
-      <section className="panel records-future-panel" aria-labelledby="records-statistics-title"><div><p className="eyebrow">04 · 牌卡統計</p><h2 id="records-statistics-title">牌卡出現頻率</h2><p>排行榜、78張頻率表、圖表與 CSV 匯出將於第三階段完成。</p></div><span className="status-chip pending">尚未開放</span></section>
+      <TarotRecordStatisticsSection records={records} />
     </main>
   );
 }
