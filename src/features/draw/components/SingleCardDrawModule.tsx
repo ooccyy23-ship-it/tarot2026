@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { useMemo, useState } from "react";
 import { CoinFlipCard } from "../../../components/CoinFlipCard";
 import { DrawSettings } from "../../../components/DrawSettings";
@@ -135,7 +137,7 @@ export function SingleCardDrawModule() {
           <p className="eyebrow">步驟 3</p>
           <h2>決定正逆位</h2>
         </div>
-        <p className="section-description">開始後再按停止，以硬幣正面決定正位、反面決定逆位。</p>
+        <p className="section-description">點擊開始後將自動完成抽牌，以硬幣正面決定正位、反面決定逆位。</p>
         {!card ? <p className="placeholder-text">序號有效後，這裡會顯示一張待揭示的牌。</p> : null}
         {card ? (
           <div className="single-coin-wrap">
@@ -153,8 +155,8 @@ export function SingleCardDrawModule() {
           </div>
         ) : null}
         <div className="coin-lock-note">
-          <span className="coin-lock-icon" aria-hidden="true">🔒</span>
-          <span>停止抽牌後結果立即鎖定；需按「開始新的單抽」才能重新抽牌。</span>
+          <FontAwesomeIcon className="coin-lock-icon" icon={faLock} aria-hidden="true" />
+          <span>抽牌完成後結果立即鎖定；需按「開始新的單抽」才能重新抽牌。</span>
         </div>
       </section>
 

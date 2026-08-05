@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faLock } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CoinFlipCard } from "../../../components/CoinFlipCard";
 import { DrawSettings } from "../../../components/DrawSettings";
@@ -190,9 +192,9 @@ export function FiveCardDrawModule({
 
       <SequenceResults sequenceResult={sequenceResult} validationIssues={validationIssues} />
 
-      <section className="panel draw-panel coin-operation-panel">
-        <div className="section-heading"><p className="eyebrow">步驟 3</p><h2>正逆位五次硬幣操作</h2></div>
-        <p className="section-description">請依序抽出 5 次硬幣，決定每張牌的正逆位。</p>
+      <section className={`panel draw-panel coin-operation-panel ${allCoinsCompleted ? "is-complete" : ""}`}>
+        <div className="section-heading"><p className="eyebrow">步驟 3</p><h2>正逆位抽牌</h2></div>
+        <p className="section-description">請依序點擊開始；每張完成後會自動解鎖下一張。</p>
         {validationIssues.length > 0 ? <StatusMessage tone="warning" message="序號無效時，不載入牌卡結果，也不啟用硬幣操作。" /> : null}
         {validationIssues.length === 0 && cards.length === 0 ? <p className="placeholder-text">序號有效後，這裡會依序顯示五張待揭示的牌。</p> : null}
         {cards.length > 0 ? (
@@ -200,12 +202,8 @@ export function FiveCardDrawModule({
             {cards.map((card, index) => {
               const previousCardLocked = index === 0 || cards[index - 1].orientationResult?.locked;
               const canInteract = Boolean(previousCardLocked) && !card.orientationResult?.locked;
-              const question = [...questions].sort((a, b) => a.order - b.order)[index];
               return (
                 <div className="coin-step" key={card.sequenceKey}>
-                  {index > 0 ? <div className="coin-step-arrow" aria-hidden="true">›</div> : null}
-                  <div className="draw-question-card">
-                  {question ? <div className="draw-question-label"><span>問題 {index + 1}</span><strong>{question.title}</strong></div> : null}
                   <CoinFlipCard
                     card={card}
                     canInteract={canInteract}
@@ -217,14 +215,28 @@ export function FiveCardDrawModule({
                     }}
                     onStop={() => handleStopFlip(index)}
                   />
-                  </div>
                 </div>
               );
             })}
           </div>
         ) : null}
+        {allCoinsCompleted ? (
+          <div className="orientation-summary" aria-live="polite">
+            <h3>正逆位結果</h3>
+            <div className="orientation-summary-list">
+              {cards.map((card) => (
+                <span
+                  className={card.orientationResult?.orientation === "upright" ? "is-upright" : "is-reversed"}
+                  key={card.sequenceKey}
+                >
+                  {card.orientationResult?.orientation === "upright" ? "正位" : "逆位"}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : null}
         <div className="coin-lock-note">
-          <span className="coin-lock-icon" aria-hidden="true">🔒</span>
+          <FontAwesomeIcon className="coin-lock-icon" icon={faLock} aria-hidden="true" />
           <span>完成五次抽牌後，將顯示正逆位結果與對應牌。</span>
         </div>
       </section>
