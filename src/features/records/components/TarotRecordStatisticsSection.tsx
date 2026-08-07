@@ -114,13 +114,15 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
       </div>
 
       <div className="records-chart-grid">
-        <article className="records-chart-card records-chart-wide">
+        <article className="records-chart-card records-chart-wide records-top-ten-card">
           <header><h3>Top 10 牌卡</h3><span>依總次數排序</span></header>
-          {topTen.length === 0 ? <div className="records-chart-empty">尚無牌卡資料</div> : <div className="records-horizontal-bars">
-            {topTen.map((row) => <div className="records-bar-row" key={row.cardName}>
-              <span>{row.cardName}</span>
-              <div><i style={{ width: `${(row.totalCount / topCount) * 100}%` }} /></div>
-              <strong>{row.totalCount}</strong>
+          {topTen.length === 0 ? <div className="records-chart-empty">尚無牌卡資料</div> : <div className="records-horizontal-bars records-top-ten-bars">
+            {[topTen.slice(0, 5), topTen.slice(5)].map((column, columnIndex) => <div className="records-top-ten-column" key={columnIndex}>
+              {column.map((row, rowIndex) => <div className="records-bar-row" key={row.cardName}>
+                <span><small>{columnIndex * 5 + rowIndex + 1}</small>{row.cardName}</span>
+                <div><i style={{ width: `${(row.totalCount / topCount) * 100}%` }} /></div>
+                <strong>{row.totalCount}</strong>
+              </div>)}
             </div>)}
           </div>}
         </article>
