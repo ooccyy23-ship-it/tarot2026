@@ -4319,6 +4319,184 @@ h3,
   font-weight: 700;
 }
 
+.records-clustering-panel {
+  overflow: hidden;
+}
+
+.records-clustering-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.records-clustering-heading p:not(.eyebrow) {
+  max-width: 720px;
+  margin: 6px 0 0;
+  color: var(--text-soft);
+}
+
+.records-clustering-note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  margin: 18px 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(120, 149, 163, 0.24);
+  border-radius: 13px;
+  background: rgba(120, 149, 163, 0.08);
+  color: var(--text-soft);
+  font-size: 0.84rem;
+}
+
+.records-clustering-note strong {
+  color: var(--color-dark);
+}
+
+.records-clustering-note p {
+  margin: 0;
+}
+
+.records-clustering-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.records-clustering-summary span {
+  padding: 8px 12px;
+  border: 1px solid #e4d8c3;
+  border-radius: 999px;
+  background: #fffdfa;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+}
+
+.records-clustering-summary strong {
+  color: var(--color-dark);
+  font-size: 0.94rem;
+}
+
+.records-cluster-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.records-cluster-card {
+  min-width: 0;
+  padding: 18px;
+  border: 1px solid #e4d8c3;
+  border-top: 4px solid;
+  border-radius: 16px;
+  background: #fffdfa;
+  box-shadow: 0 4px 12px rgba(70, 52, 30, 0.05);
+}
+
+.records-cluster-card > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.records-cluster-card > header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.records-cluster-card > header > span {
+  color: var(--text-soft);
+  font-size: 0.75rem;
+}
+
+.records-cluster-label {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.records-cluster-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.records-cluster-card-list > span {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  max-width: 100%;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #f1ece2;
+  color: #656753;
+}
+
+.records-cluster-card-list small {
+  color: var(--text-soft);
+  font-size: 0.68rem;
+}
+
+.records-cluster-strongest {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid #e9dfce;
+}
+
+.records-cluster-strongest > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.records-cluster-strongest small,
+.records-cluster-strongest span {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+}
+
+.records-cluster-strongest strong {
+  overflow-wrap: anywhere;
+  color: var(--color-dark);
+}
+
+.records-cluster-ungrouped {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border: 1px solid #e4d8c3;
+  border-radius: 13px;
+  background: rgba(255, 253, 250, 0.72);
+  color: var(--text-soft);
+}
+
+.records-cluster-ungrouped summary {
+  cursor: pointer;
+  color: var(--color-dark);
+  font-weight: 700;
+}
+
+.records-cluster-ungrouped > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.records-cluster-ungrouped span {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: #f1ece2;
+  font-size: 0.74rem;
+}
+
 @media (max-width: 1100px) {
   .records-stat-summary {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4346,6 +4524,7 @@ h3,
   }
 
   .records-cooccurrence-heading,
+  .records-clustering-heading,
   .records-network-heading,
   .records-cooccurrence-details > header {
     align-items: stretch;
@@ -4372,6 +4551,10 @@ h3,
   .records-cooccurrence-group-list article {
     grid-template-columns: minmax(0, 1fr);
   }
+
+  .records-cluster-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 540px) {
@@ -4396,6 +4579,20 @@ h3,
   .records-cooccurrence-legend {
     grid-template-columns: auto auto minmax(80px, 1fr) auto;
     justify-content: stretch;
+  }
+
+  .records-clustering-note {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .records-cluster-card > header,
+  .records-cluster-strongest {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .records-cluster-strongest .compact-button {
+    width: 100%;
   }
 }
 
