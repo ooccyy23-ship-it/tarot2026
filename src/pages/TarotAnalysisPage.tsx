@@ -1,4 +1,9 @@
 import { useEffect, useState } from "react";
+import { TarotCooccurrenceMatrixSection } from "../features/records/components/TarotCooccurrenceMatrixSection";
+import { TarotCooccurrenceNetworkSection } from "../features/records/components/TarotCooccurrenceNetworkSection";
+import { TarotClusteringSection } from "../features/records/components/TarotClusteringSection";
+import { TarotCentralitySection } from "../features/records/components/TarotCentralitySection";
+import { TarotTimeTrendSection } from "../features/records/components/TarotTimeTrendSection";
 import { TarotRecordStatisticsSection } from "../features/records/components/TarotRecordStatisticsSection";
 import { tarotRecordStorageErrorMessage } from "../features/records/storage/tarotRecordError";
 import { getTarotRecordService } from "../features/records/storage/tarotRecordService";
@@ -33,7 +38,14 @@ export function TarotAnalysisPage() {
           <strong>正在載入分析資料…</strong>
         </section>
       ) : error ? null : (
-        <TarotRecordStatisticsSection records={records} />
+        <>
+          <TarotRecordStatisticsSection records={records} />
+          <TarotCooccurrenceNetworkSection records={records} />
+          <TarotCooccurrenceMatrixSection records={records} />
+          <TarotClusteringSection records={records} />
+          <TarotCentralitySection records={records} />
+          <TarotTimeTrendSection records={records} />
+        </>
       )}
     </main>
   );
