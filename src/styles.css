@@ -4497,6 +4497,201 @@ h3,
   font-size: 0.74rem;
 }
 
+.records-centrality-panel {
+  overflow: hidden;
+}
+
+.records-centrality-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.records-centrality-heading p:not(.eyebrow) {
+  max-width: 720px;
+  margin: 6px 0 0;
+  color: var(--text-soft);
+}
+
+.records-centrality-leaders {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.records-centrality-leaders article {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  padding: 14px 16px;
+  border: 1px solid #e4d8c3;
+  border-radius: 14px;
+  background: #fffdfa;
+}
+
+.records-centrality-leaders small,
+.records-centrality-leaders span {
+  color: var(--text-soft);
+  font-size: 0.74rem;
+}
+
+.records-centrality-leaders strong {
+  overflow-wrap: anywhere;
+  color: var(--color-dark);
+  font-size: 1.08rem;
+}
+
+.records-centrality-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(240px, 0.8fr);
+  align-items: start;
+  gap: 14px;
+}
+
+.records-centrality-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e4d8c3;
+  border-radius: 16px;
+  background: #fffdfa;
+  overscroll-behavior-inline: contain;
+}
+
+.records-centrality-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+}
+
+.records-centrality-table th,
+.records-centrality-table td {
+  padding: 11px 10px;
+  border-bottom: 1px solid #eee5d6;
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+.records-centrality-table thead th {
+  background: #f6f1e8;
+  color: var(--color-dark);
+  font-size: 0.75rem;
+}
+
+.records-centrality-table thead span,
+.records-centrality-table thead small {
+  display: block;
+}
+
+.records-centrality-table thead small {
+  margin-top: 2px;
+  color: var(--text-soft);
+  font-size: 0.65rem;
+  font-weight: 500;
+}
+
+.records-centrality-table tbody tr:last-child th,
+.records-centrality-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.records-centrality-table tbody th {
+  display: grid;
+  grid-template-columns: 10px minmax(70px, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  text-align: left;
+}
+
+.records-centrality-table tbody th i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.records-centrality-table tbody th small,
+.records-centrality-table tbody td small {
+  display: block;
+  color: var(--text-soft);
+  font-size: 0.66rem;
+  font-weight: 500;
+}
+
+.records-centrality-table tbody td strong {
+  display: block;
+  color: var(--color-dark);
+}
+
+.records-centrality-rank {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 50%;
+  background: #9b4e22;
+  color: #fffdfa;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.records-centrality-guide {
+  padding: 16px;
+  border: 1px solid #e4d8c3;
+  border-radius: 16px;
+  background: #fffdfa;
+}
+
+.records-centrality-guide h3 {
+  margin: 0 0 12px;
+  color: var(--color-dark);
+  font-size: 1rem;
+}
+
+.records-centrality-guide dl {
+  display: grid;
+  gap: 13px;
+  margin: 0;
+}
+
+.records-centrality-guide dl > div {
+  display: grid;
+  gap: 3px;
+}
+
+.records-centrality-guide dt {
+  color: var(--color-dark);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.records-centrality-guide dd,
+.records-centrality-guide p {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.75rem;
+  line-height: 1.65;
+}
+
+.records-centrality-guide p {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eee5d6;
+}
+
+.records-centrality-footnote {
+  margin: 12px 0 0;
+  color: var(--text-soft);
+  font-size: 0.74rem;
+}
+
+@media (max-width: 940px) {
+  .records-centrality-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 1100px) {
   .records-stat-summary {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -4525,6 +4720,7 @@ h3,
 
   .records-cooccurrence-heading,
   .records-clustering-heading,
+  .records-centrality-heading,
   .records-network-heading,
   .records-cooccurrence-details > header {
     align-items: stretch;
@@ -4553,6 +4749,10 @@ h3,
   }
 
   .records-cluster-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .records-centrality-leaders {
     grid-template-columns: minmax(0, 1fr);
   }
 }
