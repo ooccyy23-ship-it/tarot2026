@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { TarotCooccurrenceMatrixSection } from "../features/records/components/TarotCooccurrenceMatrixSection";
+import { TarotCooccurrenceNetworkSection } from "../features/records/components/TarotCooccurrenceNetworkSection";
 import { TarotRecordStatisticsSection } from "../features/records/components/TarotRecordStatisticsSection";
 import { tarotRecordStorageErrorMessage } from "../features/records/storage/tarotRecordError";
 import { getTarotRecordService } from "../features/records/storage/tarotRecordService";
@@ -36,6 +37,7 @@ export function TarotAnalysisPage() {
       ) : error ? null : (
         <>
           <TarotRecordStatisticsSection records={records} />
+          <TarotCooccurrenceNetworkSection records={records} />
           <TarotCooccurrenceMatrixSection records={records} />
         </>
       )}

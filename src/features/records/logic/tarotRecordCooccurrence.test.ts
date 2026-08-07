@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { ParsedTarotRecord } from "../types/tarotRecord";
 import {
+  buildTarotCooccurrenceEdges,
   calculateTarotCooccurrenceMatrix,
   findTarotCooccurrenceGroups,
 } from "./tarotRecordCooccurrence";
@@ -66,5 +67,14 @@ describe("tarot record co-occurrence", () => {
     const groups = findTarotCooccurrenceGroups(records, "愚者", "聖杯3");
     expect(groups.map((group) => group.groupId)).toEqual(["G2", "G1"]);
     expect(groups[0].records.map((item) => item.questionOrder)).toEqual([1, 2, 3]);
+  });
+
+  it("builds each undirected network edge once and applies the threshold", () => {
+    const matrix = calculateTarotCooccurrenceMatrix(records, 8);
+    const allEdges = buildTarotCooccurrenceEdges(matrix);
+    const strongEdges = buildTarotCooccurrenceEdges(matrix, 2);
+    expect(allEdges.every((edge) => edge.sourceIndex < edge.targetIndex)).toBe(true);
+    expect(strongEdges).toHaveLength(1);
+    expect(strongEdges[0].count).toBe(2);
   });
 });

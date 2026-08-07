@@ -13,6 +13,12 @@ export type TarotCooccurrenceMatrix = {
   totalGroups: number;
 };
 
+export type TarotCooccurrenceEdge = {
+  sourceIndex: number;
+  targetIndex: number;
+  count: number;
+};
+
 export type TarotCooccurrenceGroup = {
   groupId: string;
   groupTitle: string;
@@ -101,4 +107,20 @@ export function findTarotCooccurrenceGroups(
       };
     })
     .sort((left, right) => `${right.observationDate}T${right.observationTime}`.localeCompare(`${left.observationDate}T${left.observationTime}`));
+}
+
+export function buildTarotCooccurrenceEdges(
+  matrix: TarotCooccurrenceMatrix,
+  minimumCount = 1,
+): TarotCooccurrenceEdge[] {
+  const edges: TarotCooccurrenceEdge[] = [];
+  matrix.counts.forEach((row, sourceIndex) => {
+    row.forEach((count, targetIndex) => {
+      if (targetIndex <= sourceIndex || count < minimumCount) return;
+      edges.push({ sourceIndex, targetIndex, count });
+    });
+  });
+  return edges.sort((left, right) => right.count - left.count
+    || left.sourceIndex - right.sourceIndex
+    || left.targetIndex - right.targetIndex);
 }

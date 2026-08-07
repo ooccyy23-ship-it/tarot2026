@@ -1,15 +1,7 @@
 import { useMemo, useState, type CSSProperties } from "react";
-import { formatDateForDisplay } from "../parser/observationDateTime";
-import {
-  calculateTarotCooccurrenceMatrix,
-  findTarotCooccurrenceGroups,
-} from "../logic/tarotRecordCooccurrence";
+import { calculateTarotCooccurrenceMatrix } from "../logic/tarotRecordCooccurrence";
 import type { ParsedTarotRecord } from "../types/tarotRecord";
-
-type SelectedPair = {
-  firstCardName: string;
-  secondCardName: string;
-};
+import { TarotCooccurrenceGroupDetails, type TarotSelectedPair } from "./TarotCooccurrenceGroupDetails";
 
 function heatStyle(count: number, maxCount: number): CSSProperties {
   if (count === 0 || maxCount === 0) return {};
@@ -21,11 +13,8 @@ function heatStyle(count: number, maxCount: number): CSSProperties {
 }
 
 export function TarotCooccurrenceMatrixSection({ records }: { records: ParsedTarotRecord[] }) {
-  const [selectedPair, setSelectedPair] = useState<SelectedPair | null>(null);
+  const [selectedPair, setSelectedPair] = useState<TarotSelectedPair | null>(null);
   const matrix = useMemo(() => calculateTarotCooccurrenceMatrix(records, 8), [records]);
-  const selectedGroups = useMemo(() => selectedPair
-    ? findTarotCooccurrenceGroups(records, selectedPair.firstCardName, selectedPair.secondCardName)
-    : [], [records, selectedPair]);
 
   return (
     <section className="panel records-cooccurrence-panel" aria-labelledby="records-cooccurrence-title">
@@ -89,29 +78,7 @@ export function TarotCooccurrenceMatrixSection({ records }: { records: ParsedTar
         </>
       )}
 
-      {selectedPair ? <section className="records-cooccurrence-details" aria-live="polite">
-        <header>
-          <div>
-            <p className="eyebrow">共同出現的原始題組</p>
-            <h3>{selectedPair.firstCardName} × {selectedPair.secondCardName}</h3>
-            <p>共出現在 {selectedGroups.length} 組五牌紀錄中。</p>
-          </div>
-          <button className="ghost-button compact-button" type="button" onClick={() => setSelectedPair(null)}>關閉</button>
-        </header>
-        <div className="records-cooccurrence-group-list">
-          {selectedGroups.map((group) => <article key={group.groupId}>
-            <div className="records-cooccurrence-group-meta">
-              <strong>{group.groupTitle}</strong>
-              <span>{formatDateForDisplay(group.observationDate)}　{group.observationTime}</span>
-            </div>
-            <div className="records-cooccurrence-card-list">
-              {group.records.map((record) => <span key={record.id} className={record.normalizedCardName === selectedPair.firstCardName || record.normalizedCardName === selectedPair.secondCardName ? "is-matched" : ""}>
-                {record.questionOrder}. {record.cardName}{record.orientationLabel}
-              </span>)}
-            </div>
-          </article>)}
-        </div>
-      </section> : null}
+      {selectedPair ? <TarotCooccurrenceGroupDetails pair={selectedPair} records={records} onClose={() => setSelectedPair(null)} /> : null}
     </section>
   );
 }
