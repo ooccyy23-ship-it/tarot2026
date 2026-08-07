@@ -3,6 +3,7 @@ import { TarotCooccurrenceMatrixSection } from "../features/records/components/T
 import { TarotCooccurrenceNetworkSection } from "../features/records/components/TarotCooccurrenceNetworkSection";
 import { TarotClusteringSection } from "../features/records/components/TarotClusteringSection";
 import { TarotCentralitySection } from "../features/records/components/TarotCentralitySection";
+import { TarotTimeTrendSection } from "../features/records/components/TarotTimeTrendSection";
 import { TarotRecordStatisticsSection } from "../features/records/components/TarotRecordStatisticsSection";
 import { tarotRecordStorageErrorMessage } from "../features/records/storage/tarotRecordError";
 import { getTarotRecordService } from "../features/records/storage/tarotRecordService";
@@ -43,6 +44,7 @@ export function TarotAnalysisPage() {
           <TarotCooccurrenceMatrixSection records={records} />
           <TarotClusteringSection records={records} />
           <TarotCentralitySection records={records} />
+          <TarotTimeTrendSection records={records} />
         </>
       )}
     </main>

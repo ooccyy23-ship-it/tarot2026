@@ -4686,6 +4686,126 @@ h3,
   font-size: 0.74rem;
 }
 
+.records-time-trend-panel {
+  overflow: hidden;
+}
+
+.records-time-trend-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.records-time-trend-heading p:not(.eyebrow) {
+  max-width: 760px;
+  margin: 6px 0 0;
+  color: var(--text-soft);
+}
+
+.records-time-trend-range {
+  display: grid;
+  flex: 0 0 170px;
+  gap: 6px;
+}
+
+.records-time-trend-range span {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.records-time-trend-range select {
+  width: 100%;
+}
+
+.records-time-trend-meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 18px;
+  margin: 18px 0 12px;
+  color: var(--text-soft);
+  font-size: 0.78rem;
+}
+
+.records-time-trend-meta strong {
+  color: var(--color-dark);
+}
+
+.records-time-trend-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+
+.records-time-trend-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-dark);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.records-time-trend-legend i {
+  width: 18px;
+  height: 4px;
+  border-radius: 999px;
+}
+
+.records-time-trend-legend small {
+  color: var(--text-soft);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.records-time-trend-scroll {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e4d8c3;
+  border-radius: 16px;
+  background: #fffdfa;
+  overscroll-behavior-inline: contain;
+}
+
+.records-time-trend-chart {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 300px;
+}
+
+.records-time-trend-grid-line {
+  stroke: #e9dfce;
+  stroke-width: 1;
+}
+
+.records-time-trend-axis-label {
+  fill: #7b776e;
+  font-size: 11px;
+}
+
+.records-time-trend-line {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 2.5;
+}
+
+.records-time-trend-point {
+  stroke: #fffdfa;
+  stroke-width: 2;
+}
+
+.records-time-trend-footnote {
+  margin: 12px 0 0;
+  color: var(--text-soft);
+  font-size: 0.74rem;
+}
+
 @media (max-width: 940px) {
   .records-centrality-layout {
     grid-template-columns: minmax(0, 1fr);
@@ -4721,6 +4841,7 @@ h3,
   .records-cooccurrence-heading,
   .records-clustering-heading,
   .records-centrality-heading,
+  .records-time-trend-heading,
   .records-network-heading,
   .records-cooccurrence-details > header {
     align-items: stretch;
@@ -4754,6 +4875,10 @@ h3,
 
   .records-centrality-leaders {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .records-time-trend-range {
+    flex-basis: auto;
   }
 }
 
