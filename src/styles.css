@@ -3723,6 +3723,60 @@ h3,
   text-align: right;
 }
 
+.records-top-ten-card {
+  padding: 14px 16px;
+}
+
+.records-top-ten-card header {
+  margin-bottom: 10px;
+}
+
+.records-top-ten-card h3 {
+  font-size: 1.05rem;
+}
+
+.records-top-ten-bars {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 28px;
+}
+
+.records-top-ten-column {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+
+.records-top-ten-card .records-bar-row {
+  grid-template-columns: minmax(92px, 0.9fr) minmax(100px, 2fr) 28px;
+  gap: 8px;
+  min-height: 24px;
+  font-size: 0.82rem;
+}
+
+.records-top-ten-card .records-bar-row > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.records-top-ten-card .records-bar-row > span small {
+  display: inline-grid;
+  flex: 0 0 20px;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(155, 78, 34, 0.1);
+  color: var(--color-dark);
+  font-size: 0.66rem;
+  font-weight: 800;
+}
+
+.records-top-ten-card .records-bar-row > div {
+  height: 8px;
+}
+
 .records-donut-layout {
   display: flex;
   align-items: center;
@@ -3868,7 +3922,7 @@ h3,
 
 .records-frequency-controls {
   display: grid;
-  grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(150px, 1fr));
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
   gap: 12px;
   margin-bottom: 14px;
 }
@@ -3935,6 +3989,30 @@ h3,
 
 .records-frequency-table tbody tr:last-child td {
   border-bottom: 0;
+}
+
+.records-frequency-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  color: var(--text-soft);
+  font-size: 0.76rem;
+}
+
+.records-frequency-pagination > div {
+  display: flex;
+  gap: 8px;
+}
+
+.records-frequency-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.records-frequency-empty {
+  min-height: 140px;
 }
 
 .records-network-panel,
@@ -4816,6 +4894,10 @@ h3,
   .records-stat-summary {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .records-frequency-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -4827,6 +4909,10 @@ h3,
   .records-chart-wide,
   .records-chart-full {
     grid-column: auto;
+  }
+
+  .records-top-ten-bars {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .records-statistics-heading {
@@ -4879,6 +4965,15 @@ h3,
 
   .records-time-trend-range {
     flex-basis: auto;
+  }
+
+  .records-frequency-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .records-frequency-pagination > div button {
+    flex: 1;
   }
 }
 
