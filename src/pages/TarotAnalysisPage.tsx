@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { TarotCooccurrenceMatrixSection } from "../features/records/components/TarotCooccurrenceMatrixSection";
 import { TarotRecordStatisticsSection } from "../features/records/components/TarotRecordStatisticsSection";
 import { tarotRecordStorageErrorMessage } from "../features/records/storage/tarotRecordError";
 import { getTarotRecordService } from "../features/records/storage/tarotRecordService";
@@ -33,7 +34,10 @@ export function TarotAnalysisPage() {
           <strong>正在載入分析資料…</strong>
         </section>
       ) : error ? null : (
-        <TarotRecordStatisticsSection records={records} />
+        <>
+          <TarotRecordStatisticsSection records={records} />
+          <TarotCooccurrenceMatrixSection records={records} />
+        </>
       )}
     </main>
   );

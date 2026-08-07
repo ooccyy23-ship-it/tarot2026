@@ -3588,7 +3588,9 @@ h3,
 .records-chart-grid,
 .records-chart-card,
 .records-ranking-section,
-.records-frequency-section {
+.records-frequency-section,
+.records-cooccurrence-panel,
+.records-cooccurrence-panel > * {
   min-width: 0;
 }
 
@@ -3935,6 +3937,225 @@ h3,
   border-bottom: 0;
 }
 
+.records-cooccurrence-panel {
+  overflow: hidden;
+}
+
+.records-cooccurrence-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.records-cooccurrence-heading p:not(.eyebrow) {
+  max-width: 720px;
+  margin: 6px 0 0;
+  color: var(--text-soft);
+}
+
+.records-cooccurrence-sample {
+  display: grid;
+  flex: 0 0 auto;
+  min-width: 130px;
+  gap: 2px;
+  padding: 12px 16px;
+  border: 1px solid #e4d8c3;
+  border-radius: 14px;
+  background: #fffdfa;
+  text-align: right;
+}
+
+.records-cooccurrence-sample strong {
+  color: var(--color-dark);
+  font-size: 1.65rem;
+}
+
+.records-cooccurrence-sample span,
+.records-cooccurrence-sample small {
+  color: var(--text-soft);
+  font-size: 0.76rem;
+}
+
+.records-cooccurrence-sample small {
+  color: #9b4e22;
+  font-weight: 700;
+}
+
+.records-cooccurrence-table-wrap {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid #e4d8c3;
+  border-radius: 16px;
+  background: #fffdfa;
+  overscroll-behavior-inline: contain;
+}
+
+.records-cooccurrence-table {
+  width: 100%;
+  min-width: 780px;
+  border-collapse: separate;
+  border-spacing: 3px;
+  padding: 8px;
+}
+
+.records-cooccurrence-table th,
+.records-cooccurrence-table td {
+  min-width: 72px;
+  height: 62px;
+  padding: 0;
+  text-align: center;
+}
+
+.records-cooccurrence-table th {
+  color: var(--color-dark);
+  font-size: 0.78rem;
+}
+
+.records-cooccurrence-table th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 94px;
+  background: #fffdfa;
+}
+
+.records-cooccurrence-table th span,
+.records-cooccurrence-table th small {
+  display: block;
+}
+
+.records-cooccurrence-table th small {
+  margin-top: 3px;
+  color: var(--text-soft);
+  font-size: 0.68rem;
+  font-weight: 500;
+}
+
+.records-cooccurrence-table td > button,
+.records-cooccurrence-table td > span {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 56px;
+  place-items: center;
+  border: 1px solid rgba(120, 149, 163, 0.16);
+  border-radius: 9px;
+  background: rgba(241, 236, 226, 0.42);
+  color: #52616a;
+  font: inherit;
+  font-weight: 800;
+}
+
+.records-cooccurrence-table td > button:not(:disabled) {
+  cursor: pointer;
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.records-cooccurrence-table td > button:not(:disabled):hover,
+.records-cooccurrence-table td > button.is-selected {
+  position: relative;
+  z-index: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 0 0 3px rgba(217, 144, 47, 0.34), 0 5px 12px rgba(70, 52, 30, 0.12);
+}
+
+.records-cooccurrence-table td > button:disabled {
+  color: #aaa292;
+}
+
+.records-cooccurrence-table td.is-diagonal > span {
+  background: #eee8dd;
+  color: #918879;
+}
+
+.records-cooccurrence-legend {
+  display: grid;
+  grid-template-columns: auto auto minmax(120px, 240px) auto;
+  align-items: center;
+  justify-content: end;
+  gap: 8px;
+  margin-top: 12px;
+  color: var(--text-soft);
+  font-size: 0.76rem;
+}
+
+.records-cooccurrence-legend i {
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(69, 111, 164, 0.2), rgba(69, 111, 164, 0.88));
+}
+
+.records-cooccurrence-details {
+  margin-top: 22px;
+  padding-top: 20px;
+  border-top: 1px solid #e4d8c3;
+}
+
+.records-cooccurrence-details > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.records-cooccurrence-details h3,
+.records-cooccurrence-details p {
+  margin: 4px 0;
+}
+
+.records-cooccurrence-details p:not(.eyebrow) {
+  color: var(--text-soft);
+}
+
+.records-cooccurrence-group-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.records-cooccurrence-group-list article {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(0, 2fr);
+  gap: 18px;
+  padding: 14px;
+  border: 1px solid #e4d8c3;
+  border-radius: 14px;
+  background: #fffdfa;
+}
+
+.records-cooccurrence-group-meta {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+}
+
+.records-cooccurrence-group-meta span {
+  color: var(--text-soft);
+  font-size: 0.78rem;
+}
+
+.records-cooccurrence-card-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.records-cooccurrence-card-list span {
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f1ece2;
+  color: #656753;
+  font-size: 0.78rem;
+}
+
+.records-cooccurrence-card-list span.is-matched {
+  background: rgba(232, 213, 140, 0.55);
+  color: #713a19;
+  font-weight: 700;
+}
+
 @media (max-width: 1100px) {
   .records-stat-summary {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -3960,6 +4181,20 @@ h3,
   .records-export-actions {
     justify-items: stretch;
   }
+
+  .records-cooccurrence-heading,
+  .records-cooccurrence-details > header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .records-cooccurrence-sample {
+    text-align: left;
+  }
+
+  .records-cooccurrence-group-list article {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 540px) {
@@ -3979,6 +4214,11 @@ h3,
 
   .records-chart-card {
     padding: 14px;
+  }
+
+  .records-cooccurrence-legend {
+    grid-template-columns: auto auto minmax(80px, 1fr) auto;
+    justify-content: stretch;
   }
 }
 
