@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { tarotCardNames } from "../data/tarotCardCatalog";
-import { TarotRecordStatisticsSection } from "../features/records/components/TarotRecordStatisticsSection";
 import {
   DEFAULT_TAROT_RECORD_FILTERS,
   filterTarotRecords,
@@ -14,6 +13,7 @@ import {
   updateDraftCardName,
   validateParsedTarotGroup,
 } from "../features/records/parser/parseTarotRecord";
+import { tarotRecordStorageErrorMessage } from "../features/records/storage/tarotRecordError";
 import { getTarotRecordService } from "../features/records/storage/tarotRecordService";
 import type {
   ParsedTarotGroupDraft,
@@ -35,14 +35,8 @@ const suitLabels = {
   pentacles: "星幣",
 } as const;
 
-function storageErrorMessage(reason: unknown): string {
-  const code = typeof reason === "object" && reason !== null && "code" in reason ? String(reason.code) : "";
-  if (code.includes("permission-denied")) return "Firestore 權限不足，請確認已登入授權帳號並部署最新 Rules。";
-  if (code.includes("unavailable")) return "Firestore 目前無法連線，請檢查網路後再試。";
-  return reason instanceof Error ? reason.message : "資料操作失敗，請稍後再試。";
-}
-
 export function TarotRecordsPage() {
+  const [showImporter, setShowImporter] = useState(false);
   const [input, setInput] = useState("");
   const [draft, setDraft] = useState<ParsedTarotGroupDraft | null>(null);
   const [parseIssues, setParseIssues] = useState<TarotRecordParseIssue[]>([]);
@@ -65,7 +59,7 @@ export function TarotRecordsPage() {
     try {
       setRecords(await getTarotRecordService().listRecords());
     } catch (reason) {
-      setError(storageErrorMessage(reason));
+      setError(tarotRecordStorageErrorMessage(reason));
     } finally {
       setLoadingRecords(false);
     }
@@ -83,6 +77,8 @@ export function TarotRecordsPage() {
   const groupOptions = useMemo(() => [...new Map(records.map((record) => [record.groupId, record.groupTitle])).entries()], [records]);
   const filteredRecords = useMemo(() => sortTarotRecordsNewest(filterTarotRecords(records, filters)), [filters, records]);
   const paginated = useMemo(() => paginateTarotRecords(filteredRecords, page, pageSize), [filteredRecords, page, pageSize]);
+  const advancedFilterCount = useMemo(() => Object.entries(filters)
+    .filter(([key, value]) => key !== "keyword" && Boolean(value)).length, [filters]);
 
   const updateFilter = <K extends keyof TarotRecordFilters>(key: K, value: TarotRecordFilters[K]) => {
     setFilters((current) => ({ ...current, [key]: value }));
@@ -132,9 +128,10 @@ export function TarotRecordsPage() {
       setInput("");
       setDraft(null);
       setParseIssues([]);
+      setShowImporter(false);
       await loadRecords();
     } catch (reason) {
-      setError(storageErrorMessage(reason));
+      setError(tarotRecordStorageErrorMessage(reason));
     } finally {
       setSaving(false);
     }
@@ -157,7 +154,7 @@ export function TarotRecordsPage() {
       setEditFields(null);
       setNotice("抽牌紀錄已更新。");
     } catch (reason) {
-      setError(storageErrorMessage(reason));
+      setError(tarotRecordStorageErrorMessage(reason));
     } finally {
       setBusyRecordId("");
     }
@@ -173,7 +170,7 @@ export function TarotRecordsPage() {
       setRecords((current) => current.filter((item) => item.id !== record.id));
       setNotice("已刪除1筆抽牌紀錄。");
     } catch (reason) {
-      setError(storageErrorMessage(reason));
+      setError(tarotRecordStorageErrorMessage(reason));
     } finally {
       setBusyRecordId("");
     }
@@ -189,7 +186,7 @@ export function TarotRecordsPage() {
       setRecords((current) => current.filter((item) => item.groupId !== record.groupId));
       setNotice(`已刪除題組，共${deleted}筆資料。`);
     } catch (reason) {
-      setError(storageErrorMessage(reason));
+      setError(tarotRecordStorageErrorMessage(reason));
     } finally {
       setBusyRecordId("");
     }
@@ -198,26 +195,29 @@ export function TarotRecordsPage() {
   return (
     <main className="content-page records-page">
       <header className="page-title records-page-title">
-        <div><p className="eyebrow">Tarot Records</p><h1>抽牌紀錄資料庫</h1><p>匯入完整五題紀錄，並在同一頁搜尋、篩選與維護已儲存資料。</p></div>
-        <span className="status-chip verified">第三階段</span>
+        <div><p className="eyebrow">Tarot Records</p><h1>抽牌紀錄</h1><p>搜尋、查看與維護已儲存的五題抽牌資料。</p></div>
+        <div className="records-page-actions">
+          <button className="primary-button" type="button" aria-expanded={showImporter} onClick={() => setShowImporter((current) => !current)}>{showImporter ? "收起匯入" : "匯入新紀錄"}</button>
+          <a className="secondary-button button-link" href="#/analytics">分析儀表板</a>
+        </div>
       </header>
 
       {error ? <p className="status-message error" role="alert">{error}</p> : null}
       {notice ? <p className="status-message success" role="status">{notice}</p> : null}
 
-      <section className="panel records-import-panel" aria-labelledby="records-import-title">
-        <div className="section-heading"><div><p className="eyebrow">01 · 貼上紀錄</p><h2 id="records-import-title">貼上完整五題紀錄</h2></div></div>
+      {showImporter ? <section className="panel records-import-panel" aria-labelledby="records-import-title">
+        <div className="section-heading"><div><p className="eyebrow">匯入</p><h2 id="records-import-title">貼上完整五題紀錄</h2><p className="section-description">解析成功並確認內容後，才會寫入抽牌紀錄。</p></div></div>
         <label className="records-input-label" htmlFor="tarot-record-input">抽牌紀錄文字</label>
         <textarea ref={textareaRef} id="tarot-record-input" className="records-import-textarea" value={input} placeholder="請貼上五題抽牌紀錄……" onChange={(event) => setInput(event.target.value)} />
         <div className="actions-row records-import-actions">
           <button className="primary-button" type="button" disabled={!input.trim()} onClick={handleParse}>解析紀錄</button>
           <button className="ghost-button" type="button" disabled={!input && !draft} onClick={clearInput}>清空內容</button>
         </div>
-      </section>
+      </section> : null}
 
-      <section className="panel records-preview-panel" aria-labelledby="records-preview-title">
+      {showImporter && (draft || parseIssues.length > 0) ? <section className="panel records-preview-panel" aria-labelledby="records-preview-title">
         <div className="section-heading">
-          <div><p className="eyebrow">02 · 解析預覽</p><h2 id="records-preview-title">確認辨識結果</h2></div>
+          <div><p className="eyebrow">解析預覽</p><h2 id="records-preview-title">確認辨識結果</h2></div>
           {draft ? <span className={`status-chip ${validationIssues.length === 0 ? "verified" : "overdue"}`}>{validationIssues.length === 0 ? "解析成功" : "需要修正"}</span> : null}
         </div>
         {!draft ? (
@@ -251,20 +251,25 @@ export function TarotRecordsPage() {
             </div>
           </>
         )}
-      </section>
+      </section> : null}
 
       <section className="panel records-table-panel" aria-labelledby="records-table-title">
-        <div className="section-heading"><div><p className="eyebrow">03 · 抽牌資料表</p><h2 id="records-table-title">已儲存抽牌資料</h2></div><span className="status-chip pending">{filteredRecords.length} 筆</span></div>
-        <div className="records-filter-grid">
-          <label><span>關鍵字</span><input type="search" value={filters.keyword} placeholder="題組、題目或牌名" onChange={(event) => updateFilter("keyword", event.target.value)} /></label>
-          <label><span>開始日期</span><input type="date" value={filters.dateFrom} onChange={(event) => updateFilter("dateFrom", event.target.value)} /></label>
-          <label><span>結束日期</span><input type="date" value={filters.dateTo} onChange={(event) => updateFilter("dateTo", event.target.value)} /></label>
-          <label><span>題組</span><select value={filters.groupId} onChange={(event) => updateFilter("groupId", event.target.value)}><option value="">全部題組</option>{groupOptions.map(([id, title]) => <option key={id} value={id}>{title}</option>)}</select></label>
-          <label><span>牌卡</span><select value={filters.cardName} onChange={(event) => updateFilter("cardName", event.target.value)}><option value="">全部牌卡</option>{tarotCardNames.map((name) => <option key={name}>{name}</option>)}</select></label>
-          <label><span>正逆位</span><select value={filters.orientation} onChange={(event) => updateFilter("orientation", event.target.value as TarotOrientation | "")}><option value="">全部</option><option value="upright">正位</option><option value="reversed">逆位</option></select></label>
-          <label><span>牌類</span><select value={filters.arcanaType} onChange={(event) => updateFilter("arcanaType", event.target.value as TarotRecordFilters["arcanaType"])}><option value="">全部</option><option value="major">大阿爾克那</option><option value="minor">小阿爾克那</option></select></label>
-          <label><span>牌組</span><select value={filters.suit} onChange={(event) => updateFilter("suit", event.target.value as TarotRecordFilters["suit"])}><option value="">全部</option><option value="major">大阿爾克那</option><option value="cups">聖杯</option><option value="swords">寶劍</option><option value="wands">權杖</option><option value="pentacles">星幣</option></select></label>
-          <button className="ghost-button" type="button" onClick={() => { setFilters(DEFAULT_TAROT_RECORD_FILTERS); setPage(1); }}>清除篩選</button>
+        <div className="section-heading"><div><p className="eyebrow">Records</p><h2 id="records-table-title">已儲存抽牌資料</h2></div><span className="status-chip pending">{filteredRecords.length} 筆</span></div>
+        <div className="records-filter-toolbar">
+          <label className="records-primary-search"><span>搜尋紀錄</span><input type="search" value={filters.keyword} placeholder="輸入題組、題目或牌名" onChange={(event) => updateFilter("keyword", event.target.value)} /></label>
+          <details className="records-advanced-filters" open={advancedFilterCount > 0 || undefined}>
+            <summary>進階篩選{advancedFilterCount > 0 ? `（已套用 ${advancedFilterCount} 項）` : ""}</summary>
+            <div className="records-filter-grid">
+              <label><span>開始日期</span><input type="date" value={filters.dateFrom} onChange={(event) => updateFilter("dateFrom", event.target.value)} /></label>
+              <label><span>結束日期</span><input type="date" value={filters.dateTo} onChange={(event) => updateFilter("dateTo", event.target.value)} /></label>
+              <label><span>題組</span><select value={filters.groupId} onChange={(event) => updateFilter("groupId", event.target.value)}><option value="">全部題組</option>{groupOptions.map(([id, title]) => <option key={id} value={id}>{title}</option>)}</select></label>
+              <label><span>牌卡</span><select value={filters.cardName} onChange={(event) => updateFilter("cardName", event.target.value)}><option value="">全部牌卡</option>{tarotCardNames.map((name) => <option key={name}>{name}</option>)}</select></label>
+              <label><span>正逆位</span><select value={filters.orientation} onChange={(event) => updateFilter("orientation", event.target.value as TarotOrientation | "")}><option value="">全部</option><option value="upright">正位</option><option value="reversed">逆位</option></select></label>
+              <label><span>牌類</span><select value={filters.arcanaType} onChange={(event) => updateFilter("arcanaType", event.target.value as TarotRecordFilters["arcanaType"])}><option value="">全部</option><option value="major">大阿爾克那</option><option value="minor">小阿爾克那</option></select></label>
+              <label><span>牌組</span><select value={filters.suit} onChange={(event) => updateFilter("suit", event.target.value as TarotRecordFilters["suit"])}><option value="">全部</option><option value="major">大阿爾克那</option><option value="cups">聖杯</option><option value="swords">寶劍</option><option value="wands">權杖</option><option value="pentacles">星幣</option></select></label>
+              <button className="ghost-button" type="button" onClick={() => { setFilters(DEFAULT_TAROT_RECORD_FILTERS); setPage(1); }}>清除全部篩選</button>
+            </div>
+          </details>
         </div>
 
         {loadingRecords ? <div className="records-placeholder"><strong>載入抽牌紀錄中…</strong></div> : paginated.total === 0 ? <div className="records-placeholder"><strong>沒有符合條件的紀錄</strong><p>可調整篩選條件，或先匯入第一組五題紀錄。</p></div> : (
@@ -289,7 +294,6 @@ export function TarotRecordsPage() {
         </div>
       </section>
 
-      <TarotRecordStatisticsSection records={records} />
     </main>
   );
 }

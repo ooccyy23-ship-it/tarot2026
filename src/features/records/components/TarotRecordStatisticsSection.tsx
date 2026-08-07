@@ -97,7 +97,7 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
   return (
     <section className="panel records-statistics-panel" aria-labelledby="records-statistics-title">
       <div className="section-heading records-statistics-heading">
-        <div><p className="eyebrow">04 · 牌卡統計</p><h2 id="records-statistics-title">牌卡出現頻率</h2><p>統計以全部已儲存紀錄計算，正位與逆位合併為同一張牌。</p></div>
+        <div><p className="eyebrow">Analysis</p><h2 id="records-statistics-title">牌卡出現頻率</h2><p>統計以全部已儲存紀錄計算，正位與逆位合併為同一張牌。</p></div>
         <div className="records-export-actions">
           <button className="secondary-button" type="button" disabled={records.length === 0} onClick={exportCsv}>匯出 CSV</button>
           {exportMessage ? <small role="status">{exportMessage}</small> : null}

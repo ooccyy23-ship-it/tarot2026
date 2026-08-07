@@ -6,6 +6,7 @@ const navigation: Array<{ route: AppRoute; label: string }> = [
   { route: "/", label: "首頁" },
   { route: "/draw", label: "抽牌工具" },
   { route: "/records", label: "抽牌紀錄" },
+  { route: "/analytics", label: "分析儀表板" },
 ];
 
 export function AppLayout({ currentRoute, children }: { currentRoute: string; children: ReactNode }) {

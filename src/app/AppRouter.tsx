@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import DrawToolPage from "../App";
 import { DashboardPage } from "../pages/DashboardPage";
+import { TarotAnalysisPage } from "../pages/TarotAnalysisPage";
 import { TarotRecordsPage } from "../pages/TarotRecordsPage";
 import { AppLayout } from "./AppLayout";
 
-const routes = ["/", "/draw", "/records"] as const;
+const routes = ["/", "/draw", "/records", "/analytics"] as const;
 export type AppRoute = (typeof routes)[number];
 
 function getRoute(): string {
@@ -24,6 +25,9 @@ export function AppRouter() {
 
   let page;
   switch (route) {
+    case "/analytics":
+      page = <TarotAnalysisPage />;
+      break;
     case "/records":
       page = <TarotRecordsPage />;
       break;
