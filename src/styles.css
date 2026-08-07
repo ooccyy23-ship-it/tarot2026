@@ -3159,6 +3159,17 @@ h3,
   overflow: hidden;
 }
 
+.records-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.records-analysis-page .records-statistics-panel {
+  margin-top: 0;
+}
+
 .records-input-label {
   display: block;
   margin-bottom: 8px;
@@ -3350,6 +3361,55 @@ h3,
   overflow: hidden;
 }
 
+.records-filter-toolbar {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.records-primary-search {
+  display: grid;
+  max-width: 620px;
+  gap: 6px;
+}
+
+.records-primary-search > span {
+  color: var(--color-secondary);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.records-primary-search input {
+  width: 100%;
+  padding: 12px 13px;
+  border: 1px solid #d8cdb9;
+  border-radius: 12px;
+  background: #fffdfa;
+  color: inherit;
+}
+
+.records-advanced-filters {
+  border: 1px solid #e4d8c3;
+  border-radius: 14px;
+  background: rgba(255, 253, 250, 0.62);
+}
+
+.records-advanced-filters summary {
+  padding: 13px 15px;
+  color: var(--color-dark);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.records-advanced-filters[open] summary {
+  border-bottom: 1px solid #e4d8c3;
+}
+
+.records-advanced-filters .records-filter-grid {
+  margin: 0;
+  padding: 15px;
+}
+
 .records-filter-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -3482,6 +3542,11 @@ h3,
   .records-future-panel {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .records-page-actions,
+  .records-page-actions > * {
+    width: 100%;
   }
 
   .records-import-textarea {
