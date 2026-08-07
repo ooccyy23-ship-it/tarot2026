@@ -3922,7 +3922,7 @@ h3,
 
 .records-frequency-controls {
   display: grid;
-  grid-template-columns: minmax(220px, 2fr) repeat(2, minmax(150px, 1fr));
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
   gap: 12px;
   margin-bottom: 14px;
 }
@@ -3989,6 +3989,30 @@ h3,
 
 .records-frequency-table tbody tr:last-child td {
   border-bottom: 0;
+}
+
+.records-frequency-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  color: var(--text-soft);
+  font-size: 0.76rem;
+}
+
+.records-frequency-pagination > div {
+  display: flex;
+  gap: 8px;
+}
+
+.records-frequency-pagination button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.records-frequency-empty {
+  min-height: 140px;
 }
 
 .records-network-panel,
@@ -4870,6 +4894,10 @@ h3,
   .records-stat-summary {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .records-frequency-controls {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 760px) {
@@ -4937,6 +4965,15 @@ h3,
 
   .records-time-trend-range {
     flex-basis: auto;
+  }
+
+  .records-frequency-pagination {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .records-frequency-pagination > div button {
+    flex: 1;
   }
 }
 
