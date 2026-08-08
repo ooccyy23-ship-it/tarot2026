@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { EmptyState } from "../components/ui/EmptyState";
+import { PageHeader } from "../components/ui/PageHeader";
 import { TarotCooccurrenceMatrixSection } from "../features/records/components/TarotCooccurrenceMatrixSection";
 import { TarotCooccurrenceNetworkSection } from "../features/records/components/TarotCooccurrenceNetworkSection";
 import { TarotClusteringSection } from "../features/records/components/TarotClusteringSection";
@@ -23,21 +25,16 @@ export function TarotAnalysisPage() {
 
   return (
     <main className="content-page records-page records-analysis-page">
-      <header className="page-title records-page-title">
-        <div>
-          <p className="eyebrow">Tarot Analytics</p>
-          <h1>抽牌分析儀表板</h1>
-          <p>統計全部已儲存的抽牌資料，觀察牌卡頻率、正逆位與牌組分布。</p>
-        </div>
-        <a className="secondary-button button-link" href="#/records">返回抽牌紀錄</a>
-      </header>
+      <PageHeader eyebrow="Tarot Analytics" title="統計分析" description="統計全部已儲存的抽牌資料，觀察牌卡頻率、共現關係與時間變化。" actions={<a className="secondary-button button-link" href="#/records">返回抽牌資料庫</a>} />
 
       {error ? <p className="status-message error" role="alert">{error}</p> : null}
       {loading ? (
         <section className="panel records-placeholder" aria-live="polite">
           <strong>正在載入分析資料…</strong>
         </section>
-      ) : error ? null : (
+      ) : error ? null : records.length === 0 ? (
+        <section className="panel"><EmptyState title="尚無可分析的資料" description="先匯入完整的五題抽牌紀錄，即可建立統計分析。" action={<a className="primary-button button-link" href="#/import">前往紀錄匯入</a>} /></section>
+      ) : (
         <>
           <TarotRecordStatisticsSection records={records} />
           <TarotCooccurrenceNetworkSection records={records} />

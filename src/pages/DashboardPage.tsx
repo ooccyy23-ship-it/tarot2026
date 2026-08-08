@@ -1,14 +1,9 @@
+import { PageHeader } from "../components/ui/PageHeader";
+
 export function DashboardPage() {
   return (
     <main className="content-page">
-      <header className="page-hero dashboard-hero">
-        <div>
-          <p className="eyebrow">Tarot Draw & Records</p>
-          <h1>專注抽牌，留下真正會使用的紀錄。</h1>
-          <p>使用時間序號完成單張或五張抽牌，並整理重要的五題牌組紀錄。</p>
-        </div>
-        <a className="primary-button button-link" href="#/draw">開始抽牌</a>
-      </header>
+      <PageHeader eyebrow="Tarot Validation System" title="塔羅抽牌與研究資料系統" description="使用時間序號完成抽牌，整理重要紀錄並觀察長期資料變化。" actions={<a className="primary-button button-link" href="#/draw">開始抽牌</a>} />
 
       <section className="home-tool-grid" aria-label="主要功能">
         <article className="home-tool-card home-tool-card-primary">
@@ -24,11 +19,23 @@ export function DashboardPage() {
         <article className="home-tool-card">
           <span className="home-tool-number" aria-hidden="true">02</span>
           <div>
-            <p className="eyebrow">Records</p>
-            <h2>抽牌紀錄</h2>
-            <p>貼上、解析、搜尋與查看真正需要保留的五題抽牌資料。</p>
+            <p className="eyebrow">Import</p>
+            <h2>紀錄匯入</h2>
+            <p>貼上並確認完整五題紀錄，再安全寫入資料庫。</p>
           </div>
-          <a className="secondary-button button-link" href="#/records">查看抽牌紀錄</a>
+          <a className="secondary-button button-link" href="#/import">匯入紀錄</a>
+        </article>
+
+        <article className="home-tool-card">
+          <span className="home-tool-number" aria-hidden="true">03</span>
+          <div><p className="eyebrow">Database</p><h2>抽牌資料庫</h2><p>搜尋、篩選與維護已保存的五題抽牌資料。</p></div>
+          <a className="secondary-button button-link" href="#/records">查看資料庫</a>
+        </article>
+
+        <article className="home-tool-card">
+          <span className="home-tool-number" aria-hidden="true">04</span>
+          <div><p className="eyebrow">Analytics</p><h2>統計分析</h2><p>查看牌卡頻率、共現關係與時間趨勢。</p></div>
+          <a className="secondary-button button-link" href="#/analytics">開啟分析</a>
         </article>
       </section>
     </main>

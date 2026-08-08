@@ -4,6 +4,7 @@ import { AppRouter } from "./app/AppRouter";
 import { AuthProvider } from "./features/auth/AuthProvider";
 import { AuthGate } from "./features/auth/components/AuthGate";
 import "./styles.css";
+import "./styles-v3.css";
 
 if (import.meta.env.DEV) {
   const developmentWindow = window as typeof window & {

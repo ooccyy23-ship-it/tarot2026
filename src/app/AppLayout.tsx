@@ -3,10 +3,10 @@ import { AuthStatus } from "../features/auth/components/AuthStatus";
 import type { AppRoute } from "./AppRouter";
 
 const navigation: Array<{ route: AppRoute; label: string }> = [
-  { route: "/", label: "首頁" },
   { route: "/draw", label: "抽牌工具" },
-  { route: "/records", label: "抽牌紀錄" },
-  { route: "/analytics", label: "分析儀表板" },
+  { route: "/import", label: "紀錄匯入" },
+  { route: "/records", label: "抽牌資料庫" },
+  { route: "/analytics", label: "統計分析" },
 ];
 
 export function AppLayout({ currentRoute, children }: { currentRoute: string; children: ReactNode }) {
@@ -14,11 +14,11 @@ export function AppLayout({ currentRoute, children }: { currentRoute: string; ch
   return (
     <div className="site-shell">
       <header className="site-header">
-        <a className="brand" href="#/" aria-label="塔羅抽牌與紀錄系統首頁">
+        <a className="brand" href="#/" aria-label="Tarot Validation System 首頁">
           <span className="brand-mark">T</span>
           <span>
-            <strong>塔羅抽牌系統</strong>
-            <small>抽牌與紀錄</small>
+            <strong>Tarot Validation System</strong>
+            <small>塔羅抽牌與研究資料系統</small>
           </span>
         </a>
         <div className="header-controls">
