@@ -54,6 +54,18 @@ describe("tarot record statistics", () => {
     expect(stats.monthlyCounts).toEqual([{ month: "2026-08", count: 1 }, { month: "2026-09", count: 1 }]);
   });
 
+  it("uses minor arcana only as the suit denominator and keeps the fixed suit order", () => {
+    const stats = calculateTarotRecordStatistics([
+      record(),
+      record({ id: "2", normalizedCardName: "聖杯4", cardName: "聖杯4", rank: "4" }),
+      record({ id: "3", normalizedCardName: "寶劍2", cardName: "寶劍2", suit: "swords", rank: "2" }),
+      record({ id: "4", normalizedCardName: "惡魔", cardName: "惡魔", arcanaType: "major", suit: "major", rank: "惡魔" }),
+    ]);
+
+    expect(stats.suitDistribution.map((item) => item.suit)).toEqual(["cups", "swords", "wands", "pentacles"]);
+    expect(stats.suitDistribution.map((item) => item.percentage)).toEqual([66.7, 33.3, 0, 0]);
+  });
+
   it("sorts equal counts by standard card order", () => {
     const sorted = sortTarotCardFrequencies(buildTarotCardFrequencyTable([]), "totalCount", "desc");
     expect(sorted.slice(0, 3).map((row) => row.cardName)).toEqual(["愚者", "魔術師", "女祭司"]);

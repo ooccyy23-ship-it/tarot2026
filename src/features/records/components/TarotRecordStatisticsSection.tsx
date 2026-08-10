@@ -24,6 +24,11 @@ function formatPercentage(value: number): string {
   return `${value.toFixed(value % 1 === 0 ? 0 : 1)}%`;
 }
 
+function formatPercentagePoint(value: number): string {
+  const normalized = Math.abs(value) < 0.05 ? 0 : value;
+  return `${normalized > 0 ? "+" : ""}${normalized.toFixed(1)}pp`;
+}
+
 function downloadRecords(records: ParsedTarotRecord[]): void {
   const blob = new Blob([createTarotRecordsCsv(sortTarotRecordsNewest(records))], {
     type: "text/csv;charset=utf-8",
@@ -67,6 +72,9 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
   );
   const topTen = statistics.ranking.slice(0, 10);
   const topCount = Math.max(...topTen.map((row) => row.totalCount), 1);
+  const orientationDifference = Math.abs(
+    statistics.uprightPercentage - statistics.reversedPercentage,
+  );
 
   const exportCsv = () => {
     try {
@@ -111,23 +119,49 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
           </div>}
         </article>
 
-        <article className="records-chart-card">
-          <header><h3>正逆位分布</h3><span>總計 {statistics.totalRecords}</span></header>
-          <div className="records-donut-layout">
-            <div
-              className={`records-donut ${statistics.totalRecords === 0 ? "empty" : ""}`}
-              style={statistics.totalRecords === 0 ? undefined : { background: `conic-gradient(#7895a3 0 ${statistics.uprightPercentage}%, #d9902f ${statistics.uprightPercentage}% 100%)` }}
-              role="img"
-              aria-label={`正位${statistics.uprightCount}筆，逆位${statistics.reversedCount}筆`}
-            ><span>{statistics.totalRecords}</span></div>
-            <ul><li><i className="upright" />正位 <strong>{statistics.uprightCount}</strong>（{formatPercentage(statistics.uprightPercentage)}）</li><li><i className="reversed" />逆位 <strong>{statistics.reversedCount}</strong>（{formatPercentage(statistics.reversedPercentage)}）</li></ul>
-          </div>
-        </article>
+        <article className="records-chart-card records-chart-wide records-structure-card">
+          <header className="records-structure-header">
+            <h3>抽牌結構</h3>
+            <span>總計 {statistics.totalRecords} 張</span>
+          </header>
+          <div className="records-structure-layout">
+            <section className="records-structure-section records-orientation-section" aria-labelledby="records-orientation-title">
+              <h4 id="records-orientation-title">方向分布（正逆位）</h4>
+              <div className="records-structure-rows">
+                {[
+                  { label: "正位", count: statistics.uprightCount, percentage: statistics.uprightPercentage, className: "is-upright" },
+                  { label: "逆位", count: statistics.reversedCount, percentage: statistics.reversedPercentage, className: "is-reversed" },
+                ].map((item) => <div className="records-structure-row" key={item.label}>
+                  <div className="records-structure-values">
+                    <span>{item.label}</span>
+                    <strong>{item.count} 張</strong>
+                    <strong>{formatPercentage(item.percentage)}</strong>
+                  </div>
+                  <progress className={item.className} max="100" value={item.percentage}>{formatPercentage(item.percentage)}</progress>
+                </div>)}
+              </div>
+              <p className="records-orientation-gap">正逆差 <strong>{orientationDifference.toFixed(1)} 個百分點</strong></p>
+              <p className="records-structure-note">此項僅呈現抽牌方向分布，不作為情感或事件意義判定。</p>
+            </section>
 
-        <article className="records-chart-card">
-          <header><h3>四牌組分布</h3><span>不含大阿爾克那</span></header>
-          <div className="records-suit-bars">
-            {statistics.suitDistribution.map((item) => <div key={item.suit}><div><span>{suitLabels[item.suit]}</span><strong>{item.count}（{formatPercentage(item.percentage)}）</strong></div><progress max="100" value={item.percentage}>{item.percentage}%</progress></div>)}
+            <section className="records-structure-section records-suit-section" aria-labelledby="records-suit-title">
+              <div className="records-structure-subheading">
+                <h4 id="records-suit-title">花色分布（小阿爾克那）</h4>
+                <span>基準：25%（四花色均勻分布）</span>
+              </div>
+              <div className="records-structure-rows records-structure-suit-rows">
+                {statistics.suitDistribution.map((item) => <div className="records-structure-row records-suit-row" key={item.suit}>
+                  <div className="records-structure-values">
+                    <span>{suitLabels[item.suit]}</span>
+                    <strong>{item.count} 張</strong>
+                    <strong>{formatPercentage(item.percentage)}</strong>
+                    <em className={item.percentage >= 25 ? "is-positive" : "is-negative"}>{formatPercentagePoint(item.percentage - 25)}</em>
+                  </div>
+                  <progress max="100" value={item.percentage}>{formatPercentage(item.percentage)}</progress>
+                </div>)}
+              </div>
+              <p className="records-structure-note">pp = percentage point（百分點）</p>
+            </section>
           </div>
         </article>
 
