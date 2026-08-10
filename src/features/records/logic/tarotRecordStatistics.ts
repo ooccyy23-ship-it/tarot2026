@@ -108,7 +108,7 @@ export function calculateTarotRecordStatistics(records: ParsedTarotRecord[]): Ta
     .filter((row) => row.totalCount > 0)
     .sort((left, right) => right.totalCount - left.totalCount || left.order - right.order);
   const minorTotal = records.filter((record) => record.suit !== "major").length;
-  const suits: TarotSuitCount["suit"][] = ["wands", "cups", "swords", "pentacles"];
+  const suits: TarotSuitCount["suit"][] = ["cups", "swords", "wands", "pentacles"];
   const suitDistribution = suits.map((suit) => {
     const count = records.filter((record) => record.suit === suit).length;
     return { suit, count, percentage: percentage(count, minorTotal) };
