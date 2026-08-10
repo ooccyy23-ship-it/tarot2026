@@ -1,11 +1,11 @@
 import { useMemo, useState } from "react";
+import { RecentSevenDayStatisticsCard } from "./RecentSevenDayStatisticsCard";
 import { createTarotRecordsCsv, tarotRecordsCsvFilename } from "../logic/tarotRecordCsv";
 import { sortTarotRecordsNewest } from "../logic/tarotRecordCollection";
 import {
   calculateTarotRecordStatistics,
   sortTarotCardFrequencies,
   type TarotFrequencySortKey,
-  type TarotMonthCount,
 } from "../logic/tarotRecordStatistics";
 import type { ParsedTarotRecord, TarotSuit } from "../types/tarotRecord";
 
@@ -36,37 +36,6 @@ function downloadRecords(records: ParsedTarotRecord[]): void {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
-}
-
-function MonthlyLineChart({ months }: { months: TarotMonthCount[] }) {
-  if (months.length === 0) return <div className="records-chart-empty">尚無月份資料</div>;
-  const width = Math.max(640, months.length * 86);
-  const height = 250;
-  const left = 42;
-  const right = 26;
-  const top = 28;
-  const bottom = 52;
-  const chartWidth = width - left - right;
-  const chartHeight = height - top - bottom;
-  const maxCount = Math.max(...months.map((item) => item.count), 1);
-  const points = months.map((item, index) => ({
-    ...item,
-    x: months.length === 1 ? left + chartWidth / 2 : left + (chartWidth * index) / (months.length - 1),
-    y: top + chartHeight - (item.count / maxCount) * chartHeight,
-  }));
-  return (
-    <div className="records-line-chart-scroll" role="img" aria-label="每月抽牌數量折線圖">
-      <svg className="records-line-chart" viewBox={`0 0 ${width} ${height}`} style={{ minWidth: width }}>
-        <line x1={left} y1={top + chartHeight} x2={width - right} y2={top + chartHeight} className="chart-axis" />
-        <polyline points={points.map((point) => `${point.x},${point.y}`).join(" ")} className="chart-line" />
-        {points.map((point) => <g key={point.month}>
-          <circle cx={point.x} cy={point.y} r="5" className="chart-point" />
-          <text x={point.x} y={point.y - 12} textAnchor="middle" className="chart-value">{point.count}</text>
-          <text x={point.x} y={height - 22} textAnchor="middle" className="chart-label">{point.month.replace("-", "/")}</text>
-        </g>)}
-      </svg>
-    </div>
-  );
 }
 
 export function TarotRecordStatisticsSection({ records }: { records: ParsedTarotRecord[] }) {
@@ -162,10 +131,7 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
           </div>
         </article>
 
-        <article className="records-chart-card records-chart-full">
-          <header><h3>每月抽牌數量</h3><span>{statistics.monthlyCounts.length} 個月份</span></header>
-          <MonthlyLineChart months={statistics.monthlyCounts} />
-        </article>
+        <RecentSevenDayStatisticsCard records={records} />
       </div>
 
       <div className="records-frequency-section">
