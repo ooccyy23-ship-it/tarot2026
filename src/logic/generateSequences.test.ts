@@ -22,6 +22,25 @@ describe("generateSequences", () => {
     expect(result.values.s3).toBe(0);
   });
 
+  it("sequence 3 uses absolute difference when the product sum is greater than 78", () => {
+    const result = generateSequences(1, 58);
+
+    expect(result.formattedValues).toEqual({
+      s1: "58",
+      s2: "59",
+      s3: "05",
+      s4: "63",
+      s5: "41",
+    });
+    expect(result.explanations.s3).toEqual([
+      "58 → 5×8＝40",
+      "59 → 5×9＝45",
+      "40＋45＝85",
+      "85大於78",
+      "|40－45|＝05",
+    ]);
+  });
+
   it("sequence 4 uses addition when s1 + s3 is less than or equal to 78", () => {
     const result = generateSequences(2, 11);
 

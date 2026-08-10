@@ -26,9 +26,9 @@ export function AppLayout({ currentRoute, children }: { currentRoute: string; ch
             {navigation.map((item) => (
               <a
                 key={item.route}
-                className={activeRoute === item.route ? "is-active" : ""}
+                className={activeRoute === item.route || (item.route === "/analytics" && activeRoute.startsWith("/analytics/")) ? "is-active" : ""}
                 href={`#${item.route}`}
-                aria-current={activeRoute === item.route ? "page" : undefined}
+                aria-current={activeRoute === item.route || (item.route === "/analytics" && activeRoute.startsWith("/analytics/")) ? "page" : undefined}
               >
                 {item.label}
               </a>

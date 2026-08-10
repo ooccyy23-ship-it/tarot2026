@@ -19,7 +19,11 @@ export function generateSequences(hour: number, minute: number): SequenceResult 
   const s2 = hour + minute;
   const s1Digits = multiplyDigits(s1);
   const s2Digits = multiplyDigits(s2);
-  const s3 = s1Digits.result + s2Digits.result;
+  const s3Sum = s1Digits.result + s2Digits.result;
+  const s3 =
+    s3Sum <= 78
+      ? s3Sum
+      : Math.abs(s1Digits.result - s2Digits.result);
   const s4Sum = s1 + s3;
   const s4 = s4Sum <= 78 ? s4Sum : Math.abs(s1 - s3);
 
@@ -50,7 +54,13 @@ export function generateSequences(hour: number, minute: number): SequenceResult 
       s3: [
         `${s1Digits.formatted} → ${s1Digits.formatted[0]}×${s1Digits.formatted[1]}＝${s1Digits.result}`,
         `${s2Digits.formatted} → ${s2Digits.formatted[0]}×${s2Digits.formatted[1]}＝${s2Digits.result}`,
-        `${s1Digits.result}＋${s2Digits.result}＝${formattedValues.s3}`,
+        ...(s3Sum <= 78
+          ? [`${s1Digits.result}＋${s2Digits.result}＝${formattedValues.s3}`]
+          : [
+              `${s1Digits.result}＋${s2Digits.result}＝${s3Sum}`,
+              `${s3Sum}大於78`,
+              `|${s1Digits.result}－${s2Digits.result}|＝${formattedValues.s3}`,
+            ]),
       ],
       s4:
         s4Sum <= 78
