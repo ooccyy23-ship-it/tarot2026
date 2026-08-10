@@ -1,3 +1,4 @@
+import { tarotCardCatalog } from "../../../data/tarotCardCatalog";
 import type { ParsedTarotRecord } from "../types/tarotRecord";
 
 export type DailyStatisticsRange = "7" | "30" | "all";
@@ -18,7 +19,13 @@ export type DailyTarotStatistics = {
   reversedCount: number;
   majorCount: number;
   minorCount: number;
+  highFrequencyCards: DailyHighFrequencyCard[];
   groups: DailyTarotGroup[];
+};
+
+export type DailyHighFrequencyCard = {
+  cardName: string;
+  count: number;
 };
 
 export type RecentDailyCount = {
@@ -36,6 +43,7 @@ export type RecentDailySummary = {
 };
 
 const DATE_PATTERN = /^(\d{4})-(\d{2})-(\d{2})$/;
+const CARD_ORDER = new Map(tarotCardCatalog.map((card) => [card.name, card.order]));
 
 function formatDateKey(year: number, month: number, day: number): string {
   return `${String(year).padStart(4, "0")}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
@@ -67,6 +75,25 @@ export function formatShortDate(date: string): string {
 
 export function formatDailyDate(date: string): string {
   return date.replace(/-/g, "/");
+}
+
+export function calculateDailyHighFrequencyCards(
+  records: ParsedTarotRecord[],
+  limit = 3,
+): DailyHighFrequencyCard[] {
+  const counts = new Map<string, number>();
+  records.forEach((record) => {
+    counts.set(record.normalizedCardName, (counts.get(record.normalizedCardName) ?? 0) + 1);
+  });
+  return [...counts.entries()]
+    .map(([cardName, count]) => ({ cardName, count }))
+    .sort((left, right) => {
+      if (left.count !== right.count) return right.count - left.count;
+      const orderDifference = (CARD_ORDER.get(left.cardName) ?? Number.MAX_SAFE_INTEGER)
+        - (CARD_ORDER.get(right.cardName) ?? Number.MAX_SAFE_INTEGER);
+      return orderDifference || left.cardName.localeCompare(right.cardName, "zh-Hant");
+    })
+    .slice(0, Math.max(0, limit));
 }
 
 export function calculateDailyTarotStatistics(records: ParsedTarotRecord[]): DailyTarotStatistics[] {
@@ -107,6 +134,7 @@ export function calculateDailyTarotStatistics(records: ParsedTarotRecord[]): Dai
         reversedCount: dailyRecords.filter((record) => record.orientation === "reversed").length,
         majorCount: dailyRecords.filter((record) => record.arcanaType === "major").length,
         minorCount: dailyRecords.filter((record) => record.arcanaType === "minor").length,
+        highFrequencyCards: calculateDailyHighFrequencyCards(dailyRecords),
         groups,
       };
     })
