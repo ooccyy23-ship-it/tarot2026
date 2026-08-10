@@ -137,20 +137,19 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
 .records-analysis-page .records-bar-row { min-height: 30px; }
 .records-analysis-page .records-frequency-section { border-top-color: var(--border); }
 
-.records-daily-seven-card { min-height: 280px; max-height: 320px; }
-.records-daily-seven-card > header { align-items: center; margin-bottom: 12px; }
+.records-analysis-page .records-daily-seven-card { min-height: 230px; max-height: 265px; padding: 16px 20px; }
+.records-daily-seven-card > header { align-items: center; margin-bottom: 8px; }
 .records-daily-seven-card > header > div { display: grid; gap: 2px; }
 .records-daily-seven-card .compact-button { min-height: 38px; padding: 7px 13px; white-space: nowrap; }
-.records-daily-summary { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 10px; }
-.records-daily-summary > div { display: flex; align-items: baseline; gap: 5px; min-width: 0; padding: 7px 10px; border-radius: 10px; background: var(--bg-soft); }
-.records-daily-summary span, .records-daily-summary small { color: var(--text-secondary); font-size: .75rem; }
-.records-daily-summary strong { color: var(--text-primary); font-size: 1.12rem; }
-.records-daily-chart { position: relative; min-width: 0; padding-left: 24px; }
-.records-daily-y-label { position: absolute; top: 38%; left: -7px; color: var(--text-muted); font-size: .67rem; transform: rotate(-90deg); }
-.records-daily-columns { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: clamp(5px,1.5vw,16px); height: 122px; padding: 0 4px; border-bottom: 1px solid var(--border-strong); }
-.records-daily-column { display: grid; grid-template-rows: 18px 78px 22px; min-width: 0; text-align: center; }
-.records-daily-column > strong { color: var(--text-secondary); font-size: .72rem; line-height: 18px; }
-.records-daily-column > span { overflow: hidden; color: var(--text-secondary); font-size: .7rem; line-height: 22px; text-overflow: clip; white-space: nowrap; }
+.records-daily-summary { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; margin-bottom: 7px; }
+.records-daily-summary > div { display: flex; align-items: baseline; gap: 4px; min-width: 0; padding: 4px 9px; border-radius: 9px; background: #fbf6ec; }
+.records-daily-summary span, .records-daily-summary small { color: var(--text-secondary); font-size: .7rem; }
+.records-daily-summary strong { color: var(--text-primary); font-size: 1.08rem; line-height: 1.2; }
+.records-daily-chart { min-width: 0; }
+.records-daily-columns { display: grid; grid-template-columns: repeat(7,minmax(0,1fr)); gap: clamp(5px,1.5vw,16px); height: 98px; padding: 0 4px; border-bottom: 1px solid var(--border-strong); }
+.records-daily-column { display: grid; grid-template-rows: 16px 62px 20px; min-width: 0; text-align: center; }
+.records-daily-column > strong { color: var(--text-secondary); font-size: .68rem; line-height: 16px; }
+.records-daily-column > span { overflow: hidden; color: var(--text-secondary); font-size: .67rem; line-height: 20px; text-overflow: clip; white-space: nowrap; }
 .records-daily-bar-track { display: flex; align-items: flex-end; justify-content: center; min-width: 0; }
 .records-daily-bar-track i { width: min(34px,72%); border-radius: 5px 5px 2px 2px; background: var(--accent); box-shadow: inset 0 -1px 0 rgba(63,52,44,.08); }
 .records-daily-bar-track i.is-zero { height: 0; }
@@ -173,7 +172,13 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
 .records-daily-date-button { display: inline-flex; align-items: center; gap: 8px; padding: 3px 0; border: 0; background: transparent; color: var(--text-primary); font-weight: 700; }
 .records-daily-date-button span { display: grid; width: 22px; height: 22px; place-items: center; border-radius: 7px; background: var(--accent-soft); color: var(--accent-hover); }
 .records-daily-expanded-row > td { padding: 0; background: var(--bg-soft); text-align: left; }
-.records-daily-groups { display: grid; gap: 12px; padding: 16px; }
+.records-daily-expanded-content { display: grid; gap: 12px; padding: 14px 16px 16px; }
+.records-daily-high-frequency { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.records-daily-high-frequency > strong { flex: none; color: var(--text-secondary); font-size: .78rem; }
+.records-daily-high-frequency > div { display: flex; flex-wrap: wrap; gap: 7px; min-width: 0; }
+.records-daily-high-frequency span { padding: 5px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--text-primary); font-size: .78rem; }
+.records-daily-high-frequency b { color: var(--accent-hover); }
+.records-daily-groups { display: grid; gap: 12px; }
 .records-daily-groups article { padding: 16px 18px; border: 1px solid var(--border); border-radius: 14px; background: var(--bg-surface); }
 .records-daily-groups article > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 10px; }
 .records-daily-groups article > header span { color: var(--accent-hover); font-size: .75rem; font-weight: 700; }
@@ -216,21 +221,20 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
   .records-preview-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .records-analysis-page .records-stat-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .records-analysis-page .records-top-ten-bars { grid-template-columns: 1fr; }
-  .records-daily-seven-card { min-height: 286px; max-height: none; }
+  .records-analysis-page .records-daily-seven-card { min-height: 245px; max-height: none; padding: 15px 16px; }
   .records-daily-seven-card > header, .records-daily-detail-heading { align-items: stretch; flex-direction: column; }
   .records-daily-seven-card .compact-button { align-self: flex-start; }
   .records-daily-summary { grid-template-columns: repeat(3,minmax(0,1fr)); }
   .records-daily-summary > div { display: grid; align-content: start; gap: 0; padding: 7px; }
   .records-daily-summary strong { font-size: 1rem; }
   .records-daily-summary small { min-height: 18px; }
-  .records-daily-chart { padding-left: 15px; }
   .records-daily-columns { gap: 3px; padding-inline: 0; }
   .records-daily-column > span { font-size: .62rem; }
-  .records-daily-y-label { left: -11px; }
   .records-daily-range { align-self: flex-start; }
   .records-daily-range button { padding-inline: 14px; }
   .records-daily-groups article > header { flex-direction: column; gap: 4px; }
   .records-daily-groups ol { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .records-daily-high-frequency { align-items: flex-start; flex-direction: column; gap: 7px; }
 }
 @media (max-width: 420px) {
   .brand strong { font-size: .88rem; }
@@ -239,5 +243,7 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
   .sequence-grid, .final-results { grid-template-columns: 1fr; }
   .records-preview-summary, .records-analysis-page .records-stat-summary { grid-template-columns: 1fr; }
   .records-daily-summary span, .records-daily-summary small { font-size: .66rem; }
+  .records-daily-summary { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .records-daily-summary > div:last-child { grid-column: 1 / -1; }
   .records-daily-groups ol { grid-template-columns: 1fr; }
 }

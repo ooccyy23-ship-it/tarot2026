@@ -31,7 +31,6 @@ export function RecentSevenDayStatisticsCard({ records }: { records: ParsedTarot
         role="img"
         aria-label={`近 7 日每日抽牌張數：${summary.days.map((day) => `${day.label} ${day.count} 張`).join("，")}`}
       >
-        <span className="records-daily-y-label">張數</span>
         <div className="records-daily-columns">
           {summary.days.map((day) => (
             <div className="records-daily-column" key={day.date}>
@@ -39,7 +38,7 @@ export function RecentSevenDayStatisticsCard({ records }: { records: ParsedTarot
               <div className="records-daily-bar-track">
                 <i
                   className={day.count === 0 ? "is-zero" : ""}
-                  style={{ height: day.count === 0 ? 0 : `${Math.max((day.count / maxCount) * 100, 5)}%` }}
+                  style={{ height: day.count === 0 ? 0 : `${(day.count / maxCount) * 100}%` }}
                 />
               </div>
               <span>{day.label}</span>

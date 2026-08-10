@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   buildRecentDailySummary,
+  calculateDailyHighFrequencyCards,
   calculateDailyTarotStatistics,
   filterDailyStatisticsByRange,
   getTaipeiDateKey,
@@ -66,6 +67,22 @@ describe("tarotRecordDailyStatistics", () => {
 
   it("uses Asia/Taipei when determining today", () => {
     expect(getTaipeiDateKey(new Date("2026-08-09T16:30:00.000Z"))).toBe("2026-08-10");
+  });
+
+  it("combines upright and reversed occurrences when calculating the daily top three", () => {
+    const cards = calculateDailyHighFrequencyCards([
+      record({ id: "A1", normalizedCardName: "聖杯5", cardName: "聖杯5" }),
+      record({ id: "A2", normalizedCardName: "聖杯5", cardName: "聖杯5", orientation: "reversed", orientationLabel: "逆位" }),
+      record({ id: "B1", normalizedCardName: "正義", cardName: "正義" }),
+      record({ id: "C1", normalizedCardName: "權杖騎士", cardName: "權杖騎士" }),
+      record({ id: "D1", normalizedCardName: "世界", cardName: "世界" }),
+    ]);
+
+    expect(cards).toEqual([
+      { cardName: "聖杯5", count: 2 },
+      { cardName: "正義", count: 1 },
+      { cardName: "世界", count: 1 },
+    ]);
   });
 
   it("filters 7 and 30 calendar days while all keeps every recorded day", () => {

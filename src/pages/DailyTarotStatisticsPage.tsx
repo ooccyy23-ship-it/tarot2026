@@ -68,7 +68,7 @@ export function DailyTarotStatisticsPage() {
                 type="button"
                 key={item.value}
                 aria-pressed={range === item.value}
-                onClick={() => setRange(item.value)}
+                onClick={() => { setRange(item.value); setExpandedDates(new Set()); }}
               >
                 {item.label}
               </button>
@@ -102,7 +102,16 @@ export function DailyTarotStatisticsPage() {
                       {expanded ? (
                         <tr className="records-daily-expanded-row">
                           <td colSpan={7}>
-                            <div className="records-daily-groups">
+                            <div className="records-daily-expanded-content">
+                              <section className="records-daily-high-frequency" aria-label={`${formatDailyDate(day.date)} 當日高頻牌`}>
+                                <strong>當日高頻牌</strong>
+                                <div>
+                                  {day.highFrequencyCards.map((card) => (
+                                    <span key={card.cardName}>{card.cardName} <b>× {card.count}</b></span>
+                                  ))}
+                                </div>
+                              </section>
+                              <div className="records-daily-groups">
                               {day.groups.map((group, groupIndex) => (
                                 <article key={group.groupId}>
                                   <header>
@@ -114,6 +123,7 @@ export function DailyTarotStatisticsPage() {
                                   </ol>
                                 </article>
                               ))}
+                              </div>
                             </div>
                           </td>
                         </tr>
