@@ -13,6 +13,7 @@ import type {
   TarotRecordParseResult,
 } from "../types/tarotRecord";
 import { TarotRecordParseError } from "../types/tarotRecord";
+import { createTarotRecordFingerprint } from "../logic/tarotRecordFingerprint";
 import { parseObservationDateTime } from "./observationDateTime";
 
 const questionPrefixPattern = /^\s*(?:第\s*(\d+)\s*題|([0-9]+)\s*[.、．])\s*(.*?)\s*$/;
@@ -156,8 +157,10 @@ export function parseTarotRecordDraft(input: string): TarotRecordParseResult {
     observationTime: dateTime.observationTime,
     observationDateTime: dateTime.observationDateTime,
     originalDateText: dateTime.originalDateText,
+    importSource: "manual_text",
     records: records.sort((a, b) => a.questionOrder - b.questionOrder),
   };
+  group.fingerprint = createTarotRecordFingerprint(group);
   return { group, issues };
 }
 
@@ -181,13 +184,20 @@ export function validateParsedTarotGroup(group: ParsedTarotGroupDraft): TarotRec
     if (!(["正位", "逆位"] as string[]).includes(record.orientationLabel)) {
       issues.push({ code: "missing_orientation", message: `第${record.questionOrder}題缺少正逆位。`, questionOrder: record.questionOrder });
     }
+    if (record.questionText.trim().length > 0 && record.questionText.trim().length < 4) {
+      issues.push({ code: "short_question", severity: "warning", field: "questionText", message: `第${record.questionOrder}題題目文字較短，建議確認內容。`, questionOrder: record.questionOrder });
+    }
+  }
+  if (group.sequences && group.sequences.length !== 5) {
+    issues.push({ code: "invalid_sequence_count", message: "五序號若有保存，必須正好包含5個序號。", field: "sequence" });
   }
   return issues;
 }
 
 export function finalizeParsedTarotGroup(group: ParsedTarotGroupDraft): ParsedTarotGroup {
   const validationIssues = validateParsedTarotGroup(group);
-  if (validationIssues.length > 0) throw new TarotRecordParseError(validationIssues);
+  const blockingIssues = validationIssues.filter((issue) => issue.severity !== "warning");
+  if (blockingIssues.length > 0) throw new TarotRecordParseError(blockingIssues);
   const records: ParsedTarotRecord[] = group.records.map((record) => {
     const metadata = getTarotCardMetadata(record.cardName);
     if (!metadata) throw new Error(`第${record.questionOrder}題牌名無效。`);
@@ -202,14 +212,18 @@ export function finalizeParsedTarotGroup(group: ParsedTarotGroupDraft): ParsedTa
       orientation: record.orientationLabel === "正位" ? "upright" : "reversed",
     };
   });
-  return { ...group, records };
+  const finalized = { ...group, records };
+  finalized.fingerprint = createTarotRecordFingerprint(finalized);
+  return finalized;
 }
 
 export function parseTarotRecordText(input: string): ParsedTarotGroup {
   const result = parseTarotRecordDraft(input);
-  if (!result.group || result.issues.length > 0) throw new TarotRecordParseError(result.issues);
+  const parseErrors = result.issues.filter((issue) => issue.severity !== "warning");
+  if (!result.group || parseErrors.length > 0) throw new TarotRecordParseError(parseErrors);
   const validationIssues = validateParsedTarotGroup(result.group);
-  if (validationIssues.length > 0) throw new TarotRecordParseError(validationIssues);
+  const validationErrors = validationIssues.filter((issue) => issue.severity !== "warning");
+  if (validationErrors.length > 0) throw new TarotRecordParseError(validationErrors);
   return finalizeParsedTarotGroup(result.group);
 }
 

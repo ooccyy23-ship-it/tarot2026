@@ -23,6 +23,8 @@ import {
   saveDraftDraw,
   type DrawDraftLoadResult,
 } from "../storage/drawDraftStorage";
+import { createDrawResultImportDraft } from "../../records/logic/drawResultImport";
+import { saveTarotImportDraft } from "../../records/storage/tarotImportDraftStorage";
 
 type Props = {
   fixedTime?: string;
@@ -95,7 +97,7 @@ export function FiveCardDrawModule({
   const allCoinsCompleted = cards.length === 5 && cards.every((card) => card.orientationResult?.locked);
   const lockedCount = cards.filter((card) => card.orientationResult?.locked).length;
   const drawInProgress = Boolean(timeInput || sequenceResult || cards.length > 0 || activeFlipIndex !== null)
-    && (!allCoinsCompleted || Boolean(onComplete && !savedAt));
+    && (!allCoinsCompleted || Boolean(onComplete && !completionSent.current));
   const showDebugPanel = import.meta.env.DEV;
 
   useEffect(() => {
@@ -412,6 +414,21 @@ export function FiveCardDrawModule({
     }
   };
 
+  const handleImportRecord = () => {
+    if (!allCoinsCompleted || !observationDate) return;
+    const group = createDrawResultImportDraft({
+      observationDate,
+      drawTime: timeInput,
+      weekday,
+      cards,
+      questions,
+      questionGroupId: draftQuestionGroupId,
+      questionGroupName: draftQuestionGroupName,
+    });
+    saveTarotImportDraft({ source: "draw_result", input: "", group });
+    window.location.hash = "/import";
+  };
+
   return (
     <div className="draw-module">
       {recoveryResult.status !== "none" ? <DrawDraftRecoveryPanel result={recoveryResult} onRestore={recoveryResult.status === "invalid" ? undefined : handleRestoreDraft} onDiscard={handleDiscardDraft} /> : null}
@@ -509,6 +526,7 @@ export function FiveCardDrawModule({
           weekday={weekday}
           cards={cards}
           onCopy={handleCopy}
+          onImport={handleImportRecord}
           onRestart={lockAfterComplete ? undefined : handleRestart}
         /></div>
       ) : null}

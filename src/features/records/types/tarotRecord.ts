@@ -2,6 +2,7 @@ export type TarotArcanaType = "major" | "minor";
 export type TarotSuit = "major" | "cups" | "swords" | "wands" | "pentacles";
 export type TarotOrientation = "upright" | "reversed";
 export type TarotOrientationLabel = "正位" | "逆位";
+export type TarotRecordImportSource = "draw_result" | "manual_text";
 
 export type ParsedTarotGroup = {
   groupId: string;
@@ -10,6 +11,13 @@ export type ParsedTarotGroup = {
   observationTime: string;
   observationDateTime: string;
   originalDateText: string;
+  importSource?: TarotRecordImportSource;
+  drawResultId?: string;
+  sourceQuestionGroupId?: string;
+  drawMode?: "five";
+  weekdayLabel?: string;
+  sequences?: number[];
+  fingerprint?: string;
   records: ParsedTarotRecord[];
 };
 
@@ -22,6 +30,10 @@ export type ParsedTarotRecord = {
   groupTitle: string;
   questionOrder: number;
   questionText: string;
+  sequence?: number;
+  importSource?: TarotRecordImportSource;
+  drawResultId?: string;
+  fingerprint?: string;
   cardName: string;
   normalizedCardName: string;
   arcanaType: TarotArcanaType;
@@ -40,6 +52,9 @@ export type TarotRecordGroupSummary = {
   observationTime: string;
   observationDateTime: string;
   recordCount: number;
+  importSource?: TarotRecordImportSource;
+  drawResultId?: string;
+  fingerprint?: string;
   createdAt: string;
   updatedAt?: string;
 };
@@ -69,13 +84,25 @@ export type TarotRecordParseIssueCode =
   | "missing_question"
   | "missing_orientation"
   | "missing_card"
-  | "unknown_card";
+  | "unknown_card"
+  | "missing_sequence"
+  | "invalid_sequence_count"
+  | "title_needs_confirmation"
+  | "question_needs_confirmation"
+  | "short_question";
 
 export type TarotRecordParseIssue = {
   code: TarotRecordParseIssueCode;
   message: string;
   questionOrder?: number;
+  severity?: "warning" | "error";
+  field?: "groupTitle" | "questionText" | "cardName" | "orientation" | "sequence" | "dateTime";
 };
+
+export type TarotRecordDuplicate = Pick<
+  TarotRecordGroupSummary,
+  "groupId" | "groupTitle" | "observationDate" | "observationTime" | "drawResultId" | "fingerprint"
+>;
 
 export type ParsedTarotRecordDraft = Omit<
   ParsedTarotRecord,

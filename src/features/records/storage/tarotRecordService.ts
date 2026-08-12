@@ -6,6 +6,7 @@ import type {
   ParsedTarotRecord,
   TarotRecordEditableFields,
   TarotRecordGroupSummary,
+  TarotRecordDuplicate,
 } from "../types/tarotRecord";
 import { TarotRecordRepository } from "./tarotRecordRepository";
 
@@ -24,6 +25,16 @@ export class TarotRecordService {
   saveGroup(group: ParsedTarotGroup): Promise<ParsedTarotGroup> {
     this.assertAuthorized();
     return this.repository.saveGroup(group);
+  }
+
+  findDuplicateGroup(group: ParsedTarotGroup): Promise<TarotRecordDuplicate | null> {
+    this.assertAuthorized();
+    return this.repository.findDuplicateGroup(group);
+  }
+
+  getRecord(recordId: string): Promise<ParsedTarotRecord | null> {
+    this.assertAuthorized();
+    return this.repository.getRecord(recordId);
   }
 
   listRecords(): Promise<ParsedTarotRecord[]> {
