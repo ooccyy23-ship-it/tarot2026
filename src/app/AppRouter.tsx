@@ -6,6 +6,7 @@ import { DailyTarotStatisticsPage } from "../pages/DailyTarotStatisticsPage";
 import { TarotRecordImportPage } from "../pages/TarotRecordImportPage";
 import { TarotRecordsPage } from "../pages/TarotRecordsPage";
 import { AppLayout } from "./AppLayout";
+import { NetworkStatusNotice } from "../components/NetworkStatusNotice";
 
 const routes = ["/", "/draw", "/import", "/records", "/analytics", "/analytics/daily"] as const;
 export type AppRoute = (typeof routes)[number];
@@ -60,5 +61,5 @@ export function AppRouter() {
       page = <DashboardPage />;
   }
 
-  return <AppLayout currentRoute={route}>{page}</AppLayout>;
+  return <AppLayout currentRoute={route}><NetworkStatusNotice />{page}</AppLayout>;
 }

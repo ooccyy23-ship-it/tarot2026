@@ -145,6 +145,13 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
 .draw-step-summary { margin: 0; color: var(--text-secondary); font-size: .84rem; }
 .draw-settings-actions { flex-wrap: wrap; gap: 8px 14px; }
 .draw-disabled-reason { flex-basis: 100%; color: var(--text-secondary); font-size: .74rem; line-height: 1.45; }
+.draw-recovery-panel { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 20px; border-color: var(--accent); }
+.draw-recovery-panel.is-expired { border-color: var(--warning); }
+.draw-recovery-panel h2 { margin: 4px 0 8px; }
+.draw-recovery-panel p { margin: 4px 0; color: var(--text-secondary); }
+.draw-recovery-panel .details-panel { grid-column: 1 / -1; }
+.status-message { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.status-message-dismiss { flex: 0 0 auto; width: 32px; min-width: 32px; height: 32px; padding: 0; border-radius: 50%; color: inherit; }
 .coin-card.is-disabled .coin-status { min-height: 34px; color: var(--text-secondary); font-size: .72rem; line-height: 1.35; }
 
 .records-analysis-page .records-structure-card { min-height: 300px; max-height: 380px; padding: 20px 22px; }
@@ -288,6 +295,9 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
   .draw-step-heading { align-items: center; flex-direction: row; }
   .draw-step-heading h2 { font-size: 1.3rem; }
   .draw-step-heading .compact-button { min-height: 40px; }
+  .draw-recovery-panel { grid-template-columns: 1fr; }
+  .draw-recovery-panel .actions-row { align-items: stretch; }
+  .draw-recovery-panel .actions-row button { width: 100%; }
 }
 @media (max-width: 420px) {
   .brand strong { font-size: .88rem; }

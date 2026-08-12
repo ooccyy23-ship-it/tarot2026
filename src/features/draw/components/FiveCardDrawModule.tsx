@@ -15,6 +15,14 @@ import type { DrawResult } from "../../observations/types/observation";
 import type { ObservationQuestion } from "../../questionGroups/types/questionGroup";
 import { buildCopyText, buildDrawCards, buildDrawResult, formatTimeInput, parseTimeInput } from "../logic/drawFlow";
 import { CompletedDrawSummary } from "./CompletedDrawSummary";
+import { useOnlineStatus } from "../../../hooks/useOnlineStatus";
+import { DrawDraftRecoveryPanel } from "./DrawDraftRecoveryPanel";
+import {
+  clearDraftDraw,
+  loadDraftDraw,
+  saveDraftDraw,
+  type DrawDraftLoadResult,
+} from "../storage/drawDraftStorage";
 
 type Props = {
   fixedTime?: string;
@@ -25,6 +33,9 @@ type Props = {
   lockAfterComplete?: boolean;
   isActive?: boolean;
   onProgressChange?: (inProgress: boolean) => void;
+  draftContextId?: string;
+  draftQuestionGroupId?: string;
+  draftQuestionGroupName?: string;
 };
 
 export function FiveCardDrawModule({
@@ -36,9 +47,13 @@ export function FiveCardDrawModule({
   lockAfterComplete = false,
   isActive = true,
   onProgressChange,
+  draftContextId = "draw-tool",
+  draftQuestionGroupId,
+  draftQuestionGroupName = "一般五抽",
 }: Props) {
   const embedded = fixedTime !== undefined && fixedWeekday !== undefined;
   const systemWeekday = useMemo(() => getSystemWeekday(), []);
+  const online = useOnlineStatus();
   const [timeInput, setTimeInput] = useState(fixedTime ?? "");
   const [weekday, setWeekday] = useState<WeekdayKey>(fixedWeekday ?? systemWeekday);
   const [formError, setFormError] = useState<string | null>(null);
@@ -55,6 +70,11 @@ export function FiveCardDrawModule({
   const [sequenceCollapsed, setSequenceCollapsed] = useState(false);
   const [coinCollapsed, setCoinCollapsed] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [operationStatus, setOperationStatus] = useState<string | null>(null);
+  const [savedAt, setSavedAt] = useState<string | null>(null);
+  const [draftError, setDraftError] = useState<string | null>(null);
+  const [recoveryResult, setRecoveryResult] = useState<DrawDraftLoadResult>({ status: "none" });
+  const [recoveryResolved, setRecoveryResolved] = useState(false);
   const completionSent = useRef(false);
   const completionAttempted = useRef(false);
   const pendingCompletion = useRef<DrawResult | null>(null);
@@ -74,8 +94,70 @@ export function FiveCardDrawModule({
 
   const allCoinsCompleted = cards.length === 5 && cards.every((card) => card.orientationResult?.locked);
   const lockedCount = cards.filter((card) => card.orientationResult?.locked).length;
-  const drawInProgress = Boolean(sequenceResult || cards.length > 0 || activeFlipIndex !== null) && !allCoinsCompleted;
+  const drawInProgress = Boolean(timeInput || sequenceResult || cards.length > 0 || activeFlipIndex !== null)
+    && (!allCoinsCompleted || Boolean(onComplete && !savedAt));
   const showDebugPanel = import.meta.env.DEV;
+
+  useEffect(() => {
+    if (!isActive || recoveryResolved || completedResult) return;
+    const result = loadDraftDraw(draftContextId);
+    if ((result.status === "valid" || result.status === "expired") && result.draft.mode !== "five") {
+      setRecoveryResult({ status: "none" });
+      setRecoveryResolved(true);
+      return;
+    }
+    if ((result.status === "valid" || result.status === "expired")
+      && draftQuestionGroupId && result.draft.questionGroupId !== draftQuestionGroupId) {
+      setRecoveryResult({ status: "invalid", errors: ["暫存題組與目前題組不一致。"], raw: JSON.stringify(result.draft) });
+      return;
+    }
+    setRecoveryResult(result);
+    setRecoveryResolved(result.status === "none");
+  }, [completedResult, draftContextId, draftQuestionGroupId, isActive, recoveryResolved]);
+
+  useEffect(() => {
+    if (completedResult) clearDraftDraw(draftContextId);
+  }, [completedResult, draftContextId]);
+
+  useEffect(() => {
+    if (!isActive || !recoveryResolved || !parseTimeInput(timeInput) || completionSent.current || (embedded && !sequenceResult)) return;
+    const shouldSaveCompleted = allCoinsCompleted && Boolean(onComplete);
+    if (allCoinsCompleted && !shouldSaveCompleted) return;
+    try {
+      saveDraftDraw({
+        mode: "five",
+        contextId: draftContextId,
+        questionGroupId: draftQuestionGroupId,
+        questionGroupName: draftQuestionGroupName,
+        observationDate: (observationDate ?? new Date()).toISOString(),
+        drawTime: timeInput,
+        weekday,
+        sequenceResult,
+        validationIssues,
+        cards,
+        progress: allCoinsCompleted
+          ? "awaiting_save"
+          : lockedCount > 0
+            ? "orientations_in_progress"
+            : sequenceResult
+              ? "sequences_ready"
+              : "time_entered",
+      });
+      setDraftError(null);
+    } catch (reason) {
+      setDraftError(reason instanceof Error ? `未完成抽牌暫存失敗：${reason.message}` : "未完成抽牌暫存失敗。");
+    }
+  }, [allCoinsCompleted, cards, draftContextId, draftQuestionGroupId, draftQuestionGroupName, embedded, isActive, lockedCount, observationDate, onComplete, recoveryResolved, sequenceResult, timeInput, validationIssues, weekday]);
+
+  useEffect(() => {
+    if (allCoinsCompleted && !onComplete) clearDraftDraw(draftContextId);
+  }, [allCoinsCompleted, draftContextId, onComplete]);
+
+  useEffect(() => {
+    if (!savedAt) return;
+    const timer = window.setTimeout(() => setSavedAt(null), 4000);
+    return () => window.clearTimeout(timer);
+  }, [savedAt]);
 
   const showTemporarySuccess = useCallback((message: string) => {
     setSuccessMessage(message);
@@ -148,17 +230,24 @@ export function FiveCardDrawModule({
 
   const persistCompletion = useCallback(async (result: DrawResult) => {
     if (!onComplete || completionSaving || completionSent.current) return;
-    setCompletionSaving(true);
     setCompletionError(null);
+    if (!online) {
+      setCompletionError("目前網路已中斷，抽牌結果尚未儲存；本機進度會保留，請恢復連線後重新嘗試。");
+      return;
+    }
+    setCompletionSaving(true);
     try {
       await onComplete(result);
       completionSent.current = true;
+      clearDraftDraw(draftContextId);
+      setSavedAt(new Date().toLocaleTimeString("zh-TW", { hour: "2-digit", minute: "2-digit" }));
+      showTemporarySuccess("已儲存至雲端。");
     } catch (reason) {
       setCompletionError(reason instanceof Error ? reason.message : "抽牌結果保存失敗，請稍後重試。");
     } finally {
       setCompletionSaving(false);
     }
-  }, [completionSaving, onComplete]);
+  }, [completionSaving, draftContextId, onComplete, online, showTemporarySuccess]);
 
   useEffect(() => {
     if (
@@ -203,17 +292,20 @@ export function FiveCardDrawModule({
     return true;
   };
 
-  const handleCalculate = () => {
-    if (activeFlipIndex !== null || completionSaving || !confirmRecalculateIfNeeded()) return;
+  const handleCalculate = async () => {
+    if (activeFlipIndex !== null || completionSaving || operationStatus || !confirmRecalculateIfNeeded()) return;
     const parsedTime = parseTimeInput(timeInput);
     if (!parsedTime) {
       setFormError("請輸入有效時間，格式需為 HH:MM，且小時 00～23、分鐘 00～59。");
       resetDrawState();
       return;
     }
-
+    setOperationStatus("正在計算五序號…");
+    await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
     const nextSequenceResult = generateSequences(parsedTime.hour, parsedTime.minute);
     const nextValidationIssues = validateSequences(nextSequenceResult);
+    setOperationStatus(nextValidationIssues.length > 0 ? null : "正在產生牌卡…");
+    if (nextValidationIssues.length === 0) await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
     setFormError(null);
     setSequenceResult(nextSequenceResult);
     setValidationIssues(nextValidationIssues);
@@ -233,6 +325,7 @@ export function FiveCardDrawModule({
     } else {
       window.requestAnimationFrame(() => sequencePanelRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }));
     }
+    setOperationStatus(null);
   };
 
   const handleWeekdayChange = (value: WeekdayKey) => {
@@ -259,6 +352,51 @@ export function FiveCardDrawModule({
     }
     setFormError(null);
     resetDrawState();
+    clearDraftDraw(draftContextId);
+  };
+
+  const handleRestoreDraft = () => {
+    if (recoveryResult.status !== "valid" && recoveryResult.status !== "expired") return;
+    const draft = recoveryResult.draft;
+    setTimeInput(draft.drawTime);
+    setWeekday(draft.weekday);
+    setSequenceResult(draft.sequenceResult as SequenceResult | null);
+    setValidationIssues(draft.validationIssues);
+    setCards(draft.cards);
+    setObservationDate(new Date(draft.observationDate));
+    setSettingsCollapsed(Boolean(draft.sequenceResult));
+    setSequenceCollapsed(Boolean(draft.sequenceResult));
+    setCoinCollapsed(false);
+    previousLockedCount.current = draft.cards.filter((card) => card.orientationResult?.locked).length;
+    pendingCompletion.current = null;
+    completionAttempted.current = false;
+    completionSent.current = false;
+    setRecoveryResult({ status: "none" });
+    setRecoveryResolved(true);
+    const restoredCount = draft.cards.filter((card) => card.orientationResult?.locked).length;
+    showTemporarySuccess(`已恢復上次未完成的抽牌進度。已恢復進度：${restoredCount} / 5`);
+    window.requestAnimationFrame(() => {
+      if (draft.sequenceResult && draft.cards.length > 0) {
+        coinPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        window.setTimeout(() => coinButtonRefs.current[restoredCount]?.focus({ preventScroll: true }), 300);
+      } else {
+        timeInputRef.current?.focus();
+      }
+    });
+  };
+
+  const handleDiscardDraft = () => {
+    if (recoveryResult.status !== "invalid" && !window.confirm("這會清除尚未完成的抽牌進度，已完成的正逆位也會被清除。是否確定？")) return;
+    clearDraftDraw(draftContextId);
+    setRecoveryResult({ status: "none" });
+    setRecoveryResolved(true);
+    if (!embedded) {
+      setTimeInput("");
+      setWeekday(systemWeekday);
+    }
+    resetDrawState();
+    showTemporarySuccess("已清除未完成抽牌。");
+    window.requestAnimationFrame(() => timeInputRef.current?.focus());
   };
 
   const handleCopy = async (): Promise<boolean> => {
@@ -276,6 +414,7 @@ export function FiveCardDrawModule({
 
   return (
     <div className="draw-module">
+      {recoveryResult.status !== "none" ? <DrawDraftRecoveryPanel result={recoveryResult} onRestore={recoveryResult.status === "invalid" ? undefined : handleRestoreDraft} onDiscard={handleDiscardDraft} /> : null}
       {embedded ? (
         <section className="panel fixed-draw-settings">
           <div className="section-heading"><p className="eyebrow">抽牌設定</p><h2>使用觀測基本資料</h2></div>
@@ -284,7 +423,7 @@ export function FiveCardDrawModule({
             <span>牌卡對照<strong>{getWeekdayLabel(weekday)}</strong></span>
           </div>
           {formError ? <StatusMessage tone="error" message={formError} /> : null}
-          <button className="primary-button" type="button" disabled={activeFlipIndex !== null || completionSaving} onClick={handleCalculate}>計算五個序號</button>
+          <button className="primary-button" type="button" disabled={activeFlipIndex !== null || completionSaving || Boolean(operationStatus)} onClick={() => void handleCalculate()}>計算五個序號</button>
           {activeFlipIndex !== null || completionSaving ? <small className="draw-disabled-reason">抽牌或保存進行中，暫時不能重新計算。</small> : null}
         </section>
       ) : (
@@ -296,15 +435,17 @@ export function FiveCardDrawModule({
           inputRef={timeInputRef}
           collapsed={settingsCollapsed}
           onToggleCollapsed={() => setSettingsCollapsed((value) => !value)}
-          disabled={activeFlipIndex !== null || completionSaving}
+          disabled={activeFlipIndex !== null || completionSaving || Boolean(operationStatus)}
           disabledReason="抽牌或保存進行中，暫時不能重新計算。"
           onTimeInputChange={(value) => { setTimeInput(formatTimeInput(value)); setFormError(null); setCopyMessage(null); }}
           onWeekdayChange={handleWeekdayChange}
-          onSubmit={handleCalculate}
+          onSubmit={() => void handleCalculate()}
         />
       )}
 
       {successMessage ? <StatusMessage tone="success" message={successMessage} /> : null}
+      {operationStatus ? <StatusMessage tone="info" message={operationStatus} /> : null}
+      {draftError ? <StatusMessage tone="error" message={draftError} onDismiss={() => setDraftError(null)} /> : null}
       <div ref={sequencePanelRef}><SequenceResults sequenceResult={sequenceResult} validationIssues={validationIssues} collapsed={sequenceCollapsed} onToggleCollapsed={() => setSequenceCollapsed((value) => !value)} /></div>
 
       <section className={`panel draw-panel coin-operation-panel ${allCoinsCompleted ? "is-complete" : ""} ${coinCollapsed ? "is-step-collapsed" : ""}`} ref={coinPanelRef}>
@@ -372,18 +513,19 @@ export function FiveCardDrawModule({
         /></div>
       ) : null}
       {completionSaving ? <StatusMessage tone="info" message="正在將鎖定結果寫入 Firestore…" /> : null}
+      {savedAt ? <StatusMessage tone="success" message={`已儲存至雲端。儲存時間：${savedAt}`} /> : null}
       {completionError ? (
         <section className="panel draw-save-error">
           <StatusMessage tone="error" message={completionError} />
           <button
             className="primary-button"
             type="button"
-            disabled={completionSaving}
+            disabled={completionSaving || !online}
             onClick={() => {
               if (pendingCompletion.current) void persistCompletion(pendingCompletion.current);
             }}
           >
-            重新嘗試保存
+            {online ? "重新嘗試保存" : "等待網路恢復"}
           </button>
         </section>
       ) : null}
