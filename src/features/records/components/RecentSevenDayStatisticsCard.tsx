@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { buildRecentDailySummary, formatShortDate } from "../logic/tarotRecordDailyStatistics";
 import type { ParsedTarotRecord } from "../types/tarotRecord";
+import { buildRecordsHash } from "../logic/tarotRecordNavigation";
 
 export function RecentSevenDayStatisticsCard({ records }: { records: ParsedTarotRecord[] }) {
   const summary = useMemo(() => buildRecentDailySummary(records), [records]);
@@ -33,7 +34,7 @@ export function RecentSevenDayStatisticsCard({ records }: { records: ParsedTarot
       >
         <div className="records-daily-columns">
           {summary.days.map((day) => (
-            <div className="records-daily-column" key={day.date}>
+            <a className="records-daily-column records-stat-drilldown" href={buildRecordsHash({ dateFrom: day.date, dateTo: day.date })} aria-label={`查看 ${day.label} 的 ${day.count} 次牌卡出現`} key={day.date}>
               <strong>{day.count}</strong>
               <div className="records-daily-bar-track">
                 <i
@@ -42,7 +43,7 @@ export function RecentSevenDayStatisticsCard({ records }: { records: ParsedTarot
                 />
               </div>
               <span>{day.label}</span>
-            </div>
+            </a>
           ))}
         </div>
       </div>

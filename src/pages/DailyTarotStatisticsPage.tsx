@@ -10,6 +10,7 @@ import {
 import { tarotRecordStorageErrorMessage } from "../features/records/storage/tarotRecordError";
 import { getTarotRecordService } from "../features/records/storage/tarotRecordService";
 import type { ParsedTarotRecord } from "../features/records/types/tarotRecord";
+import { buildRecordsHash } from "../features/records/logic/tarotRecordNavigation";
 
 const ranges: Array<{ value: DailyStatisticsRange; label: string }> = [
   { value: "7", label: "7 日" },
@@ -103,6 +104,7 @@ export function DailyTarotStatisticsPage() {
                         <tr className="records-daily-expanded-row">
                           <td colSpan={7}>
                             <div className="records-daily-expanded-content">
+                              <a className="secondary-button compact-button button-link records-daily-trace-link" href={buildRecordsHash({ dateFrom: day.date, dateTo: day.date })}>查看當日原始紀錄</a>
                               <section className="records-daily-high-frequency" aria-label={`${formatDailyDate(day.date)} 當日高頻牌`}>
                                 <strong>當日高頻牌</strong>
                                 <div>

@@ -46,6 +46,14 @@ export function sortTarotRecordsNewest(records: ParsedTarotRecord[]): ParsedTaro
   });
 }
 
+export function sortTarotRecords(
+  records: ParsedTarotRecord[],
+  direction: "desc" | "asc",
+): ParsedTarotRecord[] {
+  const newest = sortTarotRecordsNewest(records);
+  return direction === "desc" ? newest : newest.reverse();
+}
+
 export function paginateTarotRecords(
   records: ParsedTarotRecord[],
   page: number,

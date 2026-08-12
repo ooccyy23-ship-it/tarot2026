@@ -8,6 +8,7 @@ import {
   type TarotFrequencySortKey,
 } from "../logic/tarotRecordStatistics";
 import type { ParsedTarotRecord, TarotSuit } from "../types/tarotRecord";
+import { buildRecordsHash } from "../logic/tarotRecordNavigation";
 
 const arcanaLabels = { major: "大阿爾克那", minor: "小阿爾克那" } as const;
 const suitLabels: Record<TarotSuit, string> = {
@@ -99,10 +100,10 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
       <div className="records-stat-summary">
         <article><span>全部牌卡</span><strong>{statistics.totalRecords}</strong><small>總筆數</small></article>
         <article><span>不同牌卡</span><strong>{statistics.uniqueCards}</strong><small>共 78 張</small></article>
-        <article><span>正位</span><strong>{statistics.uprightCount}</strong><small>{formatPercentage(statistics.uprightPercentage)}</small></article>
-        <article><span>逆位</span><strong>{statistics.reversedCount}</strong><small>{formatPercentage(statistics.reversedPercentage)}</small></article>
-        <article><span>大阿爾克那</span><strong>{statistics.majorCount}</strong><small>{formatPercentage(statistics.majorPercentage)}</small></article>
-        <article><span>小阿爾克那</span><strong>{statistics.minorCount}</strong><small>{formatPercentage(statistics.minorPercentage)}</small></article>
+        <a href={buildRecordsHash({ orientation: "upright" })} aria-label={`查看正位的 ${statistics.uprightCount} 次出現`}><span>正位</span><strong>{statistics.uprightCount}</strong><small>{formatPercentage(statistics.uprightPercentage)} · 查看紀錄</small></a>
+        <a href={buildRecordsHash({ orientation: "reversed" })} aria-label={`查看逆位的 ${statistics.reversedCount} 次出現`}><span>逆位</span><strong>{statistics.reversedCount}</strong><small>{formatPercentage(statistics.reversedPercentage)} · 查看紀錄</small></a>
+        <a href={buildRecordsHash({ arcanaType: "major" })} aria-label={`查看大阿爾克那的 ${statistics.majorCount} 次出現`}><span>大阿爾克那</span><strong>{statistics.majorCount}</strong><small>{formatPercentage(statistics.majorPercentage)} · 查看紀錄</small></a>
+        <a href={buildRecordsHash({ arcanaType: "minor" })} aria-label={`查看小阿爾克那的 ${statistics.minorCount} 次出現`}><span>小阿爾克那</span><strong>{statistics.minorCount}</strong><small>{formatPercentage(statistics.minorPercentage)} · 查看紀錄</small></a>
       </div>
 
       <div className="records-chart-grid">
@@ -110,11 +111,11 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
           <header><h3>Top 10 牌卡</h3><span>依總次數排序</span></header>
           {topTen.length === 0 ? <div className="records-chart-empty">尚無牌卡資料</div> : <div className="records-horizontal-bars records-top-ten-bars">
             {[topTen.slice(0, 5), topTen.slice(5)].map((column, columnIndex) => <div className="records-top-ten-column" key={columnIndex}>
-              {column.map((row, rowIndex) => <div className="records-bar-row" key={row.cardName}>
+              {column.map((row, rowIndex) => <a className="records-bar-row records-stat-drilldown" href={buildRecordsHash({ cardName: row.cardName })} aria-label={`查看${row.cardName}的 ${row.totalCount} 次出現`} key={row.cardName}>
                 <span><small>{columnIndex * 5 + rowIndex + 1}</small>{row.cardName}</span>
                 <div><i style={{ width: `${(row.totalCount / topCount) * 100}%` }} /></div>
                 <strong>{row.totalCount}</strong>
-              </div>)}
+              </a>)}
             </div>)}
           </div>}
         </article>
@@ -131,14 +132,14 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
                 {[
                   { label: "正位", count: statistics.uprightCount, percentage: statistics.uprightPercentage, className: "is-upright" },
                   { label: "逆位", count: statistics.reversedCount, percentage: statistics.reversedPercentage, className: "is-reversed" },
-                ].map((item) => <div className="records-structure-row" key={item.label}>
+                ].map((item) => <a className="records-structure-row records-stat-drilldown" href={buildRecordsHash({ orientation: item.label === "正位" ? "upright" : "reversed" })} aria-label={`查看${item.label}的 ${item.count} 次出現`} key={item.label}>
                   <div className="records-structure-values">
                     <span>{item.label}</span>
                     <strong>{item.count} 張</strong>
                     <strong>{formatPercentage(item.percentage)}</strong>
                   </div>
                   <progress className={item.className} max="100" value={item.percentage}>{formatPercentage(item.percentage)}</progress>
-                </div>)}
+                </a>)}
               </div>
               <p className="records-orientation-gap">正逆差 <strong>{orientationDifference.toFixed(1)} 個百分點</strong></p>
               <p className="records-structure-note">此項僅呈現抽牌方向分布，不作為情感或事件意義判定。</p>
@@ -150,7 +151,7 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
                 <span>基準：25%（四花色均勻分布）</span>
               </div>
               <div className="records-structure-rows records-structure-suit-rows">
-                {statistics.suitDistribution.map((item) => <div className="records-structure-row records-suit-row" key={item.suit}>
+                {statistics.suitDistribution.map((item) => <a className="records-structure-row records-suit-row records-stat-drilldown" href={buildRecordsHash({ suit: item.suit })} aria-label={`查看${suitLabels[item.suit]}的 ${item.count} 次出現`} key={item.suit}>
                   <div className="records-structure-values">
                     <span>{suitLabels[item.suit]}</span>
                     <strong>{item.count} 張</strong>
@@ -158,7 +159,7 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
                     <em className={item.percentage >= 25 ? "is-positive" : "is-negative"}>{formatPercentagePoint(item.percentage - 25)}</em>
                   </div>
                   <progress max="100" value={item.percentage}>{formatPercentage(item.percentage)}</progress>
-                </div>)}
+                </a>)}
               </div>
               <p className="records-structure-note">pp = percentage point（百分點）</p>
             </section>
@@ -177,7 +178,7 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
           <label><span>排序方向</span><select value={sortDirection} onChange={(event) => { setSortDirection(event.target.value as "asc" | "desc"); setFrequencyPage(1); }}><option value="asc">由小到大</option><option value="desc">由大到小</option></select></label>
         </div>
         {pagedFrequencies.length === 0 ? <div className="records-placeholder records-frequency-empty"><strong>沒有符合條件的牌卡</strong><p>請調整資料範圍或搜尋條件。</p></div> : <>
-          <div className="records-frequency-table-wrap"><table className="records-frequency-table records-frequency-complete"><thead><tr><th>牌序</th><th>牌卡</th><th>牌類</th><th>牌組</th><th>總次數</th><th>正位</th><th>逆位</th><th>比例</th><th>最近出現日期</th></tr></thead><tbody>{pagedFrequencies.map((row) => <tr key={row.cardName}><td>{row.order}</td><td><strong>{row.cardName}</strong></td><td>{arcanaLabels[row.arcanaType]}</td><td>{suitLabels[row.suit]}</td><td>{row.totalCount}</td><td>{row.uprightCount}</td><td>{row.reversedCount}</td><td>{formatPercentage(row.percentage)}</td><td>{row.recentDate ? row.recentDate.replace(/-/g, "/") : "尚未出現"}</td></tr>)}</tbody></table></div>
+          <div className="records-frequency-table-wrap"><table className="records-frequency-table records-frequency-complete"><thead><tr><th>牌序</th><th>牌卡</th><th>牌類</th><th>牌組</th><th>總次數</th><th>正位</th><th>逆位</th><th>比例</th><th>最近出現日期</th></tr></thead><tbody>{pagedFrequencies.map((row) => <tr key={row.cardName}><td>{row.order}</td><td>{row.totalCount > 0 ? <a href={buildRecordsHash({ cardName: row.cardName })} aria-label={`查看${row.cardName}的原始紀錄`}><strong>{row.cardName}</strong></a> : <strong>{row.cardName}</strong>}</td><td>{arcanaLabels[row.arcanaType]}</td><td>{suitLabels[row.suit]}</td><td>{row.totalCount}</td><td>{row.uprightCount}</td><td>{row.reversedCount}</td><td>{formatPercentage(row.percentage)}</td><td>{row.recentDate ? row.recentDate.replace(/-/g, "/") : "尚未出現"}</td></tr>)}</tbody></table></div>
           <div className="records-frequency-pagination">
             <span>共 {filteredFrequencies.length} 張 · 第 {currentFrequencyPage}／{frequencyPageCount} 頁</span>
             <div><button className="ghost-button compact-button" type="button" disabled={currentFrequencyPage <= 1} onClick={() => setFrequencyPage((page) => Math.max(1, page - 1))}>上一頁</button><button className="ghost-button compact-button" type="button" disabled={currentFrequencyPage >= frequencyPageCount} onClick={() => setFrequencyPage((page) => Math.min(frequencyPageCount, page + 1))}>下一頁</button></div>

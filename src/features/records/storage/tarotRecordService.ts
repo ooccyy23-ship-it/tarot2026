@@ -42,6 +42,11 @@ export class TarotRecordService {
     return this.repository.listRecords();
   }
 
+  listRecordsByGroup(groupId: string): Promise<ParsedTarotRecord[]> {
+    this.assertAuthorized();
+    return this.repository.listRecordsByGroup(groupId);
+  }
+
   listGroups(): Promise<TarotRecordGroupSummary[]> {
     this.assertAuthorized();
     return this.repository.listGroups();

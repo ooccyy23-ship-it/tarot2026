@@ -196,6 +196,14 @@ export class TarotRecordRepository {
     return snapshot.docs.map((item) => toRecord(item.data(), item.id));
   }
 
+  async listRecordsByGroup(groupId: string): Promise<ParsedTarotRecord[]> {
+    const snapshot = await getDocsFromServer(query(
+      collection(this.database, RECORD_COLLECTION),
+      where("groupId", "==", groupId),
+    ));
+    return snapshot.docs.map((item) => toRecord(item.data(), item.id));
+  }
+
   async listGroups(): Promise<TarotRecordGroupSummary[]> {
     const snapshot = await getDocsFromServer(query(
       collection(this.database, GROUP_COLLECTION),
