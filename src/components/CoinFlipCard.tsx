@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRotateLeft, faCheck, faCompass } from "@fortawesome/free-solid-svg-icons";
-import { useEffect } from "react";
+import { useEffect, type Ref } from "react";
 import type { DrawCard } from "../types/tarot";
 
 type CoinFlipCardProps = {
@@ -9,6 +9,8 @@ type CoinFlipCardProps = {
   isFlipping: boolean;
   onStart: () => void;
   onStop: () => void;
+  buttonRef?: Ref<HTMLButtonElement>;
+  disabledReason?: string;
 };
 
 export function CoinFlipCard({
@@ -17,6 +19,8 @@ export function CoinFlipCard({
   isFlipping,
   onStart,
   onStop,
+  buttonRef,
+  disabledReason,
 }: CoinFlipCardProps) {
   const locked = card.orientationResult?.locked ?? false;
   const orientationLabel = card.orientationResult?.orientation === "upright" ? "正位" : "逆位";
@@ -56,7 +60,7 @@ export function CoinFlipCard({
       <p className="coin-status" aria-live="polite">
         {locked ? (
           <strong>{card.orientationResult?.orientation === "upright" ? "✓ 正位" : "↺ 逆位"}</strong>
-        ) : isFlipping ? "抽牌中" : "等待抽牌"}
+        ) : isFlipping ? "抽牌中" : !canInteract && disabledReason ? disabledReason : "等待抽牌"}
       </p>
 
       <div className="coin-action-slot">
@@ -65,6 +69,8 @@ export function CoinFlipCard({
             className="secondary-button coin-action-button"
             type="button"
             disabled={!canInteract}
+            ref={buttonRef}
+            title={!canInteract ? disabledReason : undefined}
             onClick={onStart}
           >
             開始

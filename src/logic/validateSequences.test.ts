@@ -14,7 +14,7 @@ describe("validateSequences", () => {
         expect.objectContaining({
           sequence: "s3",
           value: 0,
-          reason: "序號不可為0",
+          reason: "序號 3 計算結果為 0，本次時間不適合抽牌。",
         }),
       ]),
     );
@@ -30,7 +30,7 @@ describe("validateSequences", () => {
         expect.objectContaining({
           sequence: "s2",
           value: 82,
-          reason: "序號不可大於78",
+          reason: "序號 2 計算結果為 82，大於有效範圍 1～78，本次時間不適合抽牌。",
         }),
       ]),
     );
@@ -49,7 +49,7 @@ describe("validateSequences", () => {
 
     expect(issues).toHaveLength(2);
     expect(issues.map((issue) => issue.sequence)).toEqual(["s1", "s2"]);
-    expect(issues.every((issue) => issue.reason === "序號重複：數值 20 共出現 2 次")).toBe(true);
+    expect(issues.every((issue) => issue.reason === "序號 20 重複出現於第 1 張與第 2 張，不能進入正逆位抽牌。")).toBe(true);
   });
 
   it("accepts five unique values within 1 to 78", () => {
