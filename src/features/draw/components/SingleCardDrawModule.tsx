@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLock } from "@fortawesome/free-solid-svg-icons";
-import { useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { CoinFlipCard } from "../../../components/CoinFlipCard";
 import { DrawSettings } from "../../../components/DrawSettings";
 import { StatusMessage } from "../../../components/StatusMessage";
@@ -15,7 +15,12 @@ import {
   getSingleSequenceIssue,
 } from "../logic/singleDraw";
 
-export function SingleCardDrawModule() {
+type Props = {
+  isActive?: boolean;
+  onProgressChange?: (inProgress: boolean) => void;
+};
+
+export function SingleCardDrawModule({ isActive = true, onProgressChange }: Props) {
   const systemWeekday = useMemo(() => getSystemWeekday(), []);
   const [timeInput, setTimeInput] = useState("");
   const [weekday, setWeekday] = useState<WeekdayKey>(systemWeekday);
@@ -25,11 +30,81 @@ export function SingleCardDrawModule() {
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipStartedAt, setFlipStartedAt] = useState<string | null>(null);
   const [copyMessage, setCopyMessage] = useState<string | null>(null);
+  const [copyMessageTone, setCopyMessageTone] = useState<"success" | "error">("success");
+  const [copying, setCopying] = useState(false);
+  const [settingsCollapsed, setSettingsCollapsed] = useState(false);
+  const [sequenceCollapsed, setSequenceCollapsed] = useState(false);
+  const [coinCollapsed, setCoinCollapsed] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const timeInputRef = useRef<HTMLInputElement | null>(null);
+  const coinPanelRef = useRef<HTMLElement | null>(null);
+  const coinButtonRef = useRef<HTMLButtonElement | null>(null);
+  const finalResultRef = useRef<HTMLElement | null>(null);
+  const guideToCoin = useRef(false);
+  const wasLocked = useRef(false);
+  const successTimer = useRef<number | null>(null);
 
   const isLocked = card?.orientationResult?.locked ?? false;
+  const drawInProgress = Boolean(sequenceResult || card || isFlipping) && !isLocked;
+
+  const showTemporarySuccess = useCallback((message: string) => {
+    setSuccessMessage(message);
+    if (successTimer.current !== null) window.clearTimeout(successTimer.current);
+    successTimer.current = window.setTimeout(() => setSuccessMessage(null), 1800);
+  }, []);
+
+  useEffect(() => () => {
+    if (successTimer.current !== null) window.clearTimeout(successTimer.current);
+  }, []);
+
+  useEffect(() => {
+    onProgressChange?.(drawInProgress);
+  }, [drawInProgress, onProgressChange]);
+
+  useEffect(() => {
+    if (isActive && !sequenceResult) window.requestAnimationFrame(() => timeInputRef.current?.focus());
+  }, [isActive, sequenceResult]);
+
+  useEffect(() => {
+    if (!isActive || !drawInProgress) return;
+    const message = "目前單抽尚未完成，離開後本次未完成操作可能遺失。確定要離開嗎？";
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    const handleRouteChange = (event: Event) => {
+      if (!window.confirm(message)) event.preventDefault();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("tarot:before-route-change", handleRouteChange);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("tarot:before-route-change", handleRouteChange);
+    };
+  }, [drawInProgress, isActive]);
+
+  useEffect(() => {
+    if (!guideToCoin.current || !card || isLocked) return;
+    guideToCoin.current = false;
+    window.requestAnimationFrame(() => {
+      coinPanelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      window.setTimeout(() => coinButtonRef.current?.focus({ preventScroll: true }), 300);
+    });
+  }, [card, isLocked]);
+
+  useEffect(() => {
+    if (!isLocked || wasLocked.current) {
+      wasLocked.current = isLocked;
+      return;
+    }
+    wasLocked.current = true;
+    setCoinCollapsed(true);
+    showTemporarySuccess("單抽正逆位判定已完成，最終結果已產生。");
+    window.requestAnimationFrame(() => finalResultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }, [isLocked, showTemporarySuccess]);
 
   const handleCalculate = () => {
-    if (isLocked || isFlipping) return;
+    if (isLocked || isFlipping || (sequenceResult && !window.confirm("重新計算將清除目前的單抽序號與操作，是否繼續？"))) return;
     const parsedTime = parseTimeInput(timeInput);
     if (!parsedTime) {
       setFormError("請輸入有效時間，格式需為 HH:MM，且小時 00～23、分鐘 00～59。");
@@ -44,6 +119,14 @@ export function SingleCardDrawModule() {
     setFormError(issue);
     setCard(issue ? null : buildSingleDrawCard(result, weekday));
     setCopyMessage(null);
+    setSettingsCollapsed(!issue);
+    setSequenceCollapsed(!issue);
+    setCoinCollapsed(false);
+    wasLocked.current = false;
+    if (!issue) {
+      guideToCoin.current = true;
+      showTemporarySuccess("單抽序號計算完成，已前往正逆位操作。");
+    }
   };
 
   const handleWeekdayChange = (value: WeekdayKey) => {
@@ -65,7 +148,7 @@ export function SingleCardDrawModule() {
   };
 
   const handleRestart = () => {
-    if (isLocked && !window.confirm("開始新的單抽將清除目前已鎖定的結果，是否繼續？")) return;
+    if (!window.confirm("開始新的單抽將清除目前的設定、序號與已鎖定結果，是否繼續？")) return;
     setTimeInput("");
     setWeekday(systemWeekday);
     setFormError(null);
@@ -74,16 +157,29 @@ export function SingleCardDrawModule() {
     setIsFlipping(false);
     setFlipStartedAt(null);
     setCopyMessage(null);
+    setCopying(false);
+    setSettingsCollapsed(false);
+    setSequenceCollapsed(false);
+    setCoinCollapsed(false);
+    setSuccessMessage(null);
+    guideToCoin.current = false;
+    wasLocked.current = false;
   };
 
   const handleCopy = async () => {
-    if (!card || !isLocked) return;
+    if (!card || !isLocked || copying) return;
+    setCopying(true);
     try {
       await navigator.clipboard.writeText(buildSingleCopyText(timeInput, weekday, card));
+      setCopyMessageTone("success");
       setCopyMessage("單抽結果已複製到剪貼簿。");
+      window.setTimeout(() => setCopyMessage(null), 1500);
     } catch (error) {
       console.error(error);
-      setCopyMessage("複製失敗，請手動複製畫面內容。");
+      setCopyMessageTone("error");
+      setCopyMessage("複製失敗，瀏覽器可能未允許剪貼簿權限，請確認權限後再試一次。");
+    } finally {
+      setCopying(false);
     }
   };
 
@@ -94,7 +190,11 @@ export function SingleCardDrawModule() {
         weekday={weekday}
         systemWeekday={systemWeekday}
         error={formError}
+        inputRef={timeInputRef}
+        collapsed={settingsCollapsed}
+        onToggleCollapsed={() => setSettingsCollapsed((value) => !value)}
         disabled={isLocked || isFlipping}
+        disabledReason={isFlipping ? "抽牌進行中，暫時不能重新計算。" : isLocked ? "結果已鎖定，請先開始新的單抽。" : undefined}
         submitLabel="計算單抽序號"
         onTimeInputChange={(value) => {
           setTimeInput(formatTimeInput(value));
@@ -107,12 +207,15 @@ export function SingleCardDrawModule() {
         onSubmit={handleCalculate}
       />
 
-      <section className="panel draw-panel single-sequence-panel">
-        <div className="section-heading">
-          <p className="eyebrow">步驟 2</p>
-          <h2>單抽序號計算結果</h2>
+      {successMessage ? <StatusMessage tone="success" message={successMessage} /> : null}
+
+      <section className={`panel draw-panel single-sequence-panel ${sequenceCollapsed ? "is-step-collapsed" : ""}`}>
+        <div className="section-heading draw-step-heading">
+          <div><p className="eyebrow">步驟 2</p><h2>單抽序號計算結果</h2></div>
+          {sequenceResult ? <button className="ghost-button compact-button" type="button" onClick={() => setSequenceCollapsed((value) => !value)}>{sequenceCollapsed ? "展開查看" : "收合"}</button> : null}
         </div>
-        {!sequenceResult ? <p className="placeholder-text">完成設定後，這裡會顯示單抽序號。</p> : null}
+        {sequenceCollapsed && sequenceResult ? <p className="draw-step-summary">已完成：序號 {sequenceResult.formattedSequence}</p> : null}
+        {!sequenceCollapsed ? <>{!sequenceResult ? <p className="placeholder-text">完成設定後，這裡會顯示單抽序號。</p> : null}
         {sequenceResult ? (
           <>
             <article className="sequence-card single-sequence-card">
@@ -120,7 +223,7 @@ export function SingleCardDrawModule() {
               <strong>{sequenceResult.formattedSequence}</strong>
             </article>
             {formError ? (
-              <StatusMessage tone="error" message="此時間不適合單抽，未載入正式牌卡。" />
+              <StatusMessage tone="error" message={formError} />
             ) : (
               <StatusMessage tone="success" message="序號有效，已可進行正逆位硬幣操作。" />
             )}
@@ -130,13 +233,15 @@ export function SingleCardDrawModule() {
             </details>
           </>
         ) : null}
+        </> : null}
       </section>
 
-      <section className="panel draw-panel coin-operation-panel single-coin-panel">
-        <div className="section-heading">
-          <p className="eyebrow">步驟 3</p>
-          <h2>決定正逆位</h2>
+      <section className={`panel draw-panel coin-operation-panel single-coin-panel ${coinCollapsed ? "is-step-collapsed" : ""}`} ref={coinPanelRef}>
+        <div className="section-heading draw-step-heading">
+          <div><p className="eyebrow">步驟 3</p><h2>決定正逆位</h2></div>
+          {card ? <button className="ghost-button compact-button" type="button" onClick={() => setCoinCollapsed((value) => !value)}>{coinCollapsed ? "展開查看" : "收合"}</button> : null}
         </div>
+        {coinCollapsed ? <p className="draw-step-summary">正逆位判定已完成</p> : <>
         <p className="section-description">點擊開始後將自動完成抽牌，以硬幣正面決定正位、反面決定逆位。</p>
         {!card ? <p className="placeholder-text">序號有效後，這裡會顯示一張待揭示的牌。</p> : null}
         {card ? (
@@ -145,6 +250,8 @@ export function SingleCardDrawModule() {
               card={card}
               canInteract={!isLocked}
               isFlipping={isFlipping}
+              buttonRef={coinButtonRef}
+              disabledReason="請先取得有效單抽序號"
               onStart={() => {
                 setFlipStartedAt(new Date().toISOString());
                 setIsFlipping(true);
@@ -158,10 +265,11 @@ export function SingleCardDrawModule() {
           <FontAwesomeIcon className="coin-lock-icon" icon={faLock} aria-hidden="true" />
           <span>抽牌完成後結果立即鎖定；需按「開始新的單抽」才能重新抽牌。</span>
         </div>
+        </>}
       </section>
 
       {card && isLocked ? (
-        <section className="panel draw-panel final-results-panel single-final-panel">
+        <section className="panel draw-panel final-results-panel single-final-panel" ref={finalResultRef}>
           <div className="section-heading">
             <p className="eyebrow">步驟 4</p>
             <h2>最終單抽結果</h2>
@@ -183,12 +291,12 @@ export function SingleCardDrawModule() {
             </div>
           </article>
           <div className="actions-row final-actions-row">
-            <button className="primary-button" type="button" onClick={handleCopy}>複製單抽結果</button>
+            <button className="primary-button" type="button" disabled={copying} onClick={handleCopy}>{copying ? "複製中…" : "複製單抽結果"}</button>
             <button className="ghost-button" type="button" onClick={handleRestart}>開始新的單抽</button>
           </div>
         </section>
       ) : null}
-      {copyMessage ? <StatusMessage tone="info" message={copyMessage} /> : null}
+      {copyMessage ? <StatusMessage tone={copyMessageTone} message={copyMessage} /> : null}
     </div>
   );
 }

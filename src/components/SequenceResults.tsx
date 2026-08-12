@@ -4,6 +4,8 @@ import { StatusMessage } from "./StatusMessage";
 type SequenceResultsProps = {
   sequenceResult: SequenceResult | null;
   validationIssues: ValidationIssue[];
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
 };
 
 const cards = [
@@ -14,15 +16,16 @@ const cards = [
   { key: "s5", label: "序號5" },
 ] as const;
 
-export function SequenceResults({ sequenceResult, validationIssues }: SequenceResultsProps) {
+export function SequenceResults({ sequenceResult, validationIssues, collapsed = false, onToggleCollapsed }: SequenceResultsProps) {
   return (
-    <section className="panel draw-panel sequence-results-panel">
-      <div className="section-heading">
-        <p className="eyebrow">步驟 2</p>
-        <h2>五序號計算結果</h2>
+    <section className={`panel draw-panel sequence-results-panel ${collapsed ? "is-step-collapsed" : ""}`}>
+      <div className="section-heading draw-step-heading">
+        <div><p className="eyebrow">步驟 2</p><h2>五序號計算結果</h2></div>
+        {sequenceResult && onToggleCollapsed ? <button className="ghost-button compact-button" type="button" onClick={onToggleCollapsed}>{collapsed ? "展開查看" : "收合"}</button> : null}
       </div>
 
-      {!sequenceResult ? <p className="placeholder-text">完成設定後，這裡會顯示五個序號。</p> : null}
+      {collapsed && sequenceResult ? <p className="draw-step-summary">已完成：{Object.values(sequenceResult.formattedValues).join(" · ")}</p> : null}
+      {!collapsed ? <>{!sequenceResult ? <p className="placeholder-text">完成設定後，這裡會顯示五個序號。</p> : null}
 
       {sequenceResult ? (
         <>
@@ -37,7 +40,7 @@ export function SequenceResults({ sequenceResult, validationIssues }: SequenceRe
 
           {validationIssues.length > 0 ? (
             <>
-              <StatusMessage tone="error" message="此時間不適合抽牌" />
+              <StatusMessage tone="error" message={validationIssues[0].reason} />
               <div className="invalid-table">
                 <div className="invalid-row invalid-header">
                   <span>無效序號</span>
@@ -80,6 +83,7 @@ export function SequenceResults({ sequenceResult, validationIssues }: SequenceRe
           </details>
         </>
       ) : null}
+      </> : null}
     </section>
   );
 }

@@ -137,6 +137,16 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
 .records-analysis-page .records-bar-row { min-height: 30px; }
 .records-analysis-page .records-frequency-section { border-top-color: var(--border); }
 
+.draw-step-heading { justify-content: space-between; }
+.draw-step-heading > div { min-width: 0; }
+.draw-step-heading .compact-button { flex: none; min-height: 36px; padding: 6px 12px; }
+.draw-panel.is-step-collapsed { padding-block: 18px; }
+.draw-panel.is-step-collapsed .draw-step-heading { margin-bottom: 8px; }
+.draw-step-summary { margin: 0; color: var(--text-secondary); font-size: .84rem; }
+.draw-settings-actions { flex-wrap: wrap; gap: 8px 14px; }
+.draw-disabled-reason { flex-basis: 100%; color: var(--text-secondary); font-size: .74rem; line-height: 1.45; }
+.coin-card.is-disabled .coin-status { min-height: 34px; color: var(--text-secondary); font-size: .72rem; line-height: 1.35; }
+
 .records-analysis-page .records-structure-card { min-height: 300px; max-height: 380px; padding: 20px 22px; }
 .records-structure-header { align-items: baseline; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
 .records-structure-header h3 { font-size: 1.2rem; }
@@ -275,6 +285,9 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
   .records-daily-groups article > header { flex-direction: column; gap: 4px; }
   .records-daily-groups ol { grid-template-columns: repeat(2,minmax(0,1fr)); }
   .records-daily-high-frequency { align-items: flex-start; flex-direction: column; gap: 7px; }
+  .draw-step-heading { align-items: center; flex-direction: row; }
+  .draw-step-heading h2 { font-size: 1.3rem; }
+  .draw-step-heading .compact-button { min-height: 40px; }
 }
 @media (max-width: 420px) {
   .brand strong { font-size: .88rem; }

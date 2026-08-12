@@ -7,6 +7,15 @@ type DrawMode = "five" | "single";
 
 export default function App() {
   const [drawMode, setDrawMode] = useState<DrawMode>("five");
+  const [fiveDrawInProgress, setFiveDrawInProgress] = useState(false);
+  const [singleDrawInProgress, setSingleDrawInProgress] = useState(false);
+
+  const changeDrawMode = (nextMode: DrawMode) => {
+    if (nextMode === drawMode) return;
+    const hasUnfinishedDraw = drawMode === "five" ? fiveDrawInProgress : singleDrawInProgress;
+    if (hasUnfinishedDraw && !window.confirm("目前抽牌尚未完成，切換模式將離開目前操作。確定要繼續嗎？")) return;
+    setDrawMode(nextMode);
+  };
 
   return (
     <main className="app-shell">
@@ -18,7 +27,7 @@ export default function App() {
             type="button"
             role="tab"
             aria-selected={drawMode === "five"}
-            onClick={() => setDrawMode("five")}
+            onClick={() => changeDrawMode("five")}
           >
             五牌抽取
           </button>
@@ -27,14 +36,14 @@ export default function App() {
             type="button"
             role="tab"
             aria-selected={drawMode === "single"}
-            onClick={() => setDrawMode("single")}
+            onClick={() => changeDrawMode("single")}
           >
             單張抽牌
           </button>
         </div>
       </section>
-      <div hidden={drawMode !== "five"}><FiveCardDrawModule /></div>
-      <div hidden={drawMode !== "single"}><SingleCardDrawModule /></div>
+      <div hidden={drawMode !== "five"}><FiveCardDrawModule isActive={drawMode === "five"} onProgressChange={setFiveDrawInProgress} /></div>
+      <div hidden={drawMode !== "single"}><SingleCardDrawModule isActive={drawMode === "single"} onProgressChange={setSingleDrawInProgress} /></div>
     </main>
   );
 }

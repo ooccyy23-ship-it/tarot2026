@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DrawToolPage from "../App";
 import { DashboardPage } from "../pages/DashboardPage";
 import { TarotAnalysisPage } from "../pages/TarotAnalysisPage";
@@ -18,9 +18,23 @@ function getRoute(): string {
 
 export function AppRouter() {
   const [route, setRoute] = useState(getRoute);
+  const routeRef = useRef(route);
 
   useEffect(() => {
-    const handleHashChange = () => setRoute(getRoute());
+    const handleHashChange = () => {
+      const nextRoute = getRoute();
+      if (nextRoute === routeRef.current) return;
+      const navigationEvent = new CustomEvent("tarot:before-route-change", {
+        cancelable: true,
+        detail: { from: routeRef.current, to: nextRoute },
+      });
+      if (!window.dispatchEvent(navigationEvent)) {
+        window.history.replaceState(null, "", `#${routeRef.current}`);
+        return;
+      }
+      routeRef.current = nextRoute;
+      setRoute(nextRoute);
+    };
     window.addEventListener("hashchange", handleHashChange);
     return () => window.removeEventListener("hashchange", handleHashChange);
   }, []);

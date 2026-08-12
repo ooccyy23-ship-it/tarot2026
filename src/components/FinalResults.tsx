@@ -21,6 +21,7 @@ export function FinalResults({
   onRestart,
 }: FinalResultsProps) {
   const [copied, setCopied] = useState(false);
+  const [copying, setCopying] = useState(false);
   const resetTimer = useRef<number | null>(null);
   const observationId = createObservationId(observationDate, drawTime);
 
@@ -29,11 +30,17 @@ export function FinalResults({
   }, []);
 
   const handleCopy = async () => {
-    const succeeded = await onCopy();
-    if (!succeeded) return;
-    setCopied(true);
-    if (resetTimer.current !== null) window.clearTimeout(resetTimer.current);
-    resetTimer.current = window.setTimeout(() => setCopied(false), 1500);
+    if (copying) return;
+    setCopying(true);
+    try {
+      const succeeded = await onCopy();
+      if (!succeeded) return;
+      setCopied(true);
+      if (resetTimer.current !== null) window.clearTimeout(resetTimer.current);
+      resetTimer.current = window.setTimeout(() => setCopied(false), 1500);
+    } finally {
+      setCopying(false);
+    }
   };
 
   return (
@@ -70,8 +77,8 @@ export function FinalResults({
       </div>
 
       <div className="actions-row final-actions-row">
-        <button className="primary-button" type="button" onClick={() => void handleCopy()}>
-          {copied ? "已複製完整結果" : "複製完整結果"}
+        <button className="primary-button" type="button" disabled={copying} onClick={() => void handleCopy()}>
+          {copying ? "複製中…" : copied ? "已複製完整結果" : "複製完整結果"}
         </button>
         {onRestart ? (
           <button className="ghost-button" type="button" onClick={onRestart}>
