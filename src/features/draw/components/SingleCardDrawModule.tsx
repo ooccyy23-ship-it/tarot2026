@@ -14,13 +14,27 @@ import {
   calculateSingleSequence,
   getSingleSequenceIssue,
 } from "../logic/singleDraw";
+import { DrawDraftRecoveryPanel } from "./DrawDraftRecoveryPanel";
+import {
+  clearDraftDraw,
+  loadDraftDraw,
+  saveDraftDraw,
+  type DrawDraftLoadResult,
+} from "../storage/drawDraftStorage";
 
 type Props = {
   isActive?: boolean;
   onProgressChange?: (inProgress: boolean) => void;
+  draftContextId?: string;
+  draftQuestionGroupName?: string;
 };
 
-export function SingleCardDrawModule({ isActive = true, onProgressChange }: Props) {
+export function SingleCardDrawModule({
+  isActive = true,
+  onProgressChange,
+  draftContextId = "draw-tool",
+  draftQuestionGroupName = "一般單抽",
+}: Props) {
   const systemWeekday = useMemo(() => getSystemWeekday(), []);
   const [timeInput, setTimeInput] = useState("");
   const [weekday, setWeekday] = useState<WeekdayKey>(systemWeekday);
@@ -36,6 +50,10 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
   const [sequenceCollapsed, setSequenceCollapsed] = useState(false);
   const [coinCollapsed, setCoinCollapsed] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [operationStatus, setOperationStatus] = useState<string | null>(null);
+  const [draftError, setDraftError] = useState<string | null>(null);
+  const [recoveryResult, setRecoveryResult] = useState<DrawDraftLoadResult>({ status: "none" });
+  const [recoveryResolved, setRecoveryResolved] = useState(false);
   const timeInputRef = useRef<HTMLInputElement | null>(null);
   const coinPanelRef = useRef<HTMLElement | null>(null);
   const coinButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -45,7 +63,44 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
   const successTimer = useRef<number | null>(null);
 
   const isLocked = card?.orientationResult?.locked ?? false;
-  const drawInProgress = Boolean(sequenceResult || card || isFlipping) && !isLocked;
+  const drawInProgress = Boolean(timeInput || sequenceResult || card || isFlipping) && !isLocked;
+
+  useEffect(() => {
+    if (!isActive || recoveryResolved) return;
+    const result = loadDraftDraw(draftContextId);
+    if ((result.status === "valid" || result.status === "expired") && result.draft.mode !== "single") {
+      setRecoveryResult({ status: "none" });
+      setRecoveryResolved(true);
+      return;
+    }
+    setRecoveryResult(result);
+    setRecoveryResolved(result.status === "none");
+  }, [draftContextId, isActive, recoveryResolved]);
+
+  useEffect(() => {
+    if (!isActive || !recoveryResolved || !parseTimeInput(timeInput) || isLocked) return;
+    try {
+      saveDraftDraw({
+        mode: "single",
+        contextId: draftContextId,
+        questionGroupName: draftQuestionGroupName,
+        observationDate: new Date().toISOString(),
+        drawTime: timeInput,
+        weekday,
+        sequenceResult,
+        validationIssues: [],
+        cards: card ? [card] : [],
+        progress: sequenceResult ? "sequences_ready" : "time_entered",
+      });
+      setDraftError(null);
+    } catch (reason) {
+      setDraftError(reason instanceof Error ? `未完成抽牌暫存失敗：${reason.message}` : "未完成抽牌暫存失敗。");
+    }
+  }, [card, draftContextId, draftQuestionGroupName, isActive, isLocked, recoveryResolved, sequenceResult, timeInput, weekday]);
+
+  useEffect(() => {
+    if (isLocked) clearDraftDraw(draftContextId);
+  }, [draftContextId, isLocked]);
 
   const showTemporarySuccess = useCallback((message: string) => {
     setSuccessMessage(message);
@@ -103,8 +158,8 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
     window.requestAnimationFrame(() => finalResultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
   }, [isLocked, showTemporarySuccess]);
 
-  const handleCalculate = () => {
-    if (isLocked || isFlipping || (sequenceResult && !window.confirm("重新計算將清除目前的單抽序號與操作，是否繼續？"))) return;
+  const handleCalculate = async () => {
+    if (isLocked || isFlipping || operationStatus || (sequenceResult && !window.confirm("重新計算將清除目前的單抽序號與操作，是否繼續？"))) return;
     const parsedTime = parseTimeInput(timeInput);
     if (!parsedTime) {
       setFormError("請輸入有效時間，格式需為 HH:MM，且小時 00～23、分鐘 00～59。");
@@ -112,9 +167,12 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
       setCard(null);
       return;
     }
-
+    setOperationStatus("正在計算單抽序號…");
+    await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
     const result = calculateSingleSequence(parsedTime.hour, parsedTime.minute);
     const issue = getSingleSequenceIssue(result);
+    setOperationStatus(issue ? null : "正在產生牌卡…");
+    if (!issue) await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
     setSequenceResult(result);
     setFormError(issue);
     setCard(issue ? null : buildSingleDrawCard(result, weekday));
@@ -127,6 +185,7 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
       guideToCoin.current = true;
       showTemporarySuccess("單抽序號計算完成，已前往正逆位操作。");
     }
+    setOperationStatus(null);
   };
 
   const handleWeekdayChange = (value: WeekdayKey) => {
@@ -164,6 +223,32 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
     setSuccessMessage(null);
     guideToCoin.current = false;
     wasLocked.current = false;
+    clearDraftDraw(draftContextId);
+  };
+
+  const handleRestoreDraft = () => {
+    if (recoveryResult.status !== "valid" && recoveryResult.status !== "expired") return;
+    const draft = recoveryResult.draft;
+    setTimeInput(draft.drawTime);
+    setWeekday(draft.weekday);
+    setSequenceResult(draft.sequenceResult as SingleSequenceResult | null);
+    setCard(draft.cards[0] ?? null);
+    setSettingsCollapsed(Boolean(draft.sequenceResult));
+    setSequenceCollapsed(Boolean(draft.sequenceResult));
+    setCoinCollapsed(false);
+    setRecoveryResult({ status: "none" });
+    setRecoveryResolved(true);
+    showTemporarySuccess(`已恢復上次未完成的抽牌進度。已恢復進度：${draft.cards.filter((item) => item.orientationResult?.locked).length} / 1`);
+    guideToCoin.current = Boolean(draft.cards[0] && !draft.cards[0].orientationResult?.locked);
+  };
+
+  const handleDiscardDraft = () => {
+    if (recoveryResult.status !== "invalid" && !window.confirm("這會清除尚未完成的抽牌進度，已完成的正逆位也會被清除。是否確定？")) return;
+    clearDraftDraw(draftContextId);
+    setRecoveryResult({ status: "none" });
+    setRecoveryResolved(true);
+    showTemporarySuccess("已清除未完成抽牌。");
+    window.requestAnimationFrame(() => timeInputRef.current?.focus());
   };
 
   const handleCopy = async () => {
@@ -185,6 +270,7 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
 
   return (
     <div className="draw-module single-draw-module">
+      {recoveryResult.status !== "none" ? <DrawDraftRecoveryPanel result={recoveryResult} onRestore={recoveryResult.status === "invalid" ? undefined : handleRestoreDraft} onDiscard={handleDiscardDraft} /> : null}
       <DrawSettings
         timeInput={timeInput}
         weekday={weekday}
@@ -193,7 +279,7 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
         inputRef={timeInputRef}
         collapsed={settingsCollapsed}
         onToggleCollapsed={() => setSettingsCollapsed((value) => !value)}
-        disabled={isLocked || isFlipping}
+        disabled={isLocked || isFlipping || Boolean(operationStatus)}
         disabledReason={isFlipping ? "抽牌進行中，暫時不能重新計算。" : isLocked ? "結果已鎖定，請先開始新的單抽。" : undefined}
         submitLabel="計算單抽序號"
         onTimeInputChange={(value) => {
@@ -204,10 +290,12 @@ export function SingleCardDrawModule({ isActive = true, onProgressChange }: Prop
           setCopyMessage(null);
         }}
         onWeekdayChange={handleWeekdayChange}
-        onSubmit={handleCalculate}
+        onSubmit={() => void handleCalculate()}
       />
 
       {successMessage ? <StatusMessage tone="success" message={successMessage} /> : null}
+      {operationStatus ? <StatusMessage tone="info" message={operationStatus} /> : null}
+      {draftError ? <StatusMessage tone="error" message={draftError} onDismiss={() => setDraftError(null)} /> : null}
 
       <section className={`panel draw-panel single-sequence-panel ${sequenceCollapsed ? "is-step-collapsed" : ""}`}>
         <div className="section-heading draw-step-heading">

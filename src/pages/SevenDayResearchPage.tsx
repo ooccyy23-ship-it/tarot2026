@@ -350,6 +350,9 @@ export function SevenDayResearchPage({ sessionId }: { sessionId?: string }) {
                         {drawContext ? (
                           <FiveCardDrawModule
                             key={`${activeSession.sessionId}-${setId}-${drawContext.drawTimestamp}`}
+                            draftContextId={`research:${activeSession.sessionId}:${setId}`}
+                            draftQuestionGroupId={config.questionGroup.id}
+                            draftQuestionGroupName={config.questionGroup.title}
                             fixedTime={drawContext.drawTime}
                             fixedWeekday={drawContext.weekday}
                             questions={currentQuestions}

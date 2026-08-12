@@ -2,11 +2,12 @@ import { useState } from "react";
 import { PageHeader } from "./components/ui/PageHeader";
 import { FiveCardDrawModule } from "./features/draw/components/FiveCardDrawModule";
 import { SingleCardDrawModule } from "./features/draw/components/SingleCardDrawModule";
+import { getDraftDrawMode } from "./features/draw/storage/drawDraftStorage";
 
 type DrawMode = "five" | "single";
 
 export default function App() {
-  const [drawMode, setDrawMode] = useState<DrawMode>("five");
+  const [drawMode, setDrawMode] = useState<DrawMode>(() => getDraftDrawMode("draw-tool") ?? "five");
   const [fiveDrawInProgress, setFiveDrawInProgress] = useState(false);
   const [singleDrawInProgress, setSingleDrawInProgress] = useState(false);
 
@@ -42,8 +43,8 @@ export default function App() {
           </button>
         </div>
       </section>
-      <div hidden={drawMode !== "five"}><FiveCardDrawModule isActive={drawMode === "five"} onProgressChange={setFiveDrawInProgress} /></div>
-      <div hidden={drawMode !== "single"}><SingleCardDrawModule isActive={drawMode === "single"} onProgressChange={setSingleDrawInProgress} /></div>
+      <div hidden={drawMode !== "five"}><FiveCardDrawModule draftContextId="draw-tool" draftQuestionGroupName="一般五抽" isActive={drawMode === "five"} onProgressChange={setFiveDrawInProgress} /></div>
+      <div hidden={drawMode !== "single"}><SingleCardDrawModule draftContextId="draw-tool" draftQuestionGroupName="一般單抽" isActive={drawMode === "single"} onProgressChange={setSingleDrawInProgress} /></div>
     </main>
   );
 }

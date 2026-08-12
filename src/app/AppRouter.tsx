@@ -5,13 +5,15 @@ import { TarotAnalysisPage } from "../pages/TarotAnalysisPage";
 import { DailyTarotStatisticsPage } from "../pages/DailyTarotStatisticsPage";
 import { TarotRecordImportPage } from "../pages/TarotRecordImportPage";
 import { TarotRecordsPage } from "../pages/TarotRecordsPage";
+import { TarotRecordDetailPage } from "../pages/TarotRecordDetailPage";
 import { AppLayout } from "./AppLayout";
+import { NetworkStatusNotice } from "../components/NetworkStatusNotice";
 
-const routes = ["/", "/draw", "/import", "/records", "/analytics", "/analytics/daily"] as const;
+const routes = ["/", "/draw", "/import", "/records", "/records/detail", "/analytics", "/analytics/daily"] as const;
 export type AppRoute = (typeof routes)[number];
 
 function getRoute(): string {
-  const path = window.location.hash.replace(/^#/, "") || "/";
+  const path = (window.location.hash.replace(/^#/, "") || "/").split("?")[0];
   if (routes.includes(path as AppRoute)) return path;
   return "/";
 }
@@ -53,6 +55,9 @@ export function AppRouter() {
     case "/records":
       page = <TarotRecordsPage />;
       break;
+    case "/records/detail":
+      page = <TarotRecordDetailPage />;
+      break;
     case "/draw":
       page = <DrawToolPage />;
       break;
@@ -60,5 +65,5 @@ export function AppRouter() {
       page = <DashboardPage />;
   }
 
-  return <AppLayout currentRoute={route}>{page}</AppLayout>;
+  return <AppLayout currentRoute={route}><NetworkStatusNotice />{page}</AppLayout>;
 }

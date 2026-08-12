@@ -28,6 +28,9 @@ export function ObservationDrawStep({
         ))}
       </div>
       <FiveCardDrawModule
+        draftContextId={`observation:${draft.questionGroupId}:${draft.observationDate}:${draft.drawTime}`}
+        draftQuestionGroupId={draft.questionGroupId}
+        draftQuestionGroupName={draft.questionGroupSnapshot?.title ?? "新增觀測"}
         fixedTime={draft.drawTime}
         fixedWeekday={weekdayOrder[draft.weekday]}
         questions={questions}

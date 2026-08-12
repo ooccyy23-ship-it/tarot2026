@@ -3,6 +3,7 @@ import {
   doc,
   getDocFromServer,
   getDocsFromServer,
+  limit,
   orderBy,
   query,
   serverTimestamp,
@@ -15,11 +16,13 @@ import {
 } from "firebase/firestore";
 import { getTarotCardMetadata } from "../../../data/tarotCardCatalog";
 import { resolveUniqueGroupId } from "../logic/tarotRecordCollection";
+import { createTarotRecordCompatibilityFingerprint } from "../logic/tarotRecordFingerprint";
 import type {
   ParsedTarotGroup,
   ParsedTarotRecord,
   TarotRecordEditableFields,
   TarotRecordGroupSummary,
+  TarotRecordDuplicate,
   TarotOrientationLabel,
 } from "../types/tarotRecord";
 
@@ -51,6 +54,9 @@ function toGroupSummary(data: DocumentData, id: string): TarotRecordGroupSummary
     observationTime: String(data.observationTime ?? ""),
     observationDateTime: String(data.observationDateTime ?? ""),
     recordCount: Number(data.recordCount ?? 0),
+    importSource: data.importSource,
+    drawResultId: typeof data.drawResultId === "string" ? data.drawResultId : undefined,
+    fingerprint: typeof data.fingerprint === "string" ? data.fingerprint : undefined,
     createdAt: timestampToIso(data.createdAt),
     updatedAt: timestampToIso(data.updatedAt),
   };
@@ -96,6 +102,9 @@ export class TarotRecordRepository {
       id: `${resolvedGroupId}-${String(record.questionOrder).padStart(2, "0")}`,
       groupId: resolvedGroupId,
       cardName: record.normalizedCardName,
+      importSource: group.importSource ?? "manual_text",
+      drawResultId: group.drawResultId ?? null,
+      fingerprint: group.fingerprint ?? null,
       createdAt: timestamp,
       updatedAt: timestamp,
     }));
@@ -106,6 +115,13 @@ export class TarotRecordRepository {
       observationTime: group.observationTime,
       observationDateTime: group.observationDateTime,
       recordCount: storedRecords.length,
+      importSource: group.importSource ?? "manual_text",
+      drawResultId: group.drawResultId ?? null,
+      sourceQuestionGroupId: group.sourceQuestionGroupId ?? null,
+      drawMode: group.drawMode ?? null,
+      weekdayLabel: group.weekdayLabel ?? null,
+      sequences: group.sequences ?? null,
+      fingerprint: group.fingerprint ?? null,
       createdAt: timestamp,
       updatedAt: timestamp,
     });
@@ -125,6 +141,51 @@ export class TarotRecordRepository {
         updatedAt: now,
       })),
     };
+  }
+
+  async findDuplicateGroup(group: ParsedTarotGroup): Promise<TarotRecordDuplicate | null> {
+    const checks: Array<["drawResultId" | "fingerprint", string | undefined]> = [
+      ["drawResultId", group.drawResultId],
+      ["fingerprint", group.fingerprint],
+    ];
+    for (const [field, value] of checks) {
+      if (!value) continue;
+      const snapshot = await getDocsFromServer(query(
+        collection(this.database, GROUP_COLLECTION),
+        where(field, "==", value),
+        limit(1),
+      ));
+      const match = snapshot.docs[0];
+      if (match) return toGroupSummary(match.data(), match.id);
+    }
+    const sameTime = await getDocsFromServer(query(
+      collection(this.database, GROUP_COLLECTION),
+      where("observationDateTime", "==", group.observationDateTime),
+    ));
+    const expectedCompatibilityFingerprint = createTarotRecordCompatibilityFingerprint(group);
+    for (const groupDocument of sameTime.docs) {
+      const summary = toGroupSummary(groupDocument.data(), groupDocument.id);
+      if (summary.groupTitle !== group.groupTitle) continue;
+      const recordSnapshot = await getDocsFromServer(query(
+        collection(this.database, RECORD_COLLECTION),
+        where("groupId", "==", summary.groupId),
+      ));
+      const storedRecords = recordSnapshot.docs.map((item) => toRecord(item.data(), item.id));
+      if (storedRecords.length !== 5) continue;
+      const compatibilityFingerprint = createTarotRecordCompatibilityFingerprint({
+        observationDate: summary.observationDate,
+        observationTime: summary.observationTime,
+        groupTitle: summary.groupTitle,
+        records: storedRecords,
+      });
+      if (compatibilityFingerprint === expectedCompatibilityFingerprint) return summary;
+    }
+    return null;
+  }
+
+  async getRecord(recordId: string): Promise<ParsedTarotRecord | null> {
+    const snapshot = await getDocFromServer(this.recordRef(recordId));
+    return snapshot.exists() ? toRecord(snapshot.data(), snapshot.id) : null;
   }
 
   async listRecords(): Promise<ParsedTarotRecord[]> {
