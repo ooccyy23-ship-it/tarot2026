@@ -10,23 +10,30 @@ function requestedGroupId(): string {
   return new URLSearchParams(query).get("groupId") ?? "";
 }
 
+function requestedReturnHash(): string {
+  const query = window.location.hash.split("?")[1] ?? "";
+  const requested = new URLSearchParams(query).get("return") ?? "";
+  return requested.startsWith("#/records") && !requested.startsWith("#/records/detail") ? requested : "#/records";
+}
+
 export function TarotRecordDetailPage() {
   const groupId = useMemo(requestedGroupId, []);
+  const returnHash = useMemo(requestedReturnHash, []);
   const [records, setRecords] = useState<ParsedTarotRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     let active = true;
-    void getTarotRecordService().listRecords().then((items) => {
-      if (active) setRecords(items.filter((item) => item.groupId === groupId).sort((a, b) => a.questionOrder - b.questionOrder));
+    void getTarotRecordService().listRecordsByGroup(groupId).then((items) => {
+      if (active) setRecords(items.sort((a, b) => a.questionOrder - b.questionOrder));
     }).catch((reason) => { if (active) setError(tarotRecordStorageErrorMessage(reason)); }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [groupId]);
 
   const first = records[0];
   return <main className="content-page records-page records-detail-page">
-    <PageHeader eyebrow="Record Detail" title="抽牌紀錄詳情" description="查看剛儲存的完整五題抽牌結果。" actions={<a className="secondary-button button-link" href="#/records">返回抽牌資料庫</a>} />
+    <PageHeader eyebrow="Record Detail" title="抽牌紀錄詳情" description="查看已儲存且來源可追溯的完整五題抽牌結果。" actions={<a className="secondary-button button-link" href={returnHash}>返回原篩選結果</a>} />
     {error ? <p className="status-message error" role="alert">{error}</p> : null}
     {loading ? <section className="panel"><p>正在讀取紀錄…</p></section> : !first ? <section className="panel records-placeholder"><strong>找不到這筆題組紀錄</strong><p>該紀錄可能已被刪除，或網址中的題組編號不正確。</p></section> : <section className="panel">
       <div className="section-heading"><div><p className="eyebrow">{first.groupId}</p><h2>{first.groupTitle}</h2><p>{formatDateForDisplay(first.observationDate)}　{first.observationTime}</p></div><span className="status-chip verified">{records.length} 筆</span></div>
