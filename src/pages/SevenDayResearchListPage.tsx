@@ -1,7 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { StatusMessage } from "../components/StatusMessage";
 import { useAuth } from "../features/auth/useAuth";
-import { researchSessionStatusLabels } from "../features/researchSessions/constants/researchSessionLabels";
+import {
+  getResearchSessionStatusLabel,
+  researchSessionStatusLabels,
+} from "../features/researchSessions/constants/researchSessionLabels";
 import {
   filterResearchSessions,
   formatRemainingDays,
@@ -12,7 +15,6 @@ import { summarizeValidationRecords } from "../features/researchSessions/logic/r
 import { getSevenDaySessionService } from "../features/researchSessions/storage/sevenDaySessionService";
 import { getResearchValidationService } from "../features/researchSessions/storage/researchValidationService";
 import type { ResearchSession } from "../features/researchSessions/types/researchSession";
-import { ResearchStatusBadge } from "../features/researchSessions/components/ResearchStatusBadge";
 
 function localDateInput(now = new Date()): string {
   return [
@@ -168,7 +170,7 @@ export function SevenDayResearchListPage() {
                 <small>截止：{session.validationDeadline}</small>
               </div>
               <div data-label="狀態">
-                <ResearchStatusBadge status={session.status} />
+                <span className={`status-chip ${session.status}`}>{getResearchSessionStatusLabel(session.status)}</span>
               </div>
               <div data-label="已完成題組">{session.completedSets.length}／3</div>
               <div data-label="剩餘天數">{formatRemainingDays(session, today)}</div>

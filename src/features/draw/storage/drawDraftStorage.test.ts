@@ -6,7 +6,6 @@ import {
   hasDraftDraw,
   isDraftExpired,
   loadDraftDraw,
-  listStoredDraftDraws,
   saveDraftDraw,
   validateDraftDraw,
 } from "./drawDraftStorage";
@@ -17,8 +16,6 @@ function memoryStorage() {
     getItem: (key: string) => data.get(key) ?? null,
     setItem: (key: string, value: string) => { data.set(key, value); },
     removeItem: (key: string) => { data.delete(key); },
-    key: (index: number) => [...data.keys()][index] ?? null,
-    get length() { return data.size; },
   };
 }
 
@@ -113,13 +110,5 @@ describe("drawDraftStorage", () => {
     const raw = storage.getItem("tarot2026:unfinished-draw:v1:draw-tool");
     expect(raw).not.toBeNull();
     expect(validateDraftDraw(JSON.parse(raw!), "research:other:A")).toContain("暫存不屬於目前抽牌情境。");
-  });
-
-  it("lists valid unfinished drafts from every draw context", () => {
-    const storage = memoryStorage();
-    saveDraftDraw(baseDraft, storage, new Date("2026-08-12T02:00:00.000Z"));
-    saveDraftDraw({ ...baseDraft, contextId: "research:one:A", questionGroupName: "研究 A" }, storage, new Date("2026-08-12T03:00:00.000Z"));
-    expect(listStoredDraftDraws(storage, Date.parse("2026-08-12T04:00:00.000Z")).map((draft) => draft.contextId))
-      .toEqual(["research:one:A", "draw-tool"]);
   });
 });
