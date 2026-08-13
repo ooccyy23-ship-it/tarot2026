@@ -7,7 +7,10 @@ import { getDraftDrawMode } from "./features/draw/storage/drawDraftStorage";
 type DrawMode = "five" | "single";
 
 export default function App() {
-  const [drawMode, setDrawMode] = useState<DrawMode>(() => getDraftDrawMode("draw-tool") ?? "five");
+  const [drawMode, setDrawMode] = useState<DrawMode>(() => {
+    const requestedMode = new URLSearchParams(window.location.hash.split("?")[1] ?? "").get("mode");
+    return getDraftDrawMode("draw-tool") ?? (requestedMode === "single" ? "single" : "five");
+  });
   const [fiveDrawInProgress, setFiveDrawInProgress] = useState(false);
   const [singleDrawInProgress, setSingleDrawInProgress] = useState(false);
 
