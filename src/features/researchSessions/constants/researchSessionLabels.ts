@@ -4,12 +4,12 @@ import type {
 } from "../types/researchSession";
 
 export const researchSessionStatusLabels: Record<ResearchSessionStatus, string> = {
-  draft: "尚未開始",
-  drawing: "抽牌進行中",
-  observing: "觀察中",
+  draft: "草稿",
+  drawing: "抽牌中",
+  observing: "觀測中",
   validation_due: "待驗證",
   completed: "已完成",
-  invalid: "已失效",
+  invalid: "無效",
 };
 
 export const researchVerificationResultLabels: Record<ResearchVerificationResult, string> = {

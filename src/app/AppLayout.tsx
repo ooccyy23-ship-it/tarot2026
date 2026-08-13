@@ -3,20 +3,14 @@ import { AuthStatus } from "../features/auth/components/AuthStatus";
 import type { AppRoute } from "./AppRouter";
 
 const navigation: Array<{ route: AppRoute; label: string }> = [
-  { route: "/", label: "首頁" },
-  { route: "/draw", label: "抽牌" },
-  { route: "/research", label: "研究" },
-  { route: "/import", label: "匯入" },
-  { route: "/records", label: "紀錄" },
-  { route: "/analytics", label: "統計" },
+  { route: "/draw", label: "抽牌工具" },
+  { route: "/import", label: "紀錄匯入" },
+  { route: "/records", label: "抽牌資料庫" },
+  { route: "/analytics", label: "統計分析" },
 ];
 
-function isRouteActive(currentRoute: string, route: AppRoute): boolean {
-  if (route === "/") return currentRoute === "/";
-  return currentRoute === route || currentRoute.startsWith(`${route}/`);
-}
-
 export function AppLayout({ currentRoute, children }: { currentRoute: string; children: ReactNode }) {
+  const activeRoute = currentRoute;
   return (
     <div className="site-shell">
       <header className="site-header">
@@ -32,9 +26,9 @@ export function AppLayout({ currentRoute, children }: { currentRoute: string; ch
             {navigation.map((item) => (
               <a
                 key={item.route}
-                className={isRouteActive(currentRoute, item.route) ? "is-active" : ""}
+                className={activeRoute === item.route || (item.route === "/analytics" && activeRoute.startsWith("/analytics/")) || (item.route === "/records" && activeRoute.startsWith("/records/")) ? "is-active" : ""}
                 href={`#${item.route}`}
-                aria-current={isRouteActive(currentRoute, item.route) ? "page" : undefined}
+                aria-current={activeRoute === item.route || (item.route === "/analytics" && activeRoute.startsWith("/analytics/")) || (item.route === "/records" && activeRoute.startsWith("/records/")) ? "page" : undefined}
               >
                 {item.label}
               </a>

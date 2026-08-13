@@ -208,18 +208,3 @@ export function getDraftDrawMode(contextId: string): DrawDraftMode | null {
   const result = loadDraftDraw(contextId);
   return result.status === "valid" || result.status === "expired" ? result.draft.mode : null;
 }
-
-export function listStoredDraftDraws(
-  storage: Pick<Storage, "getItem" | "key" | "length"> = window.localStorage,
-  now = Date.now(),
-): DrawDraft[] {
-  const drafts: DrawDraft[] = [];
-  for (let index = 0; index < storage.length; index += 1) {
-    const key = storage.key(index);
-    if (!key?.startsWith(`${DRAW_DRAFT_STORAGE_PREFIX}:`)) continue;
-    const contextId = decodeURIComponent(key.slice(DRAW_DRAFT_STORAGE_PREFIX.length + 1));
-    const result = loadDraftDraw(contextId, storage, now);
-    if (result.status === "valid" || result.status === "expired") drafts.push(result.draft);
-  }
-  return drafts.sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
-}
