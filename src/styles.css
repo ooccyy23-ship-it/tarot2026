@@ -4286,6 +4286,120 @@ h3,
   border-radius: 50%;
 }
 
+.records-partners-panel {
+  display: grid;
+  gap: 22px;
+}
+
+.records-partners-heading {
+  align-items: flex-end;
+}
+
+.records-partners-heading p:not(.eyebrow) {
+  max-width: 680px;
+  margin: 6px 0 0;
+  color: var(--text-soft);
+}
+
+.records-partners-selector {
+  display: grid;
+  flex: 0 0 min(320px, 100%);
+  gap: 7px;
+}
+
+.records-partners-selector span {
+  color: var(--text-soft);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.records-partners-selector select {
+  min-width: 240px;
+}
+
+.records-partners-summary,
+.records-pair-filter-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 16px 18px;
+  border: 1px solid #e4d8c3;
+  border-radius: 16px;
+  background: #fffdfa;
+}
+
+.records-partners-summary > div,
+.records-pair-filter-summary > div {
+  display: grid;
+  gap: 3px;
+}
+
+.records-partners-summary strong,
+.records-pair-filter-summary strong {
+  color: var(--color-dark);
+  font-size: 1.18rem;
+}
+
+.records-partners-summary span,
+.records-pair-filter-summary span,
+.records-pair-filter-summary p {
+  margin: 0;
+  color: var(--text-soft);
+}
+
+.records-partners-empty {
+  min-height: 110px;
+}
+
+.records-partners-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.records-partners-list li {
+  display: grid;
+  grid-template-columns: 34px minmax(110px, 0.7fr) minmax(160px, 1.5fr) 64px auto;
+  align-items: center;
+  gap: 14px;
+  padding: 11px 12px;
+  border-bottom: 1px solid #eee4d4;
+}
+
+.records-partners-rank {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 50%;
+  background: #f3eadb;
+  color: var(--color-brown);
+  font-weight: 800;
+}
+
+.records-partners-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #eee7da;
+}
+
+.records-partners-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-accent);
+}
+
+.records-partners-count {
+  color: var(--color-dark);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
 .records-cooccurrence-panel {
   overflow: hidden;
 }
@@ -5057,6 +5171,34 @@ h3,
 
   .records-network-footer > small {
     text-align: left;
+  }
+
+  .records-partners-heading,
+  .records-partners-summary,
+  .records-pair-filter-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .records-partners-selector,
+  .records-partners-selector select {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .records-partners-list li {
+    grid-template-columns: 34px minmax(0, 1fr) auto;
+    gap: 9px 10px;
+  }
+
+  .records-partners-bar {
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+
+  .records-partners-list li .button-link {
+    grid-column: 2 / -1;
+    justify-self: start;
   }
 
   .records-cooccurrence-group-list article {

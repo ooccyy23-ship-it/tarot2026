@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { ParsedTarotRecord } from "../types/tarotRecord";
 import {
   buildTarotCooccurrenceEdges,
+  buildTarotCooccurrencePartners,
   calculateTarotCooccurrenceMatrix,
   findTarotCooccurrenceGroups,
 } from "./tarotRecordCooccurrence";
@@ -76,5 +77,22 @@ describe("tarot record co-occurrence", () => {
     expect(allEdges.every((edge) => edge.sourceIndex < edge.targetIndex)).toBe(true);
     expect(strongEdges).toHaveLength(1);
     expect(strongEdges[0].count).toBe(2);
+  });
+
+  it("ranks partners from the existing matrix and excludes the selected card", () => {
+    const matrix = calculateTarotCooccurrenceMatrix(records, 78);
+    const partners = buildTarotCooccurrencePartners(matrix, "愚者", 1, 10);
+    expect(partners.map((partner) => [partner.cardName, partner.cooccurrenceCount])).toEqual([
+      ["聖杯3", 2],
+      ["權杖2", 1],
+      ["寶劍6", 1],
+    ]);
+    expect(partners.some((partner) => partner.cardName === "愚者")).toBe(false);
+  });
+
+  it("shares the minimum threshold and Top 10 limit", () => {
+    const matrix = calculateTarotCooccurrenceMatrix(records, 78);
+    expect(buildTarotCooccurrencePartners(matrix, "愚者", 2, 10)).toHaveLength(1);
+    expect(buildTarotCooccurrencePartners(matrix, "愚者", 3, 10)).toEqual([]);
   });
 });

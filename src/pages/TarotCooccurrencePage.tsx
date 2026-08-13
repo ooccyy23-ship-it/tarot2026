@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { EmptyState } from "../components/ui/EmptyState";
 import { PageHeader } from "../components/ui/PageHeader";
 import { TarotAnalysisFilterToolbar } from "../features/records/components/TarotAnalysisFilterToolbar";
@@ -5,10 +6,18 @@ import { TarotCentralitySection } from "../features/records/components/TarotCent
 import { TarotClusteringSection } from "../features/records/components/TarotClusteringSection";
 import { TarotCooccurrenceMatrixSection } from "../features/records/components/TarotCooccurrenceMatrixSection";
 import { TarotCooccurrenceNetworkSection } from "../features/records/components/TarotCooccurrenceNetworkSection";
+import { TarotCooccurrencePartnersSection } from "../features/records/components/TarotCooccurrencePartnersSection";
 import { useTarotAnalysisRecords } from "../features/records/hooks/useTarotAnalysisRecords";
 
 export function TarotCooccurrencePage() {
   const analysis = useTarotAnalysisRecords();
+  const [minimumCount, setMinimumCount] = useState(1);
+  const [selectedCardId, setSelectedCardId] = useState(() => window.sessionStorage.getItem("tarot2026:cooccurrence-selected-card:v1") ?? "");
+
+  useEffect(() => {
+    if (selectedCardId) window.sessionStorage.setItem("tarot2026:cooccurrence-selected-card:v1", selectedCardId);
+    else window.sessionStorage.removeItem("tarot2026:cooccurrence-selected-card:v1");
+  }, [selectedCardId]);
 
   return (
     <main className="content-page records-page records-analysis-page records-cooccurrence-page">
@@ -41,7 +50,15 @@ export function TarotCooccurrencePage() {
             onDateToChange={analysis.updateDateTo}
             onReset={analysis.resetFilters}
           />
-          <TarotCooccurrenceNetworkSection records={analysis.filteredRecords} />
+          <TarotCooccurrenceNetworkSection records={analysis.filteredRecords} minimumCount={minimumCount} onMinimumCountChange={setMinimumCount} />
+          <TarotCooccurrencePartnersSection
+            records={analysis.filteredRecords}
+            selectedCardId={selectedCardId}
+            minimumCount={minimumCount}
+            dateFrom={analysis.effectiveDateFrom}
+            dateTo={analysis.effectiveDateTo}
+            onSelectedCardChange={setSelectedCardId}
+          />
           <TarotCooccurrenceMatrixSection records={analysis.filteredRecords} />
           <TarotClusteringSection records={analysis.filteredRecords} />
           <TarotCentralitySection records={analysis.filteredRecords} />
