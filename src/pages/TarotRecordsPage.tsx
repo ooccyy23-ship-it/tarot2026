@@ -13,6 +13,7 @@ import {
 import {
   buildRecordDetailHash,
   buildRecordsHash,
+  filterRecordsByContainedCards,
   parseRecordFiltersFromHash,
   readTarotRecordViewState,
   summarizeFilteredRecords,
@@ -47,6 +48,7 @@ export function TarotRecordsPage() {
   const [loadingRecords, setLoadingRecords] = useState(true);
   const [busyRecordId, setBusyRecordId] = useState("");
   const initialFilters = hasUrlFilters ? initialQuery.filters : initialView?.filters ?? initialQuery.filters;
+  const containedCardNames = initialQuery.containsCardNames;
   const [filters, setFilters] = useState<TarotRecordFilters>(initialFilters);
   const [searchInput, setSearchInput] = useState(initialFilters.keyword);
   const [page, setPage] = useState(shouldRestoreView ? initialView?.page ?? 1 : 1);
@@ -79,8 +81,8 @@ export function TarotRecordsPage() {
   }, [searchInput]);
 
   useEffect(() => {
-    window.history.replaceState(null, "", buildRecordsHash(filters));
-  }, [filters]);
+    window.history.replaceState(null, "", buildRecordsHash(filters, containedCardNames));
+  }, [containedCardNames, filters]);
 
   useEffect(() => {
     writeTarotRecordViewState({ filters, page, pageSize, sortDirection, scrollY: window.scrollY, restoreOnReturn: false });
@@ -94,7 +96,13 @@ export function TarotRecordsPage() {
   }, [initialView, loadingRecords, shouldRestoreView]);
 
   const groupOptions = useMemo(() => [...new Map(records.map((record) => [record.groupId, record.groupTitle])).entries()], [records]);
-  const filteredRecords = useMemo(() => sortTarotRecords(filterTarotRecords(records, filters), sortDirection), [filters, records, sortDirection]);
+  const pairDateScopeRecords = useMemo(() => filterTarotRecords(records, {
+    ...DEFAULT_TAROT_RECORD_FILTERS,
+    dateFrom: filters.dateFrom,
+    dateTo: filters.dateTo,
+  }), [filters.dateFrom, filters.dateTo, records]);
+  const containedRecords = useMemo(() => filterRecordsByContainedCards(pairDateScopeRecords, containedCardNames), [containedCardNames, pairDateScopeRecords]);
+  const filteredRecords = useMemo(() => sortTarotRecords(filterTarotRecords(containedRecords, filters), sortDirection), [containedRecords, filters, sortDirection]);
   const paginated = useMemo(() => paginateTarotRecords(filteredRecords, page, pageSize), [filteredRecords, page, pageSize]);
   const recentRecord = useMemo(() => sortTarotRecordsNewest(records)[0], [records]);
   const filteredSummary = useMemo(() => summarizeFilteredRecords(filteredRecords), [filteredRecords]);
@@ -198,6 +206,7 @@ export function TarotRecordsPage() {
 
       <section className="panel records-table-panel" aria-labelledby="records-table-title">
         <div className="section-heading"><div><p className="eyebrow">Records</p><h2 id="records-table-title">已儲存紀錄</h2></div><span className="status-chip pending">{filteredSummary.appearances} 次出現 · {filteredSummary.groups} 個題組</span></div>
+        {containedCardNames.length ? <div className="records-pair-filter-summary"><div><span>共同出現條件</span><strong>{containedCardNames.join(" × ")}</strong></div><p>共 {containedCardNames.length === 2 ? new Set(containedRecords.map((record) => record.groupId)).size : containedRecords.filter((record) => record.normalizedCardName === containedCardNames[0]).length} 次共同出現 · 涉及 {new Set(containedRecords.map((record) => record.groupId)).size} 組題組</p><a className="ghost-button compact-button button-link" href="#/cooccurrence">返回共現分析</a></div> : null}
         <div className="records-filter-toolbar records-filter-toolbar-v3">
           <label className="records-primary-search"><span>搜尋紀錄</span><input type="search" value={searchInput} placeholder="輸入題組、題目或牌名" onChange={(event) => setSearchInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") updateFilter("keyword", searchInput); }} /></label>
           <button className="secondary-button records-mobile-filter-toggle" type="button" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((value) => !value)}>篩選 {activeFilters.length ? `(${activeFilters.length})` : ""}</button>
@@ -219,7 +228,7 @@ export function TarotRecordsPage() {
           <div className="records-data-table-wrap"><table className="records-data-table"><thead><tr><th>日期</th><th>時間</th><th>題組</th><th>題序</th><th>題目</th><th>牌卡</th><th>正逆位</th><th>操作</th></tr></thead><tbody>
             {paginated.records.map((record) => {
               const editing = editingId === record.id && editFields;
-              const detailHash = buildRecordDetailHash(record.groupId, buildRecordsHash(filters));
+              const detailHash = buildRecordDetailHash(record.groupId, buildRecordsHash(filters, containedCardNames));
               return <tr key={record.id}>
                 <td>{formatDateForDisplay(record.observationDate)}</td><td>{record.observationTime}</td><td><strong>{record.groupTitle}</strong><small>{record.groupId}</small></td><td>{record.questionOrder}</td>
                 <td>{editing ? <textarea value={editFields.questionText} onChange={(event) => setEditFields({ ...editFields, questionText: event.target.value })} /> : record.questionText}</td>

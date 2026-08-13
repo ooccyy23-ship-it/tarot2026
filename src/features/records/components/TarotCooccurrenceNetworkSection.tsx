@@ -57,15 +57,22 @@ function buildNetworkNodes(cards: ReturnType<typeof calculateTarotCooccurrenceMa
   });
 }
 
-export function TarotCooccurrenceNetworkSection({ records }: { records: ParsedTarotRecord[] }) {
+export function TarotCooccurrenceNetworkSection({
+  records,
+  minimumCount,
+  onMinimumCountChange,
+}: {
+  records: ParsedTarotRecord[];
+  minimumCount: number;
+  onMinimumCountChange: (value: number) => void;
+}) {
   const matrix = useMemo(() => calculateTarotCooccurrenceMatrix(records, 8), [records]);
-  const [minimumCount, setMinimumCount] = useState(1);
   const [selectedPair, setSelectedPair] = useState<TarotSelectedPair | null>(null);
   const nodes = useMemo(() => buildNetworkNodes(matrix.cards), [matrix.cards]);
   const edges = useMemo(() => buildTarotCooccurrenceEdges(matrix, minimumCount), [matrix, minimumCount]);
-  const thresholdOptions = useMemo(() => [...new Set([1, 2, 3, 5, matrix.maxCount])]
+  const thresholdOptions = useMemo(() => [...new Set([1, 2, 3, 5, minimumCount, matrix.maxCount])]
     .filter((value) => value === 1 || (value > 0 && value <= matrix.maxCount))
-    .sort((left, right) => left - right), [matrix.maxCount]);
+    .sort((left, right) => left - right), [matrix.maxCount, minimumCount]);
 
   const selectPair = (sourceIndex: number, targetIndex: number) => {
     setSelectedPair({
@@ -90,7 +97,7 @@ export function TarotCooccurrenceNetworkSection({ records }: { records: ParsedTa
         </div>
         <label className="records-network-threshold">
           <span>最低共現次數</span>
-          <select value={minimumCount} onChange={(event) => { setMinimumCount(Number(event.target.value)); setSelectedPair(null); }}>
+          <select value={minimumCount} onChange={(event) => { onMinimumCountChange(Number(event.target.value)); setSelectedPair(null); }}>
             {thresholdOptions.map((value) => <option value={value} key={value}>{value} 次以上</option>)}
           </select>
         </label>

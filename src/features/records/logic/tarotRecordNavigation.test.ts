@@ -3,6 +3,7 @@ import {
   analyticsScopeSummary,
   buildRecordsHash,
   cardNameFromStableId,
+  filterRecordsByContainedCards,
   parseRecordFiltersFromHash,
   readTarotRecordViewState,
   summarizeFilteredRecords,
@@ -34,6 +35,26 @@ describe("tarotRecordNavigation", () => {
     expect(parsed.filters.orientation).toBe("");
     expect(parsed.filters.cardName).toBe("");
     expect(parsed.invalidParameters).toEqual(["from", "cardId", "orientation"]);
+  });
+
+  it("uses stable card IDs for two-card drill-down and restores the pair", () => {
+    const hash = buildRecordsHash(
+      { dateFrom: "2026-08-01", dateTo: "2026-08-12" },
+      ["愚者", "聖杯6"],
+    );
+    expect(hash).toContain("containsCard=TAROT_00");
+    expect(hash).toContain("containsCard=TAROT_41");
+    expect(parseRecordFiltersFromHash(hash).containsCardNames).toEqual(["愚者", "聖杯6"]);
+  });
+
+  it("returns complete groups that contain both selected cards", () => {
+    const records = [
+      { ...record("1", "A", "2026-08-01"), normalizedCardName: "愚者", cardName: "愚者" },
+      record("2", "A", "2026-08-01"),
+      { ...record("3", "A", "2026-08-01"), normalizedCardName: "權杖2", cardName: "權杖2" },
+      { ...record("4", "B", "2026-08-02"), normalizedCardName: "愚者", cardName: "愚者" },
+    ];
+    expect(filterRecordsByContainedCards(records, ["愚者", "聖杯6"]).map((item) => item.id)).toEqual(["1", "2", "3"]);
   });
 
   it("rejects incompatible stored view-state versions", () => {

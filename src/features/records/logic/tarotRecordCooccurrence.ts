@@ -19,6 +19,12 @@ export type TarotCooccurrenceEdge = {
   count: number;
 };
 
+export type TarotCooccurrencePartner = {
+  cardName: string;
+  groupCount: number;
+  cooccurrenceCount: number;
+};
+
 export type TarotCooccurrenceGroup = {
   groupId: string;
   groupTitle: string;
@@ -123,4 +129,25 @@ export function buildTarotCooccurrenceEdges(
   return edges.sort((left, right) => right.count - left.count
     || left.sourceIndex - right.sourceIndex
     || left.targetIndex - right.targetIndex);
+}
+
+export function buildTarotCooccurrencePartners(
+  matrix: TarotCooccurrenceMatrix,
+  selectedCardName: string,
+  minimumCount = 1,
+  limit = 10,
+): TarotCooccurrencePartner[] {
+  const selectedIndex = matrix.cards.findIndex((card) => card.cardName === selectedCardName);
+  if (selectedIndex < 0) return [];
+  return matrix.cards
+    .map((card, index) => ({
+      cardName: card.cardName,
+      groupCount: card.groupCount,
+      cooccurrenceCount: matrix.counts[selectedIndex]?.[index] ?? 0,
+    }))
+    .filter((partner) => partner.cardName !== selectedCardName && partner.cooccurrenceCount >= minimumCount)
+    .sort((left, right) => right.cooccurrenceCount - left.cooccurrenceCount
+      || (cardOrder.get(left.cardName) ?? Number.MAX_SAFE_INTEGER) - (cardOrder.get(right.cardName) ?? Number.MAX_SAFE_INTEGER)
+      || left.cardName.localeCompare(right.cardName, "zh-Hant"))
+    .slice(0, Math.max(0, limit));
 }
