@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import DrawToolPage from "../App";
 import { DashboardPage } from "../pages/DashboardPage";
 import { TarotAnalysisPage } from "../pages/TarotAnalysisPage";
+import { TarotCooccurrencePage } from "../pages/TarotCooccurrencePage";
 import { DailyTarotStatisticsPage } from "../pages/DailyTarotStatisticsPage";
 import { TarotRecordImportPage } from "../pages/TarotRecordImportPage";
 import { TarotRecordsPage } from "../pages/TarotRecordsPage";
@@ -9,7 +10,7 @@ import { TarotRecordDetailPage } from "../pages/TarotRecordDetailPage";
 import { AppLayout } from "./AppLayout";
 import { NetworkStatusNotice } from "../components/NetworkStatusNotice";
 
-const routes = ["/", "/draw", "/import", "/records", "/records/detail", "/analytics", "/analytics/daily"] as const;
+const routes = ["/", "/draw", "/import", "/records", "/records/detail", "/analytics", "/analytics/daily", "/cooccurrence"] as const;
 export type AppRoute = (typeof routes)[number];
 
 function getRoute(): string {
@@ -51,6 +52,9 @@ export function AppRouter() {
       break;
     case "/analytics":
       page = <TarotAnalysisPage />;
+      break;
+    case "/cooccurrence":
+      page = <TarotCooccurrencePage />;
       break;
     case "/records":
       page = <TarotRecordsPage />;
