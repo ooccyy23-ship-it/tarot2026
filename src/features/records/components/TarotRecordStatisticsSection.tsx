@@ -98,8 +98,8 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
       </div>
 
       <div className="records-stat-summary">
-        <article><span>全部牌卡</span><strong>{statistics.totalRecords}</strong><small>總筆數</small></article>
-        <article><span>不同牌卡</span><strong>{statistics.uniqueCards}</strong><small>共 78 張</small></article>
+        <article className="records-stat-total"><span>全部牌卡</span><strong>{statistics.totalRecords}</strong><small>總筆數</small></article>
+        <article className="records-stat-total"><span>不同牌卡</span><strong>{statistics.uniqueCards}</strong><small>共 78 張</small></article>
         <a href={buildRecordsHash({ orientation: "upright" })} aria-label={`查看正位的 ${statistics.uprightCount} 次出現`}><span>正位</span><strong>{statistics.uprightCount}</strong><small>{formatPercentage(statistics.uprightPercentage)} · 查看紀錄</small></a>
         <a href={buildRecordsHash({ orientation: "reversed" })} aria-label={`查看逆位的 ${statistics.reversedCount} 次出現`}><span>逆位</span><strong>{statistics.reversedCount}</strong><small>{formatPercentage(statistics.reversedPercentage)} · 查看紀錄</small></a>
         <a href={buildRecordsHash({ arcanaType: "major" })} aria-label={`查看大阿爾克那的 ${statistics.majorCount} 次出現`}><span>大阿爾克那</span><strong>{statistics.majorCount}</strong><small>{formatPercentage(statistics.majorPercentage)} · 查看紀錄</small></a>

@@ -7,18 +7,37 @@ import { TarotClusteringSection } from "../features/records/components/TarotClus
 import { TarotCentralitySection } from "../features/records/components/TarotCentralitySection";
 import { TarotTimeTrendSection } from "../features/records/components/TarotTimeTrendSection";
 import { TarotRecordStatisticsSection } from "../features/records/components/TarotRecordStatisticsSection";
+import { TarotAnalysisFilterToolbar } from "../features/records/components/TarotAnalysisFilterToolbar";
 import { tarotRecordStorageErrorMessage } from "../features/records/storage/tarotRecordError";
 import { getTarotRecordService } from "../features/records/storage/tarotRecordService";
-import type { ParsedTarotRecord } from "../features/records/types/tarotRecord";
+import type { ParsedTarotRecord, TarotRecordFilters } from "../features/records/types/tarotRecord";
 import { analyticsScopeSummary, consumeAnalyticsPosition, rememberAnalyticsPosition } from "../features/records/logic/tarotRecordNavigation";
+import { DEFAULT_TAROT_RECORD_FILTERS, filterTarotRecords } from "../features/records/logic/tarotRecordCollection";
 
 export function TarotAnalysisPage() {
   const [records, setRecords] = useState<ParsedTarotRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [filters, setFilters] = useState<TarotRecordFilters>({ ...DEFAULT_TAROT_RECORD_FILTERS });
   const calculatedAt = useMemo(() => new Date(), []);
   const restoreScrollY = useMemo(() => consumeAnalyticsPosition(), []);
-  const scope = useMemo(() => analyticsScopeSummary(records, calculatedAt), [calculatedAt, records]);
+  const sourceScope = useMemo(() => analyticsScopeSummary(records, calculatedAt), [calculatedAt, records]);
+  const filteredRecords = useMemo(() => filterTarotRecords(records, filters), [filters, records]);
+  const filteredScope = useMemo(() => analyticsScopeSummary(filteredRecords, calculatedAt), [calculatedAt, filteredRecords]);
+  const effectiveDateFrom = filters.dateFrom || sourceScope.dateFrom;
+  const effectiveDateTo = filters.dateTo || sourceScope.dateTo;
+
+  const updateDateFrom = (value: string) => setFilters((current) => ({
+    ...current,
+    dateFrom: value,
+    dateTo: current.dateTo && value > current.dateTo ? value : current.dateTo,
+  }));
+
+  const updateDateTo = (value: string) => setFilters((current) => ({
+    ...current,
+    dateFrom: current.dateFrom && value < current.dateFrom ? value : current.dateFrom,
+    dateTo: value,
+  }));
 
   useEffect(() => {
     getTarotRecordService().listRecords()
@@ -48,23 +67,23 @@ export function TarotAnalysisPage() {
         <section className="panel"><EmptyState title="尚無可分析的資料" description="先匯入完整的五題抽牌紀錄，即可建立統計分析。" action={<a className="primary-button button-link" href="#/import">前往紀錄匯入</a>} /></section>
       ) : (
         <>
-          <section className="panel records-analysis-scope" aria-label="本次統計範圍">
-            <div><p className="eyebrow">Analysis Scope</p><h2>本次統計範圍</h2></div>
-            <dl>
-              <div><dt>資料條件</dt><dd>全部正式已儲存紀錄</dd></div>
-              <div><dt>題組數</dt><dd>{scope.groupCount} 個</dd></div>
-              <div><dt>牌卡總數</dt><dd>{scope.cardCount} 張</dd></div>
-              <div><dt>日期範圍</dt><dd>{scope.dateFrom.replace(/-/g, "/")} 至 {scope.dateTo.replace(/-/g, "/")}</dd></div>
-              <div><dt>計算時間</dt><dd>{scope.calculatedAt}</dd></div>
-            </dl>
-            <p>以下數字均由目前正式紀錄即時計算；點選統計項目可查看構成該數字的原始牌卡出現紀錄。</p>
-          </section>
-          <TarotRecordStatisticsSection records={records} />
-          <TarotCooccurrenceNetworkSection records={records} />
-          <TarotCooccurrenceMatrixSection records={records} />
-          <TarotClusteringSection records={records} />
-          <TarotCentralitySection records={records} />
-          <TarotTimeTrendSection records={records} />
+          <TarotAnalysisFilterToolbar
+            dateFrom={effectiveDateFrom}
+            dateTo={effectiveDateTo}
+            minimumDate={sourceScope.dateFrom}
+            maximumDate={sourceScope.dateTo}
+            cardCount={filteredScope.cardCount}
+            groupCount={filteredScope.groupCount}
+            onDateFromChange={updateDateFrom}
+            onDateToChange={updateDateTo}
+            onReset={() => setFilters({ ...DEFAULT_TAROT_RECORD_FILTERS })}
+          />
+          <TarotRecordStatisticsSection records={filteredRecords} />
+          <TarotCooccurrenceNetworkSection records={filteredRecords} />
+          <TarotCooccurrenceMatrixSection records={filteredRecords} />
+          <TarotClusteringSection records={filteredRecords} />
+          <TarotCentralitySection records={filteredRecords} />
+          <TarotTimeTrendSection records={filteredRecords} />
         </>
       )}
     </main>
