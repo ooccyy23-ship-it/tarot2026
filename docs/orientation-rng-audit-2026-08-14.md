@@ -12,7 +12,9 @@
 
 在程式碼、state、匯入與統計鏈路中，沒有找到會把正位系統性改成逆位的證據。tarot2026 的 177 / 228 在公平 50/50 下屬於較少見的樣本（雙尾精確二項檢定約 `p = 0.0129`），但單靠這一批 405 張不能證明 RNG 有 bug。
 
-本次無法在自動化稽核環境取得授權 Firebase 使用者憑證；Firestore Rules 會拒絕未登入讀取。因此無法獨立完成正式資料的 raw-format 重算與逐日／週／月分段。報告不以 UI 顯示值冒充 Firestore 原始重算。
+2026-08-14 已使用 Firebase CLI 的已授權帳號，透過 Firestore REST 以唯讀方式重新讀取 `tarotRecords`。原始文件重算結果與 UI baseline 完全一致：177 張正位、228 張逆位；405 張全部為合法 schema，沒有 null、unknown、標籤不一致、無效日期或非五張題組。
+
+偏逆位現象沒有集中於單一日期或單一週：四個 ISO 週的逆位率為 60.00%、56.67%、57.50%、53.94%，個別雙尾檢定均未達 0.05。375 張紀錄缺少 `importSource`，因此仍無法把主要偏差可靠歸因於 tarot2026 production RNG 或外部／歷史匯入來源。
 
 ## A. Production RNG
 
@@ -105,13 +107,53 @@ finalizeCoinFlip().orientation
 
 `tarotRecordRepository.ts#toRecord()` 對 Firestore document 採 TypeScript cast，沒有 runtime 驗證 orientation。若 Rules 啟用前已有 legacy/null/typo 文件，仍可能被讀進記憶體。這不會被目前統計錯算成 reversed，但可能使正逆位百分比總和小於 100%。
 
-### 正式資料 raw audit 狀態
+### 正式資料 raw audit 結果
 
-- 已建立唯讀聚合工具：`scripts/orientationRecordAudit.ts`。
-- 可分辨 formal、中文 legacy、boolean、null、missing、unknown，並產出每日／ISO 週／每月統計。
-- 本次自動化環境沒有已授權 Firebase 使用者登入狀態；Rules 正確阻擋未授權讀取。
-- 因此尚未取得：invalid、null、unknown 的正式筆數與日期範圍。
-- 也尚未能獨立驗證 UI 的 177 / 228 是否與 raw Firestore 完全一致。
+- 查詢方式：Firebase CLI OAuth + Firestore REST，僅使用 `GET`，未執行新增、修改或刪除。
+- collection：`tarotRecords`
+- 日期範圍：2026-07-24～2026-08-14。
+- 原始文件：405 張，81 個題組，每組均為 5 張。
+- 正位：177 張（43.7037%）。
+- 逆位：228 張（56.2963%）。
+- 雙尾精確二項檢定：`p = 0.012876`。
+- invalid orientation：0。
+- null／missing／unknown orientation：0。
+- orientation 與 orientationLabel 不一致：0。
+- 無效日期：0。
+- 非五張題組：0。
+
+### 題組內逆位張數
+
+| 每組逆位張數 | 題組數 |
+|---:|---:|
+| 0 | 1 |
+| 1 | 6 |
+| 2 | 24 |
+| 3 | 29 |
+| 4 | 18 |
+| 5 | 3 |
+
+### 資料來源欄位
+
+| importSource | 牌數 | 題組 | 正位 | 逆位 | 逆位率 | 雙尾 p |
+|---|---:|---:|---:|---:|---:|---:|
+| `manual_text` | 30 | 6 | 13 | 17 | 56.67% | 0.584665 |
+| 缺少欄位 | 375 | 75 | 164 | 211 | 56.27% | 0.017412 |
+
+主要偏差位於缺少來源 metadata 的 375 張紀錄；由於欄位缺失，不能從日期或內容猜測它們由 tarot2026 RNG、PiliApp 或其他來源產生。
+
+### 時間分段
+
+| 期間 | 牌數 | 正位 | 逆位 | 逆位率 | 雙尾 p |
+|---|---:|---:|---:|---:|---:|
+| 2026-W30 | 60 | 24 | 36 | 60.00% | 0.155002 |
+| 2026-W31 | 60 | 26 | 34 | 56.67% | 0.366294 |
+| 2026-W32 | 120 | 51 | 69 | 57.50% | 0.120328 |
+| 2026-W33 | 165 | 76 | 89 | 53.94% | 0.350234 |
+| 2026-07 | 120 | 50 | 70 | 58.33% | 0.082407 |
+| 2026-08 | 285 | 127 | 158 | 55.44% | 0.075376 |
+
+所有週段均略偏逆位，但沒有任何單一週段達到 `p < 0.05`；累積到 405 張後整體才達 `p = 0.012876`。這較像跨期間累積的樣本偏差，不像某一天或某一版本突然發生的資料反轉。
 
 ## E. Statistics
 
@@ -185,7 +227,7 @@ finalizeCoinFlip().orientation
 | 來源 | 正位 | 逆位 | 總數 | 正位率 | 逆位率 |
 |---|---:|---:|---:|---:|---:|
 | PiliApp Legacy | 326 | 334 | 660 | 49.394% | 50.606% |
-| tarot2026（提供的 baseline） | 177 | 228 | 405 | 43.704% | 56.296% |
+| tarot2026（Firestore raw recount） | 177 | 228 | 405 | 43.704% | 56.296% |
 
 - PiliApp：公平 50/50 的雙尾精確二項檢定約 `p = 0.7853`。
 - tarot2026：雙尾精確二項檢定約 `p = 0.0129`。
@@ -208,16 +250,18 @@ finalizeCoinFlip().orientation
 
 ## H. Root Cause
 
-**Inconclusive**
+**Inconclusive（資料來源版本不足）**
 
-理由：production RNG、state mapping、保存 mapping 與統計計數的靜態稽核，以及大樣本模擬，都沒有顯示程式偏差；但本次未能以授權身分直接讀取 Firestore 原始文件，尚不能排除歷史資料格式或特定日期／版本資料污染。
+理由：production RNG、state mapping、保存 mapping、Firestore 原始格式、統計計數與大樣本模擬都沒有顯示程式偏差。Firestore raw recount 也證明 177 / 228 並非 UI 計算錯誤或 invalid orientation 污染。
+
+目前真正無法回答的是「這 405 張各自由哪一套正逆位產生機制產生」。其中 375 張缺少 `importSource`，也沒有 `orientationRngVersion`，不能可靠區分 tarot2026 production RNG、PiliApp 或其他外部來源。因此不能把 56.2963% 直接歸因於目前的 Web Crypto RNG。
 
 就 RNG 子結論而言：**目前沒有找到程式偏差證據。**
 
 ## I. Recommendation
 
-1. 下一步以已登入使用者執行一次 read-only Firestore audit，將 `tarotRecords` 傳入 `auditOrientationRecords()`，核對 177 / 228、invalid/null/unknown 與每日／週／月分段。
-2. 未來新紀錄可新增：
+1. Firestore read-only raw audit 已完成；後續不需要修改或清洗現有 405 張資料。
+2. 未來新紀錄建議新增：
    - `orientationSource`: `"piliapp" | "tarot2026" | "unknown"`
    - `orientationRngVersion`: `"external_piliapp" | "crypto_v1" | "unknown"`
 3. 一鍵由 production draw 建立的新紀錄可可靠標記 `tarot2026` / `crypto_v1`。
