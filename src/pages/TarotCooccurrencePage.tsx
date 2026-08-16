@@ -46,8 +46,10 @@ export function TarotCooccurrencePage() {
             maximumDate={analysis.sourceScope.dateTo}
             cardCount={analysis.filteredScope.cardCount}
             groupCount={analysis.filteredScope.groupCount}
+            recordType={analysis.recordType}
             onDateFromChange={analysis.updateDateFrom}
             onDateToChange={analysis.updateDateTo}
+            onRecordTypeChange={analysis.updateRecordType}
             onReset={analysis.resetFilters}
           />
           <TarotCooccurrenceNetworkSection records={analysis.filteredRecords} minimumCount={minimumCount} onMinimumCountChange={setMinimumCount} />

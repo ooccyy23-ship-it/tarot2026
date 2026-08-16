@@ -41,6 +41,9 @@ function toRecord(data: DocumentData, id: string): ParsedTarotRecord {
   return {
     ...data,
     id,
+    recordType: data.recordType === "open_observation" ? "open_observation" : "questioned",
+    questionText: typeof data.questionText === "string" ? data.questionText : "",
+    position: Number(data.position ?? data.questionOrder ?? 0) || undefined,
     createdAt: timestampToIso(data.createdAt),
     updatedAt: timestampToIso(data.updatedAt),
   } as ParsedTarotRecord;
@@ -57,6 +60,10 @@ function toGroupSummary(data: DocumentData, id: string): TarotRecordGroupSummary
     importSource: data.importSource,
     drawResultId: typeof data.drawResultId === "string" ? data.drawResultId : undefined,
     fingerprint: typeof data.fingerprint === "string" ? data.fingerprint : undefined,
+    recordType: data.recordType === "open_observation" ? "open_observation" : "questioned",
+    observationCode: typeof data.observationCode === "string" ? data.observationCode : undefined,
+    drawMethod: typeof data.drawMethod === "string" ? data.drawMethod : undefined,
+    note: typeof data.note === "string" ? data.note : undefined,
     createdAt: timestampToIso(data.createdAt),
     updatedAt: timestampToIso(data.updatedAt),
   };
@@ -76,6 +83,18 @@ function validateGroup(group: ParsedTarotGroup): void {
   }
   if (new Set(group.records.map((record) => record.id)).size !== 5) {
     throw new Error("五筆紀錄的 id 必須各自唯一。");
+  }
+  const recordType = group.recordType ?? "questioned";
+  if (recordType === "open_observation") {
+    if (!group.observationCode?.trim()) throw new Error("無題觀測缺少觀測編號。");
+    if (!group.records.every((record) => !record.questionText.trim())) {
+      throw new Error("無題觀測不得包含題目文字。");
+    }
+  } else if (!group.records.every((record) => record.questionText.trim())) {
+    throw new Error("題組觀測的題目文字不可空白。");
+  }
+  if (!group.records.every((record) => getTarotCardMetadata(record.cardName))) {
+    throw new Error("五張牌都必須是標準78張牌中的有效牌名。");
   }
 }
 
@@ -97,10 +116,17 @@ export class TarotRecordRepository {
     ));
     const batch = writeBatch(this.database);
     const timestamp = serverTimestamp();
+    const recordType = group.recordType ?? "questioned";
     const storedRecords = group.records.map((record) => ({
       ...record,
       id: `${resolvedGroupId}-${String(record.questionOrder).padStart(2, "0")}`,
       groupId: resolvedGroupId,
+      recordType,
+      observationCode: group.observationCode ?? null,
+      position: record.questionOrder,
+      weekdayLabel: group.weekdayLabel ?? null,
+      drawMethod: group.drawMethod ?? null,
+      note: group.note ?? "",
       cardName: record.normalizedCardName,
       importSource: group.importSource ?? "manual_text",
       drawResultId: group.drawResultId ?? null,
@@ -111,6 +137,8 @@ export class TarotRecordRepository {
     batch.set(this.groupRef(resolvedGroupId), {
       groupId: resolvedGroupId,
       groupTitle: group.groupTitle,
+      recordType,
+      observationCode: group.observationCode ?? null,
       observationDate: group.observationDate,
       observationTime: group.observationTime,
       observationDateTime: group.observationDateTime,
@@ -121,6 +149,8 @@ export class TarotRecordRepository {
       drawMode: group.drawMode ?? null,
       weekdayLabel: group.weekdayLabel ?? null,
       sequences: group.sequences ?? null,
+      drawMethod: group.drawMethod ?? null,
+      note: group.note ?? "",
       fingerprint: group.fingerprint ?? null,
       createdAt: timestamp,
       updatedAt: timestamp,
@@ -213,14 +243,14 @@ export class TarotRecordRepository {
   }
 
   async updateRecord(recordId: string, fields: TarotRecordEditableFields): Promise<ParsedTarotRecord> {
-    const questionText = fields.questionText.trim();
-    if (!questionText) throw new Error("題目文字不可空白。");
     const metadata = getTarotCardMetadata(fields.cardName);
     if (!metadata) throw new Error(`牌名「${fields.cardName}」不在標準78張牌中。`);
     const reference = this.recordRef(recordId);
     const snapshot = await getDocFromServer(reference);
     if (!snapshot.exists()) throw new Error("找不到要修改的抽牌紀錄。");
     const current = toRecord(snapshot.data(), snapshot.id);
+    const questionText = current.recordType === "open_observation" ? "" : fields.questionText.trim();
+    if (current.recordType !== "open_observation" && !questionText) throw new Error("題目文字不可空白。");
     const orientationLabel: TarotOrientationLabel = fields.orientation === "upright" ? "正位" : "逆位";
     const patch = {
       questionText,
@@ -235,6 +265,20 @@ export class TarotRecordRepository {
     };
     await updateDoc(reference, patch);
     return { ...current, ...patch, updatedAt: new Date().toISOString() };
+  }
+
+  async updateOpenObservationNote(groupId: string, note: string): Promise<void> {
+    const reference = this.groupRef(groupId);
+    const snapshot = await getDocFromServer(reference);
+    if (!snapshot.exists()) throw new Error("找不到這筆無題觀測。");
+    const summary = toGroupSummary(snapshot.data(), snapshot.id);
+    if (summary.recordType !== "open_observation") throw new Error("只有無題觀測可以在此修改備註。");
+    const trimmed = note.trim();
+    const records = await getDocsFromServer(query(collection(this.database, RECORD_COLLECTION), where("groupId", "==", groupId)));
+    const batch = writeBatch(this.database);
+    batch.update(reference, { note: trimmed, updatedAt: serverTimestamp() });
+    records.docs.forEach((item) => batch.update(item.ref, { note: trimmed, updatedAt: serverTimestamp() }));
+    await batch.commit();
   }
 
   async deleteRecord(recordId: string): Promise<void> {

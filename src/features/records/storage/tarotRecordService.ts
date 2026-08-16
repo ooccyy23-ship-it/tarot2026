@@ -57,6 +57,11 @@ export class TarotRecordService {
     return this.repository.updateRecord(recordId, fields);
   }
 
+  updateOpenObservationNote(groupId: string, note: string): Promise<void> {
+    this.assertAuthorized();
+    return this.repository.updateOpenObservationNote(groupId, note);
+  }
+
   deleteRecord(recordId: string): Promise<void> {
     this.assertAuthorized();
     return this.repository.deleteRecord(recordId);

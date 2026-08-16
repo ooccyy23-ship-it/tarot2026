@@ -3,7 +3,7 @@ import { DEFAULT_TAROT_RECORD_FILTERS, filterTarotRecords } from "../logic/tarot
 import { analyticsScopeSummary } from "../logic/tarotRecordNavigation";
 import { tarotRecordStorageErrorMessage } from "../storage/tarotRecordError";
 import { getTarotRecordService } from "../storage/tarotRecordService";
-import type { ParsedTarotRecord, TarotRecordFilters } from "../types/tarotRecord";
+import type { ParsedTarotRecord, TarotRecordFilters, TarotRecordType } from "../types/tarotRecord";
 
 export function useTarotAnalysisRecords() {
   const [records, setRecords] = useState<ParsedTarotRecord[]>([]);
@@ -13,6 +13,7 @@ export function useTarotAnalysisRecords() {
   const calculatedAt = useMemo(() => new Date(), []);
   const sourceScope = useMemo(() => analyticsScopeSummary(records, calculatedAt), [calculatedAt, records]);
   const filteredRecords = useMemo(() => filterTarotRecords(records, filters), [filters, records]);
+  const comparisonRecords = useMemo(() => filterTarotRecords(records, { ...filters, recordType: "" }), [filters, records]);
   const filteredScope = useMemo(() => analyticsScopeSummary(filteredRecords, calculatedAt), [calculatedAt, filteredRecords]);
 
   useEffect(() => {
@@ -34,9 +35,12 @@ export function useTarotAnalysisRecords() {
     dateTo: value,
   }));
 
+  const updateRecordType = (value: TarotRecordType | "") => setFilters((current) => ({ ...current, recordType: value }));
+
   return {
     records,
     filteredRecords,
+    comparisonRecords,
     loading,
     error,
     sourceScope,
@@ -45,6 +49,8 @@ export function useTarotAnalysisRecords() {
     effectiveDateTo: filters.dateTo || sourceScope.dateTo,
     updateDateFrom,
     updateDateTo,
+    recordType: filters.recordType,
+    updateRecordType,
     resetFilters: () => setFilters({ ...DEFAULT_TAROT_RECORD_FILTERS }),
   };
 }

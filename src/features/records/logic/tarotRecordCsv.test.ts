@@ -27,6 +27,14 @@ describe("tarot record CSV", () => {
     expect(csv.charCodeAt(0)).toBe(0xfeff);
     expect(csv).toContain("情感本質觀測");
     expect(csv).toContain('"對方說：""你好""嗎？"');
+    expect(csv).toContain("recordType,observationCode");
+    expect(csv).toContain('"questioned"');
+  });
+
+  it("keeps open observation questions blank and exports its type", () => {
+    const csv = createTarotRecordsCsv([{ ...record, recordType: "open_observation", observationCode: "OBS-20260816-2218", groupTitle: "", questionText: "" }]);
+    expect(csv).toContain('"open_observation","OBS-20260816-2218"');
+    expect(csv).not.toContain("位置1");
   });
 
   it("uses a stable date-based filename", () => {

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import type { TarotRecordType } from "../types/tarotRecord";
 
 type OpenPanel = "scope" | "date" | null;
 
@@ -9,8 +10,10 @@ type TarotAnalysisFilterToolbarProps = {
   maximumDate: string;
   cardCount: number;
   groupCount: number;
+  recordType: TarotRecordType | "";
   onDateFromChange: (value: string) => void;
   onDateToChange: (value: string) => void;
+  onRecordTypeChange: (value: TarotRecordType | "") => void;
   onReset: () => void;
 };
 
@@ -26,8 +29,10 @@ export function TarotAnalysisFilterToolbar({
   maximumDate,
   cardCount,
   groupCount,
+  recordType,
   onDateFromChange,
   onDateToChange,
+  onRecordTypeChange,
   onReset,
 }: TarotAnalysisFilterToolbarProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -92,14 +97,14 @@ export function TarotAnalysisFilterToolbar({
             aria-controls="analytics-scope-menu"
             onClick={() => setOpenPanel((current) => current === "scope" ? null : "scope")}
           >
-            <strong className="analytics-filter-desktop-label">全部正式紀錄</strong>
-            <strong className="analytics-filter-mobile-label">全部紀錄</strong>
+            <strong className="analytics-filter-desktop-label">{recordType === "questioned" ? "題組觀測" : recordType === "open_observation" ? "無題觀測" : "全部正式紀錄"}</strong>
+            <strong className="analytics-filter-mobile-label">{recordType === "questioned" ? "題組" : recordType === "open_observation" ? "無題" : "全部紀錄"}</strong>
             <i aria-hidden="true">⌄</i>
           </button>
           {openPanel === "scope" ? (
             <div className="analytics-filter-popover analytics-scope-popover" id="analytics-scope-menu" role="dialog" aria-label="統計資料範圍">
-              <strong>全部正式紀錄</strong>
-              <p>目前統計使用所有已儲存的正式抽牌紀錄；調整日期可縮小分析範圍。</p>
+              <label><span>資料類型</span><select value={recordType} onChange={(event) => onRecordTypeChange(event.target.value as TarotRecordType | "")}><option value="">全部</option><option value="questioned">題組觀測</option><option value="open_observation">無題觀測</option></select></label>
+              <p>舊紀錄會自動視為題組觀測；無題觀測不會產生題目資料。</p>
             </div>
           ) : null}
         </div>

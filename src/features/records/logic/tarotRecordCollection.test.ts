@@ -37,6 +37,12 @@ describe("tarot record collection helpers", () => {
     expect(filterTarotRecords(records, { ...DEFAULT_TAROT_RECORD_FILTERS, dateFrom: "2026-08-06", arcanaType: "major" })[0].groupId).toBe("GRP-2");
   });
 
+  it("treats legacy records as questioned and filters open observations separately", () => {
+    const records = [record({}), record({ id: "OPEN-01", groupId: "OPEN", recordType: "open_observation", groupTitle: "", questionText: "" })];
+    expect(filterTarotRecords(records, { ...DEFAULT_TAROT_RECORD_FILTERS, recordType: "questioned" })).toHaveLength(1);
+    expect(filterTarotRecords(records, { ...DEFAULT_TAROT_RECORD_FILTERS, recordType: "open_observation" })[0].id).toBe("OPEN-01");
+  });
+
   it("sorts newest first and paginates safely", () => {
     const records = Array.from({ length: 30 }, (_, index) => record({ id: String(index), observationDateTime: `2026-08-${String(index + 1).padStart(2, "0")}T22:07:00` }));
     const sorted = sortTarotRecordsNewest(records);

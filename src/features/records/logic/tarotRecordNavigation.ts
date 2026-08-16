@@ -28,6 +28,7 @@ export type ParsedRecordFilterQuery = {
 const validOrientations = new Set(["upright", "reversed"]);
 const validArcanaTypes = new Set(["major", "minor"]);
 const validSuits = new Set(["major", "cups", "swords", "wands", "pentacles"]);
+const validRecordTypes = new Set(["questioned", "open_observation"]);
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 
 export function tarotCardStableId(order: number): string {
@@ -85,6 +86,10 @@ export function parseRecordFiltersFromHash(hash = window.location.hash): ParsedR
   if (suit && !validSuits.has(suit)) invalidParameters.push("suit");
   else filters.suit = suit as TarotRecordFilters["suit"];
 
+  const recordType = parameters.get("type")?.trim() ?? "";
+  if (recordType && !validRecordTypes.has(recordType)) invalidParameters.push("type");
+  else filters.recordType = recordType as TarotRecordFilters["recordType"];
+
   return { filters, containsCardNames: containsCardNames.slice(0, 2), invalidParameters };
 }
 
@@ -102,6 +107,7 @@ export function buildRecordsHash(filters: Partial<TarotRecordFilters> = {}, cont
   if (merged.orientation) parameters.set("orientation", merged.orientation);
   if (merged.arcanaType) parameters.set("arcana", merged.arcanaType);
   if (merged.suit) parameters.set("suit", merged.suit);
+  if (merged.recordType) parameters.set("type", merged.recordType);
   containsCardNames.slice(0, 2).forEach((cardName) => {
     const stableId = cardStableIdFromName(cardName);
     if (stableId) parameters.append("containsCard", stableId);
