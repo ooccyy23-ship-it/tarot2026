@@ -109,6 +109,19 @@ export function TarotRecordsPage() {
   const containedRecords = useMemo(() => filterRecordsByContainedCards(pairDateScopeRecords, containedCardNames), [containedCardNames, pairDateScopeRecords]);
   const filteredRecords = useMemo(() => sortTarotRecords(filterTarotRecords(containedRecords, filters), sortDirection), [containedRecords, filters, sortDirection]);
   const paginated = useMemo(() => paginateTarotRecords(filteredRecords, page, pageSize), [filteredRecords, page, pageSize]);
+  const groupedPageRecords = useMemo(() => {
+    const groups = new Map<string, ParsedTarotRecord[]>();
+    paginated.records.forEach((record) => {
+      const group = groups.get(record.groupId) ?? [];
+      group.push(record);
+      groups.set(record.groupId, group);
+    });
+    return [...groups.entries()].map(([groupId, groupRecords]) => ({
+      groupId,
+      records: [...groupRecords].sort((left, right) =>
+        (left.position ?? left.questionOrder) - (right.position ?? right.questionOrder)),
+    }));
+  }, [paginated.records]);
   const recentRecord = useMemo(() => sortTarotRecordsNewest(records)[0], [records]);
   const filteredSummary = useMemo(() => summarizeFilteredRecords(filteredRecords), [filteredRecords]);
 
@@ -234,19 +247,47 @@ export function TarotRecordsPage() {
         </div>
 
         {loadingRecords ? <div className="records-placeholder"><strong>{activeFilters.length ? "正在載入相關紀錄…" : "正在載入抽牌紀錄…"}</strong></div> : paginated.total === 0 ? <EmptyState title="沒有符合篩選條件的紀錄" description="請調整或清除篩選條件；尚未建立資料時可先匯入一個完整題組。" action={<button className="secondary-button" type="button" onClick={clearFilters}>清除篩選</button>} /> : (
-          <div className="records-data-table-wrap"><table className="records-data-table"><thead><tr><th>日期</th><th>時間</th><th>類型</th><th>觀測</th><th>位置</th><th>題目</th><th>牌卡</th><th>正逆位</th><th>操作</th></tr></thead><tbody>
-            {paginated.records.map((record) => {
-              const editing = editingId === record.id && editFields;
-              const detailHash = buildRecordDetailHash(record.groupId, buildRecordsHash(filters, containedCardNames));
-              return <tr key={record.id}>
-                <td>{formatDateForDisplay(record.observationDate)}</td><td>{record.observationTime}</td><td><RecordTypeBadge recordType={record.recordType} /></td><td><strong>{record.recordType === "open_observation" ? record.observationCode ?? "無題觀測" : record.groupTitle}</strong><small>{record.groupId}</small></td><td>{String(record.position ?? record.questionOrder).padStart(2, "0")}</td>
-                <td>{record.recordType === "open_observation" ? <span className="records-empty-question" aria-label="無題觀測沒有題目">—</span> : editing ? <textarea value={editFields.questionText} onChange={(event) => setEditFields({ ...editFields, questionText: event.target.value })} /> : record.questionText}</td>
-                <td>{editing ? <select value={editFields.cardName} onChange={(event) => setEditFields({ ...editFields, cardName: event.target.value })}>{tarotCardNames.map((name) => <option key={name}>{name}</option>)}</select> : record.cardName}</td>
-                <td>{editing ? <select value={editFields.orientation} onChange={(event) => setEditFields({ ...editFields, orientation: event.target.value as TarotOrientation })}><option value="upright">正位</option><option value="reversed">逆位</option></select> : record.orientationLabel}</td>
-                <td><div className="records-row-actions">{editing ? <><button className="compact-button primary-button" type="button" disabled={busyRecordId === record.id} onClick={() => void saveEdit()}>儲存</button><button className="compact-button ghost-button" type="button" onClick={() => { setEditingId(""); setEditFields(null); }}>取消</button></> : <><a className="compact-button secondary-button button-link" href={detailHash} onClick={markDetailNavigation}>{record.recordType === "open_observation" ? "查看觀測" : "查看題組"}</a><button className="compact-button secondary-button" type="button" onClick={() => startEdit(record)}>編輯牌卡</button>{record.recordType !== "open_observation" ? <button className="compact-button ghost-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteSingleRecord(record)}>刪除單張</button> : null}<button className="compact-button danger-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteGroup(record)}>{record.recordType === "open_observation" ? "刪除觀測" : "刪除題組"}</button></>}</div></td>
-              </tr>;
+          <div className="records-observation-list">
+            {groupedPageRecords.map(({ groupId, records: groupRecords }) => {
+              const summary = groupRecords[0];
+              const isOpenObservation = summary.recordType === "open_observation";
+              const observationTitle = isOpenObservation ? summary.observationCode ?? "無題觀測" : summary.groupTitle;
+              const detailHash = buildRecordDetailHash(groupId, buildRecordsHash(filters, containedCardNames));
+              return <article className={`records-observation-card${isOpenObservation ? " is-open-observation" : ""}`} key={groupId}>
+                <header className="records-observation-card-header">
+                  <div className="records-observation-identity">
+                    <div className="records-observation-meta">
+                      <RecordTypeBadge recordType={summary.recordType} />
+                      <span>{formatDateForDisplay(summary.observationDate)}</span>
+                      <span>{summary.observationTime}</span>
+                      <span>{groupRecords.length} 張牌</span>
+                    </div>
+                    <h3 title={observationTitle}>{observationTitle}</h3>
+                    {!isOpenObservation ? <small title={groupId}>{groupId}</small> : null}
+                  </div>
+                  <div className="records-group-actions">
+                    <a className="compact-button secondary-button button-link" href={detailHash} onClick={markDetailNavigation}>{isOpenObservation ? "查看觀測" : "查看題組"}</a>
+                    <button className="compact-button danger-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteGroup(summary)}>{isOpenObservation ? "刪除觀測" : "刪除題組"}</button>
+                  </div>
+                </header>
+
+                <div className="records-card-list" role="list" aria-label={`${observationTitle}的牌卡`}>
+                  {groupRecords.map((record) => {
+                    const editing = editingId === record.id && editFields;
+                    return <div className={`records-card-row${isOpenObservation ? " is-open-observation" : ""}`} role="listitem" key={record.id}>
+                      <div className="records-card-position"><span>位置</span><strong>{String(record.position ?? record.questionOrder).padStart(2, "0")}</strong></div>
+                      {!isOpenObservation ? <div className="records-card-question"><span>題目</span>{editing ? <textarea value={editFields.questionText} onChange={(event) => setEditFields({ ...editFields, questionText: event.target.value })} /> : <p title={record.questionText}>{record.questionText}</p>}</div> : null}
+                      <div className="records-card-result">
+                        <span>牌卡結果</span>
+                        {editing ? <div className="records-card-edit-fields"><select aria-label="牌卡" value={editFields.cardName} onChange={(event) => setEditFields({ ...editFields, cardName: event.target.value })}>{tarotCardNames.map((name) => <option key={name}>{name}</option>)}</select><select aria-label="正逆位" value={editFields.orientation} onChange={(event) => setEditFields({ ...editFields, orientation: event.target.value as TarotOrientation })}><option value="upright">正位</option><option value="reversed">逆位</option></select></div> : <div className="records-card-result-value"><strong>{record.cardName}</strong><span className={`records-orientation-badge is-${record.orientation}`}>{record.orientationLabel}</span></div>}
+                      </div>
+                      <div className="records-card-actions">{editing ? <><button className="compact-button primary-button" type="button" disabled={busyRecordId === record.id} onClick={() => void saveEdit()}>儲存</button><button className="compact-button ghost-button" type="button" onClick={() => { setEditingId(""); setEditFields(null); }}>取消</button></> : <><button className="compact-button secondary-button" type="button" onClick={() => startEdit(record)}>編輯牌卡</button>{!isOpenObservation ? <button className="compact-button ghost-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteSingleRecord(record)}>刪除單張</button> : null}</>}</div>
+                    </div>;
+                  })}
+                </div>
+              </article>;
             })}
-          </tbody></table></div>
+          </div>
         )}
         <div className="records-pagination">
           <label>每頁 <select value={pageSize} onChange={(event) => { setPageSize(Number(event.target.value) as 25 | 50 | 100); setPage(1); }}><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> 筆</label>
