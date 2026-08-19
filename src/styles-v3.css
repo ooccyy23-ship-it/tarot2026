@@ -148,9 +148,9 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(185,147,90,.
 .records-card-position strong { color: var(--accent-hover); font-size: 1.05rem; }
 .records-card-question p { display: -webkit-box; margin: 2px 0 0; overflow: hidden; color: var(--text-secondary); font-size: .82rem; line-height: 1.55; overflow-wrap: break-word; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .records-card-question textarea { width: 100%; min-height: 68px; padding: 8px 10px; resize: vertical; }
-.records-card-result-value { display: flex; align-items: center; flex-wrap: wrap; gap: 7px; margin-top: 2px; }
-.records-card-result-value strong { color: var(--text-primary); font-size: .9rem; }
-.records-orientation-badge { display: inline-flex; align-items: center; min-height: 24px; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--text-secondary); font-size: .68rem; font-weight: 700; }
+.records-card-result-value { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; width: 100%; gap: 10px; margin-top: 2px; }
+.records-card-result-value strong { min-width: 0; color: var(--text-primary); font-size: .9rem; white-space: nowrap; }
+.records-orientation-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 24px; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--text-secondary); font-size: .68rem; font-weight: 700; white-space: nowrap; }
 .records-orientation-badge.is-upright { background: #edf3ec; color: var(--success); }
 .records-orientation-badge.is-reversed { background: #fbefe8; color: var(--warning); }
 .records-card-edit-fields { display: grid; grid-template-columns: minmax(110px,1fr) 88px; gap: 7px; margin-top: 3px; }
