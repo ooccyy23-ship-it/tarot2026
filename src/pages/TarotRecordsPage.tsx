@@ -272,6 +272,12 @@ export function TarotRecordsPage() {
                 </header>
 
                 <div className="records-card-list" role="list" aria-label={`${observationTitle}的牌卡`}>
+                  <div className={`records-card-list-header${isOpenObservation ? " is-open-observation" : ""}`} aria-hidden="true">
+                    <span>位置</span>
+                    {!isOpenObservation ? <span>題目</span> : null}
+                    <span>牌卡結果</span>
+                    <span>操作</span>
+                  </div>
                   {groupRecords.map((record) => {
                     const editing = editingId === record.id && editFields;
                     return <div className={`records-card-row${isOpenObservation ? " is-open-observation" : ""}`} role="listitem" key={record.id}>
@@ -281,7 +287,7 @@ export function TarotRecordsPage() {
                         <span>牌卡結果</span>
                         {editing ? <div className="records-card-edit-fields"><select aria-label="牌卡" value={editFields.cardName} onChange={(event) => setEditFields({ ...editFields, cardName: event.target.value })}>{tarotCardNames.map((name) => <option key={name}>{name}</option>)}</select><select aria-label="正逆位" value={editFields.orientation} onChange={(event) => setEditFields({ ...editFields, orientation: event.target.value as TarotOrientation })}><option value="upright">正位</option><option value="reversed">逆位</option></select></div> : <div className="records-card-result-value"><strong>{record.cardName}</strong><span className={`records-orientation-badge is-${record.orientation}`}>{record.orientationLabel}</span></div>}
                       </div>
-                      <div className="records-card-actions">{editing ? <><button className="compact-button primary-button" type="button" disabled={busyRecordId === record.id} onClick={() => void saveEdit()}>儲存</button><button className="compact-button ghost-button" type="button" onClick={() => { setEditingId(""); setEditFields(null); }}>取消</button></> : <><button className="compact-button secondary-button" type="button" onClick={() => startEdit(record)}>編輯牌卡</button>{!isOpenObservation ? <button className="compact-button ghost-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteSingleRecord(record)}>刪除單張</button> : null}</>}</div>
+                      <div className="records-card-actions">{editing ? <><button className="compact-button primary-button" type="button" disabled={busyRecordId === record.id} onClick={() => void saveEdit()}>儲存</button><button className="compact-button ghost-button" type="button" onClick={() => { setEditingId(""); setEditFields(null); }}>取消</button></> : <><button className="compact-button secondary-button" type="button" onClick={() => startEdit(record)}>編輯牌卡</button>{!isOpenObservation ? <button className="compact-button ghost-button records-delete-single" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteSingleRecord(record)}>刪除單張</button> : null}</>}</div>
                     </div>;
                   })}
                 </div>
