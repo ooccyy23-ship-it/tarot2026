@@ -4,6 +4,7 @@ import type { AppRoute } from "./AppRouter";
 
 const navigation: Array<{ route: AppRoute; label: string }> = [
   { route: "/draw", label: "抽牌工具" },
+  { route: "/open-observation", label: "無題觀測" },
   { route: "/import", label: "紀錄匯入" },
   { route: "/records", label: "抽牌資料庫" },
   { route: "/analytics", label: "統計分析" },

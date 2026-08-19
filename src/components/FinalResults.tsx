@@ -10,6 +10,7 @@ type FinalResultsProps = {
   cards: DrawCard[];
   onCopy: () => Promise<boolean>;
   onImport?: () => void;
+  onSaveOpenObservation?: () => void;
   onRestart?: () => void;
 };
 
@@ -20,6 +21,7 @@ export function FinalResults({
   cards,
   onCopy,
   onImport,
+  onSaveOpenObservation,
   onRestart,
 }: FinalResultsProps) {
   const [copied, setCopied] = useState(false);
@@ -83,6 +85,7 @@ export function FinalResults({
           {copying ? "複製中…" : copied ? "已複製完整結果" : "複製完整結果"}
         </button>
         {onImport ? <button className="secondary-button" type="button" onClick={onImport}>匯入抽牌紀錄</button> : null}
+        {onSaveOpenObservation ? <button className="secondary-button" type="button" onClick={onSaveOpenObservation}>儲存為無題觀測</button> : null}
         <a className="ghost-button button-link" href="#/records">查看抽牌資料庫</a>
         {onRestart ? (
           <button className="ghost-button" type="button" onClick={onRestart}>

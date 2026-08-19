@@ -12,6 +12,7 @@ export const DEFAULT_TAROT_RECORD_FILTERS: TarotRecordFilters = {
   orientation: "",
   arcanaType: "",
   suit: "",
+  recordType: "",
 };
 
 export function filterTarotRecords(
@@ -34,7 +35,8 @@ export function filterTarotRecords(
       && (!filters.cardName || record.normalizedCardName === filters.cardName)
       && (!filters.orientation || record.orientation === filters.orientation)
       && (!filters.arcanaType || record.arcanaType === filters.arcanaType)
-      && (!filters.suit || record.suit === filters.suit);
+      && (!filters.suit || record.suit === filters.suit)
+      && (!filters.recordType || (record.recordType ?? "questioned") === filters.recordType);
   });
 }
 

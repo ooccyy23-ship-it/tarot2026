@@ -3,6 +3,7 @@ export type TarotSuit = "major" | "cups" | "swords" | "wands" | "pentacles";
 export type TarotOrientation = "upright" | "reversed";
 export type TarotOrientationLabel = "正位" | "逆位";
 export type TarotRecordImportSource = "draw_result" | "manual_text";
+export type TarotRecordType = "questioned" | "open_observation";
 
 export type ParsedTarotGroup = {
   groupId: string;
@@ -18,6 +19,10 @@ export type ParsedTarotGroup = {
   weekdayLabel?: string;
   sequences?: number[];
   fingerprint?: string;
+  recordType?: TarotRecordType;
+  observationCode?: string;
+  drawMethod?: string;
+  note?: string;
   records: ParsedTarotRecord[];
 };
 
@@ -30,6 +35,12 @@ export type ParsedTarotRecord = {
   groupTitle: string;
   questionOrder: number;
   questionText: string;
+  position?: number;
+  recordType?: TarotRecordType;
+  observationCode?: string;
+  weekdayLabel?: string;
+  drawMethod?: string;
+  note?: string;
   sequence?: number;
   importSource?: TarotRecordImportSource;
   drawResultId?: string;
@@ -55,6 +66,10 @@ export type TarotRecordGroupSummary = {
   importSource?: TarotRecordImportSource;
   drawResultId?: string;
   fingerprint?: string;
+  recordType: TarotRecordType;
+  observationCode?: string;
+  drawMethod?: string;
+  note?: string;
   createdAt: string;
   updatedAt?: string;
 };
@@ -68,6 +83,7 @@ export type TarotRecordFilters = {
   orientation: TarotOrientation | "";
   arcanaType: TarotArcanaType | "";
   suit: TarotSuit | "";
+  recordType: TarotRecordType | "";
 };
 
 export type TarotRecordEditableFields = Pick<

@@ -4,6 +4,7 @@ import { PageHeader } from "../components/ui/PageHeader";
 import { TarotTimeTrendSection } from "../features/records/components/TarotTimeTrendSection";
 import { TarotRecordStatisticsSection } from "../features/records/components/TarotRecordStatisticsSection";
 import { TarotAnalysisFilterToolbar } from "../features/records/components/TarotAnalysisFilterToolbar";
+import { TarotObservationTypeComparison } from "../features/records/components/TarotObservationTypeComparison";
 import { consumeAnalyticsPosition, rememberAnalyticsPosition } from "../features/records/logic/tarotRecordNavigation";
 import { useTarotAnalysisRecords } from "../features/records/hooks/useTarotAnalysisRecords";
 
@@ -39,11 +40,14 @@ export function TarotAnalysisPage() {
             maximumDate={analysis.sourceScope.dateTo}
             cardCount={analysis.filteredScope.cardCount}
             groupCount={analysis.filteredScope.groupCount}
+            recordType={analysis.recordType}
             onDateFromChange={analysis.updateDateFrom}
             onDateToChange={analysis.updateDateTo}
+            onRecordTypeChange={analysis.updateRecordType}
             onReset={analysis.resetFilters}
           />
           <TarotRecordStatisticsSection records={analysis.filteredRecords} />
+          <TarotObservationTypeComparison records={analysis.comparisonRecords} />
           <TarotTimeTrendSection records={analysis.filteredRecords} />
         </>
       )}

@@ -3,6 +3,8 @@ import type { ParsedTarotRecord } from "../types/tarotRecord";
 const csvColumns: (keyof ParsedTarotRecord)[] = [
   "id",
   "groupId",
+  "recordType",
+  "observationCode",
   "observationDate",
   "observationTime",
   "observationDateTime",
@@ -24,7 +26,10 @@ function csvCell(value: unknown): string {
 
 export function createTarotRecordsCsv(records: ParsedTarotRecord[]): string {
   const header = csvColumns.join(",");
-  const rows = records.map((record) => csvColumns.map((column) => csvCell(record[column])).join(","));
+  const rows = records.map((record) => csvColumns.map((column) => {
+    if (column === "recordType") return csvCell(record.recordType ?? "questioned");
+    return csvCell(record[column]);
+  }).join(","));
   return `\uFEFF${[header, ...rows].join("\r\n")}`;
 }
 

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { EmptyState } from "../components/ui/EmptyState";
 import { PageHeader } from "../components/ui/PageHeader";
 import { StatCard } from "../components/ui/StatCard";
+import { RecordTypeBadge } from "../features/records/components/RecordTypeBadge";
 import { tarotCardNames } from "../data/tarotCardCatalog";
 import {
   DEFAULT_TAROT_RECORD_FILTERS,
@@ -29,6 +30,7 @@ import type {
   TarotOrientation,
   TarotRecordEditableFields,
   TarotRecordFilters,
+  TarotRecordType,
   TarotSuit,
 } from "../features/records/types/tarotRecord";
 
@@ -95,7 +97,10 @@ export function TarotRecordsPage() {
     writeTarotRecordViewState({ ...initialView, restoreOnReturn: false });
   }, [initialView, loadingRecords, shouldRestoreView]);
 
-  const groupOptions = useMemo(() => [...new Map(records.map((record) => [record.groupId, record.groupTitle])).entries()], [records]);
+  const groupOptions = useMemo(() => [...new Map(records.map((record) => [
+    record.groupId,
+    record.recordType === "open_observation" ? record.observationCode ?? record.groupId : record.groupTitle,
+  ])).entries()], [records]);
   const pairDateScopeRecords = useMemo(() => filterTarotRecords(records, {
     ...DEFAULT_TAROT_RECORD_FILTERS,
     dateFrom: filters.dateFrom,
@@ -117,6 +122,7 @@ export function TarotRecordsPage() {
     if (filters.orientation) entries.push({ key: "orientation", label: orientationLabels[filters.orientation] });
     if (filters.arcanaType) entries.push({ key: "arcanaType", label: arcanaLabels[filters.arcanaType] });
     if (filters.suit) entries.push({ key: "suit", label: `牌組：${suitLabels[filters.suit]}` });
+    if (filters.recordType) entries.push({ key: "recordType", label: filters.recordType === "open_observation" ? "無題觀測" : "題組觀測" });
     return entries;
   }, [filters, groupOptions]);
 
@@ -176,14 +182,16 @@ export function TarotRecordsPage() {
   };
 
   const deleteGroup = async (record: ParsedTarotRecord) => {
-    if (!window.confirm(`確定刪除題組「${record.groupTitle}」的全部紀錄？`)) return;
-    if (!window.confirm(`請再次確認：題組 ${record.groupId} 及其牌卡紀錄將永久刪除。`)) return;
+    const isOpenObservation = record.recordType === "open_observation";
+    const label = isOpenObservation ? record.observationCode ?? record.groupId : record.groupTitle;
+    if (!window.confirm(`確定刪除${isOpenObservation ? "無題觀測" : "題組"}「${label}」的全部紀錄？`)) return;
+    if (!window.confirm(`請再次確認：${label} 及其牌卡紀錄將永久刪除。`)) return;
     setBusyRecordId(record.groupId);
     setError("");
     try {
       const deleted = await getTarotRecordService().deleteGroup(record.groupId);
       setRecords((current) => current.filter((item) => item.groupId !== record.groupId));
-      setNotice(`已刪除題組及 ${deleted} 筆牌卡紀錄。`);
+      setNotice(`已刪除${isOpenObservation ? "無題觀測" : "題組"}及 ${deleted} 筆牌卡紀錄。`);
     } catch (reason) {
       setError(tarotRecordStorageErrorMessage(reason));
     } finally {
@@ -193,24 +201,25 @@ export function TarotRecordsPage() {
 
   return (
     <main className="content-page records-page">
-      <PageHeader eyebrow="Records Database" title="抽牌資料庫" description="搜尋、篩選與維護已儲存的五題抽牌資料。" actions={<><a className="primary-button button-link" href="#/import">匯入紀錄</a><a className="secondary-button button-link" href="#/analytics">前往統計分析</a></>} />
+      <PageHeader eyebrow="Records Database" title="抽牌資料庫" description="搜尋、篩選與維護已儲存的題組觀測與無題觀測。" actions={<><a className="primary-button button-link" href="#/open-observation">新增無題觀測</a><a className="secondary-button button-link" href="#/analytics">前往統計分析</a></>} />
 
       {error ? <p className="status-message error" role="alert">{error}</p> : null}
       {notice ? <p className="status-message success" role="status">{notice}</p> : null}
 
       <section className="ui-stat-grid" aria-label="抽牌資料摘要">
         <StatCard label="牌卡紀錄" value={records.length} hint="已儲存的單張牌" />
-        <StatCard label="題組數量" value={groupOptions.length} hint="每個完整題組原則上 5 張" />
+        <StatCard label="觀測單位" value={groupOptions.length} hint="每筆正式觀測包含 5 張牌" />
         <StatCard label="最近一筆" value={recentRecord ? formatDateForDisplay(recentRecord.observationDate) : "尚無資料"} hint={recentRecord ? `${recentRecord.observationTime} · ${recentRecord.cardName}${recentRecord.orientationLabel}` : "請先匯入抽牌紀錄"} />
       </section>
 
       <section className="panel records-table-panel" aria-labelledby="records-table-title">
-        <div className="section-heading"><div><p className="eyebrow">Records</p><h2 id="records-table-title">已儲存紀錄</h2></div><span className="status-chip pending">{filteredSummary.appearances} 次出現 · {filteredSummary.groups} 個題組</span></div>
+        <div className="section-heading"><div><p className="eyebrow">Records</p><h2 id="records-table-title">已儲存紀錄</h2></div><span className="status-chip pending">{filteredSummary.appearances} 張牌 · {filteredSummary.groups} 筆觀測</span></div>
         {containedCardNames.length ? <div className="records-pair-filter-summary"><div><span>共同出現條件</span><strong>{containedCardNames.join(" × ")}</strong></div><p>共 {containedCardNames.length === 2 ? new Set(containedRecords.map((record) => record.groupId)).size : containedRecords.filter((record) => record.normalizedCardName === containedCardNames[0]).length} 次共同出現 · 涉及 {new Set(containedRecords.map((record) => record.groupId)).size} 組題組</p><a className="ghost-button compact-button button-link" href="#/cooccurrence">返回共現分析</a></div> : null}
         <div className="records-filter-toolbar records-filter-toolbar-v3">
           <label className="records-primary-search"><span>搜尋紀錄</span><input type="search" value={searchInput} placeholder="輸入題組、題目或牌名" onChange={(event) => setSearchInput(event.target.value)} onKeyDown={(event) => { if (event.key === "Enter") updateFilter("keyword", searchInput); }} /></label>
           <button className="secondary-button records-mobile-filter-toggle" type="button" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((value) => !value)}>篩選 {activeFilters.length ? `(${activeFilters.length})` : ""}</button>
           <div className={`records-filter-grid ${filtersOpen ? "is-open" : ""}`}>
+            <label><span>資料類型</span><select value={filters.recordType} onChange={(event) => updateFilter("recordType", event.target.value as TarotRecordType | "")}><option value="">全部</option><option value="questioned">題組觀測</option><option value="open_observation">無題觀測</option></select></label>
             <label><span>開始日期</span><input type="date" value={filters.dateFrom} onChange={(event) => updateFilter("dateFrom", event.target.value)} /></label>
             <label><span>結束日期</span><input type="date" value={filters.dateTo} onChange={(event) => updateFilter("dateTo", event.target.value)} /></label>
             <label><span>題組</span><select value={filters.groupId} onChange={(event) => updateFilter("groupId", event.target.value)}><option value="">全部題組</option>{groupOptions.map(([id, title]) => <option key={id} value={id}>{title}</option>)}</select></label>
@@ -225,16 +234,16 @@ export function TarotRecordsPage() {
         </div>
 
         {loadingRecords ? <div className="records-placeholder"><strong>{activeFilters.length ? "正在載入相關紀錄…" : "正在載入抽牌紀錄…"}</strong></div> : paginated.total === 0 ? <EmptyState title="沒有符合篩選條件的紀錄" description="請調整或清除篩選條件；尚未建立資料時可先匯入一個完整題組。" action={<button className="secondary-button" type="button" onClick={clearFilters}>清除篩選</button>} /> : (
-          <div className="records-data-table-wrap"><table className="records-data-table"><thead><tr><th>日期</th><th>時間</th><th>題組</th><th>題序</th><th>題目</th><th>牌卡</th><th>正逆位</th><th>操作</th></tr></thead><tbody>
+          <div className="records-data-table-wrap"><table className="records-data-table"><thead><tr><th>日期</th><th>時間</th><th>類型</th><th>觀測</th><th>位置</th><th>題目</th><th>牌卡</th><th>正逆位</th><th>操作</th></tr></thead><tbody>
             {paginated.records.map((record) => {
               const editing = editingId === record.id && editFields;
               const detailHash = buildRecordDetailHash(record.groupId, buildRecordsHash(filters, containedCardNames));
               return <tr key={record.id}>
-                <td>{formatDateForDisplay(record.observationDate)}</td><td>{record.observationTime}</td><td><strong>{record.groupTitle}</strong><small>{record.groupId}</small></td><td>{record.questionOrder}</td>
-                <td>{editing ? <textarea value={editFields.questionText} onChange={(event) => setEditFields({ ...editFields, questionText: event.target.value })} /> : record.questionText}</td>
+                <td>{formatDateForDisplay(record.observationDate)}</td><td>{record.observationTime}</td><td><RecordTypeBadge recordType={record.recordType} /></td><td><strong>{record.recordType === "open_observation" ? record.observationCode ?? "無題觀測" : record.groupTitle}</strong><small>{record.groupId}</small></td><td>{String(record.position ?? record.questionOrder).padStart(2, "0")}</td>
+                <td>{record.recordType === "open_observation" ? <span className="records-empty-question" aria-label="無題觀測沒有題目">—</span> : editing ? <textarea value={editFields.questionText} onChange={(event) => setEditFields({ ...editFields, questionText: event.target.value })} /> : record.questionText}</td>
                 <td>{editing ? <select value={editFields.cardName} onChange={(event) => setEditFields({ ...editFields, cardName: event.target.value })}>{tarotCardNames.map((name) => <option key={name}>{name}</option>)}</select> : record.cardName}</td>
                 <td>{editing ? <select value={editFields.orientation} onChange={(event) => setEditFields({ ...editFields, orientation: event.target.value as TarotOrientation })}><option value="upright">正位</option><option value="reversed">逆位</option></select> : record.orientationLabel}</td>
-                <td><div className="records-row-actions">{editing ? <><button className="compact-button primary-button" type="button" disabled={busyRecordId === record.id} onClick={() => void saveEdit()}>儲存</button><button className="compact-button ghost-button" type="button" onClick={() => { setEditingId(""); setEditFields(null); }}>取消</button></> : <><a className="compact-button secondary-button button-link" href={detailHash} onClick={markDetailNavigation}>查看題組</a><button className="compact-button secondary-button" type="button" onClick={() => startEdit(record)}>編輯</button><button className="compact-button ghost-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteSingleRecord(record)}>刪除</button><button className="compact-button danger-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteGroup(record)}>刪除題組</button></>}</div></td>
+                <td><div className="records-row-actions">{editing ? <><button className="compact-button primary-button" type="button" disabled={busyRecordId === record.id} onClick={() => void saveEdit()}>儲存</button><button className="compact-button ghost-button" type="button" onClick={() => { setEditingId(""); setEditFields(null); }}>取消</button></> : <><a className="compact-button secondary-button button-link" href={detailHash} onClick={markDetailNavigation}>{record.recordType === "open_observation" ? "查看觀測" : "查看題組"}</a><button className="compact-button secondary-button" type="button" onClick={() => startEdit(record)}>編輯牌卡</button>{record.recordType !== "open_observation" ? <button className="compact-button ghost-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteSingleRecord(record)}>刪除單張</button> : null}<button className="compact-button danger-button" type="button" disabled={Boolean(busyRecordId)} onClick={() => void deleteGroup(record)}>{record.recordType === "open_observation" ? "刪除觀測" : "刪除題組"}</button></>}</div></td>
               </tr>;
             })}
           </tbody></table></div>

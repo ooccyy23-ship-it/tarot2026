@@ -306,9 +306,24 @@ service cloud.firestore {
     }
 
     match /tarotRecordGroups/{groupId} {
+      function isValidRecordGroupType() {
+        return request.resource.data.recordType in ['questioned', 'open_observation'];
+      }
+
+      function isValidOpenObservationGroup() {
+        return request.resource.data.recordType != 'open_observation'
+          || (
+            request.resource.data.observationCode is string
+            && request.resource.data.observationCode.size() > 0
+            && request.resource.data.note is string
+          );
+      }
+
       allow read: if isAllowedUser();
       allow create: if isAllowedUser()
         && request.resource.data.groupId == groupId
+        && isValidRecordGroupType()
+        && isValidOpenObservationGroup()
         && request.resource.data.groupTitle is string
         && request.resource.data.observationDate is string
         && request.resource.data.observationTime is string
@@ -320,39 +335,83 @@ service cloud.firestore {
         && request.resource.data.groupId == resource.data.groupId
         && request.resource.data.createdAt == resource.data.createdAt
         && request.resource.data.updatedAt == request.time
+        && (
+          !('recordType' in resource.data)
+          || request.resource.data.recordType == resource.data.recordType
+        )
         && request.resource.data.recordCount is int
         && request.resource.data.recordCount >= 0
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
           'recordCount',
+          'note',
           'updatedAt'
-        ]);
+        ])
+        && (
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['note'])
+          || (
+            resource.data.recordType == 'open_observation'
+            && request.resource.data.note is string
+          )
+        );
       allow delete: if isAllowedUser();
     }
 
     match /tarotRecords/{recordId} {
+      function requestedRecordType() {
+        return request.resource.data.recordType;
+      }
+
+      function hasValidQuestionForType() {
+        return request.resource.data.questionText is string
+          && (
+            (requestedRecordType() == 'open_observation' && request.resource.data.questionText.size() == 0)
+            || (requestedRecordType() == 'questioned' && request.resource.data.questionText.size() > 0)
+          );
+      }
+
+      function existingRecordIsOpen() {
+        return ('recordType' in resource.data) && resource.data.recordType == 'open_observation';
+      }
+
+      function updatedQuestionIsValid() {
+        return request.resource.data.questionText is string
+          && (
+            (existingRecordIsOpen() && request.resource.data.questionText.size() == 0)
+            || (!existingRecordIsOpen() && request.resource.data.questionText.size() > 0)
+          );
+      }
+
       allow read: if isAllowedUser();
       allow create: if isAllowedUser()
         && request.resource.data.id == recordId
         && request.resource.data.groupId is string
+        && requestedRecordType() in ['questioned', 'open_observation']
         && request.resource.data.questionOrder is int
         && request.resource.data.questionOrder >= 1
         && request.resource.data.questionOrder <= 5
-        && request.resource.data.questionText is string
-        && request.resource.data.questionText.size() > 0
+        && request.resource.data.position is int
+        && request.resource.data.position == request.resource.data.questionOrder
+        && hasValidQuestionForType()
         && request.resource.data.orientation in ['upright', 'reversed']
         && request.resource.data.orientationLabel in ['正位', '逆位']
         && request.resource.data.createdAt == request.time
         && request.resource.data.updatedAt == request.time
         && getAfter(
           /databases/$(database)/documents/tarotRecordGroups/$(request.resource.data.groupId)
-        ).data.groupId == request.resource.data.groupId;
+        ).data.groupId == request.resource.data.groupId
+        && getAfter(
+          /databases/$(database)/documents/tarotRecordGroups/$(request.resource.data.groupId)
+        ).data.recordType == requestedRecordType();
       allow update: if isAllowedUser()
         && request.resource.data.id == resource.data.id
         && request.resource.data.groupId == resource.data.groupId
         && request.resource.data.createdAt == resource.data.createdAt
         && request.resource.data.updatedAt == request.time
-        && request.resource.data.questionText is string
-        && request.resource.data.questionText.size() > 0
+        && (
+          !('recordType' in resource.data)
+          || request.resource.data.recordType == resource.data.recordType
+        )
+        && updatedQuestionIsValid()
         && request.resource.data.orientation in ['upright', 'reversed']
         && request.resource.data.orientationLabel in ['正位', '逆位']
         && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
@@ -364,8 +423,13 @@ service cloud.firestore {
           'rank',
           'orientation',
           'orientationLabel',
+          'note',
           'updatedAt'
-        ]);
+        ])
+        && (
+          !request.resource.data.diff(resource.data).affectedKeys().hasAny(['note'])
+          || (existingRecordIsOpen() && request.resource.data.note is string)
+        );
       allow delete: if isAllowedUser();
     }
 

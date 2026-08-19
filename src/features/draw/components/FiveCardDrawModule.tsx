@@ -25,6 +25,7 @@ import {
 } from "../storage/drawDraftStorage";
 import { createDrawResultImportDraft } from "../../records/logic/drawResultImport";
 import { saveTarotImportDraft } from "../../records/storage/tarotImportDraftStorage";
+import { saveOpenObservationPrefill } from "../../records/storage/openObservationDraftStorage";
 
 type Props = {
   fixedTime?: string;
@@ -429,6 +430,26 @@ export function FiveCardDrawModule({
     window.location.hash = "/import";
   };
 
+  const handleOpenObservation = () => {
+    if (!allCoinsCompleted || !observationDate) return;
+    const date = `${observationDate.getFullYear()}-${String(observationDate.getMonth() + 1).padStart(2, "0")}-${String(observationDate.getDate()).padStart(2, "0")}`;
+    saveOpenObservationPrefill({
+      source: "draw_result",
+      observationDate: date,
+      drawTime: timeInput,
+      weekdayLabel: getWeekdayLabel(weekday),
+      drawMethod: "時間五序號抽牌",
+      note: "",
+      cards: cards.map((card, index) => ({
+        position: index + 1,
+        serialNumber: card.sequenceValue,
+        cardName: card.mapping.cardName,
+        orientation: card.orientationResult?.orientation ?? "",
+      })),
+    });
+    window.location.hash = "/open-observation";
+  };
+
   return (
     <div className="draw-module">
       {recoveryResult.status !== "none" ? <DrawDraftRecoveryPanel result={recoveryResult} onRestore={recoveryResult.status === "invalid" ? undefined : handleRestoreDraft} onDiscard={handleDiscardDraft} /> : null}
@@ -527,6 +548,7 @@ export function FiveCardDrawModule({
           cards={cards}
           onCopy={handleCopy}
           onImport={handleImportRecord}
+          onSaveOpenObservation={handleOpenObservation}
           onRestart={lockAfterComplete ? undefined : handleRestart}
         /></div>
       ) : null}

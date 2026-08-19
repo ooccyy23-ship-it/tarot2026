@@ -7,10 +7,11 @@ import { DailyTarotStatisticsPage } from "../pages/DailyTarotStatisticsPage";
 import { TarotRecordImportPage } from "../pages/TarotRecordImportPage";
 import { TarotRecordsPage } from "../pages/TarotRecordsPage";
 import { TarotRecordDetailPage } from "../pages/TarotRecordDetailPage";
+import { OpenObservationPage } from "../pages/OpenObservationPage";
 import { AppLayout } from "./AppLayout";
 import { NetworkStatusNotice } from "../components/NetworkStatusNotice";
 
-const routes = ["/", "/draw", "/import", "/records", "/records/detail", "/analytics", "/analytics/daily", "/cooccurrence"] as const;
+const routes = ["/", "/draw", "/open-observation", "/import", "/records", "/records/detail", "/analytics", "/analytics/daily", "/cooccurrence"] as const;
 export type AppRoute = (typeof routes)[number];
 
 function getRoute(): string {
@@ -64,6 +65,9 @@ export function AppRouter() {
       break;
     case "/draw":
       page = <DrawToolPage />;
+      break;
+    case "/open-observation":
+      page = <OpenObservationPage />;
       break;
     default:
       page = <DashboardPage />;
