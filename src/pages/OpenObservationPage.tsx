@@ -81,33 +81,50 @@ export function OpenObservationPage() {
   };
 
   if (savedGroupId) return <main className="content-page open-observation-page">
-    <PageHeader eyebrow="Open Observation" title="無題隨機觀測" description="記錄未預設問題的五張抽牌，用於牌面分布、共現與長期觀測分析。" />
+    <PageHeader eyebrow="Open Observation" title="無題觀測" description="建立一筆不含預設題義的五張牌觀測紀錄" />
     <section className="panel open-observation-success" aria-live="polite"><p className="eyebrow">Save Complete</p><h2>無題觀測已儲存</h2><p>{createOpenObservationCode(input.observationDate, input.drawTime)} 已安全寫入雲端。</p><div className="actions-row"><a className="primary-button button-link" href={`#/records/detail?groupId=${encodeURIComponent(savedGroupId)}`}>查看這筆觀測</a><button className="secondary-button" type="button" onClick={() => { setInput(blankInput()); setSavedGroupId(""); }}>建立另一筆</button><a className="ghost-button button-link" href="#/records">前往抽牌資料庫</a></div></section>
   </main>;
 
   return <main className="content-page open-observation-page">
-    <PageHeader eyebrow="Open Observation" title="無題隨機觀測" description="記錄未預設問題的五張抽牌，用於牌面分布、共現與長期觀測分析。" actions={<a className="secondary-button button-link" href="#/draw">前往抽牌工具</a>} />
+    <PageHeader
+      eyebrow="Open Observation"
+      title="無題觀測"
+      description="建立一筆不含預設題義的五張牌觀測紀錄"
+      actions={<div className="open-observation-page-meta"><span>Observation ID</span><strong>{createOpenObservationCode(input.observationDate, input.drawTime)}</strong><RecordTypeBadge recordType="open_observation" /></div>}
+    />
     {input.source === "draw_result" ? <p className="status-message success" role="status">已從完成的五牌抽取帶入，請確認後儲存。</p> : null}
     {error ? <p className="status-message error" role="alert">{error}</p> : null}
     <section className="panel open-observation-form">
-      <div className="section-heading"><div><p className="eyebrow">Observation Metadata</p><h2>{createOpenObservationCode(input.observationDate, input.drawTime)}</h2></div><RecordTypeBadge recordType="open_observation" /></div>
-      <div className="open-observation-meta-grid">
-        <label><span>觀測日期</span><input type="date" value={input.observationDate} onChange={(event) => setInput((current) => ({ ...current, observationDate: event.target.value }))} /></label>
-        <label><span>抽牌時間</span><input type="time" value={input.drawTime} onChange={(event) => setInput((current) => ({ ...current, drawTime: event.target.value }))} /></label>
-        <label><span>星期</span><input value={input.weekdayLabel} readOnly /></label>
-        <label><span>抽牌方式</span><input value={input.drawMethod} onChange={(event) => setInput((current) => ({ ...current, drawMethod: event.target.value }))} /></label>
-      </div>
-      <div className="open-observation-card-list" aria-label="五張牌">
-        {input.cards.map((card, index) => <article key={card.position} className="open-observation-card">
-          <div><span>位置 {String(card.position).padStart(2, "0")}</span><small>位置本身不代表牌義</small></div>
-          <label><span>序號（選填）</span><input type="number" min="1" max="78" value={card.serialNumber ?? ""} onChange={(event) => updateCard(index, { serialNumber: event.target.value ? Number(event.target.value) : null })} /></label>
-          <label><span>牌名</span><select value={card.cardName} onChange={(event) => updateCard(index, { cardName: event.target.value })}><option value="">請選擇牌卡</option>{tarotCardNames.map((name) => <option key={name}>{name}</option>)}</select></label>
-          <label><span>正逆位</span><select value={card.orientation} onChange={(event) => updateCard(index, { orientation: event.target.value as TarotOrientation })}><option value="">請選擇</option><option value="upright">正位</option><option value="reversed">逆位</option></select></label>
-        </article>)}
-      </div>
+      <section className="open-observation-section" aria-labelledby="open-observation-metadata-title">
+        <div className="open-observation-section-heading"><p className="eyebrow">Observation Metadata</p><h2 id="open-observation-metadata-title">觀測資訊</h2></div>
+        <div className="open-observation-meta-grid">
+          <label><span>觀測日期</span><input type="date" value={input.observationDate} onChange={(event) => setInput((current) => ({ ...current, observationDate: event.target.value }))} /></label>
+          <label><span>抽牌時間</span><input type="time" value={input.drawTime} onChange={(event) => setInput((current) => ({ ...current, drawTime: event.target.value }))} /></label>
+          <label><span>星期</span><input value={input.weekdayLabel} readOnly /></label>
+          <label><span>建立方式</span><input value={input.drawMethod} onChange={(event) => setInput((current) => ({ ...current, drawMethod: event.target.value }))} /></label>
+        </div>
+      </section>
+
+      <section className="open-observation-section open-observation-records" aria-labelledby="open-observation-records-title">
+        <div className="open-observation-section-heading"><p className="eyebrow">Card Records</p><h2 id="open-observation-records-title">牌卡紀錄</h2><p>位置僅代表抽牌順序，不預設任何牌義。</p></div>
+        <div className="open-observation-table" role="table" aria-label="五張牌卡紀錄">
+          <div className="open-observation-table-header" role="row">
+            <span role="columnheader">位置</span><span role="columnheader">序號（選填）</span><span role="columnheader">牌卡</span><span role="columnheader">正逆位</span>
+          </div>
+          <div className="open-observation-card-list" role="rowgroup">
+            {input.cards.map((card, index) => <div key={card.position} className="open-observation-card-row" role="row">
+              <strong className="open-observation-position" role="cell">{String(card.position).padStart(2, "0")}</strong>
+              <div role="cell"><label><span className="open-observation-mobile-label">序號（選填）</span><input aria-label={`第 ${card.position} 張序號（選填）`} type="number" min="1" max="78" value={card.serialNumber ?? ""} onChange={(event) => updateCard(index, { serialNumber: event.target.value ? Number(event.target.value) : null })} /></label></div>
+              <div className="open-observation-card-field" role="cell"><label><span className="open-observation-mobile-label">牌卡</span><select aria-label={`第 ${card.position} 張牌卡`} value={card.cardName} onChange={(event) => updateCard(index, { cardName: event.target.value })}><option value="">請選擇牌卡</option>{tarotCardNames.map((name) => <option key={name}>{name}</option>)}</select></label></div>
+              <div role="cell"><label><span className="open-observation-mobile-label">正逆位</span><select aria-label={`第 ${card.position} 張正逆位`} value={card.orientation} onChange={(event) => updateCard(index, { orientation: event.target.value as TarotOrientation })}><option value="">請選擇</option><option value="upright">正位</option><option value="reversed">逆位</option></select></label></div>
+            </div>)}
+          </div>
+        </div>
+      </section>
+
       <label className="open-observation-note"><span>觀測備註（選填）</span><textarea value={input.note} onChange={(event) => setInput((current) => ({ ...current, note: event.target.value }))} placeholder="備註只作為觀測補充，不會被視為題目。" /></label>
-      <div className="actions-row"><button className="primary-button" type="button" disabled={saving || errors.length > 0 || !online} onClick={() => void save()}>{saving ? "正在儲存觀測…" : "確認儲存"}</button><a className="ghost-button button-link" href="#/records">取消</a></div>
-      {errors.length ? <small className="draw-disabled-reason">{errors[0]}</small> : null}
+      <div className="open-observation-footer-actions"><a className="ghost-button button-link" href="#/records">取消</a><button className="primary-button" type="button" disabled={saving || errors.length > 0 || !online} onClick={() => void save()}>{saving ? "正在儲存觀測…" : "儲存觀測"}</button></div>
+      {errors.length ? <small className="draw-disabled-reason open-observation-save-reason">{errors[0]}</small> : null}
     </section>
   </main>;
 }
