@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { RecentSevenDayStatisticsCard } from "./RecentSevenDayStatisticsCard";
+import { TarotDrawTimeDistributionCard } from "./TarotDrawTimeDistributionCard";
 import { createTarotRecordsCsv, tarotRecordsCsvFilename } from "../logic/tarotRecordCsv";
 import { sortTarotRecordsNewest } from "../logic/tarotRecordCollection";
 import {
@@ -167,6 +168,7 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
         </article>
 
         <RecentSevenDayStatisticsCard records={records} />
+        <TarotDrawTimeDistributionCard records={records} />
       </div>
 
       <div className="records-frequency-section">
