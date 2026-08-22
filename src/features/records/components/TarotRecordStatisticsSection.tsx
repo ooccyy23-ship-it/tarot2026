@@ -47,9 +47,9 @@ function downloadRecords(records: ParsedTarotRecord[]): void {
 
 export function TarotRecordStatisticsSection({ records }: { records: ParsedTarotRecord[] }) {
   const [frequencySearch, setFrequencySearch] = useState("");
-  const [sortKey, setSortKey] = useState<TarotFrequencySortKey>("order");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [frequencyScope, setFrequencyScope] = useState<FrequencyScope>("recorded");
+  const [sortKey, setSortKey] = useState<TarotFrequencySortKey>("totalCount");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [frequencyScope, setFrequencyScope] = useState<FrequencyScope>("all");
   const [frequencyPage, setFrequencyPage] = useState(1);
   const [exportMessage, setExportMessage] = useState("");
   const statistics = useMemo(() => calculateTarotRecordStatistics(records), [records]);
@@ -172,12 +172,12 @@ export function TarotRecordStatisticsSection({ records }: { records: ParsedTarot
       </div>
 
       <div className="records-frequency-section">
-        <div className="section-heading"><div><p className="eyebrow">Frequency Detail</p><h3>牌卡頻率明細</h3><p>預設只顯示曾出現的牌；需要時可切換查看全部 78 張或尚未出現的牌。</p></div></div>
+        <div className="section-heading"><div><p className="eyebrow">Frequency Detail</p><h3>牌卡頻率明細</h3><p>預設顯示全部 78 張牌，依總次數由大至小排列。</p></div></div>
         <div className="records-frequency-controls">
           <label><span>資料範圍</span><select value={frequencyScope} onChange={(event) => { setFrequencyScope(event.target.value as FrequencyScope); setFrequencyPage(1); }}><option value="recorded">只看有紀錄</option><option value="all">全部 78 張</option><option value="missing">只看尚未出現</option></select></label>
           <label><span>搜尋牌名</span><input type="search" value={frequencySearch} placeholder="例如：聖杯3" onChange={(event) => { setFrequencySearch(event.target.value); setFrequencyPage(1); }} /></label>
           <label><span>排序欄位</span><select value={sortKey} onChange={(event) => { setSortKey(event.target.value as TarotFrequencySortKey); setFrequencyPage(1); }}><option value="order">牌序</option><option value="totalCount">總次數</option><option value="uprightCount">正位</option><option value="reversedCount">逆位</option><option value="recentDate">最近出現</option></select></label>
-          <label><span>排序方向</span><select value={sortDirection} onChange={(event) => { setSortDirection(event.target.value as "asc" | "desc"); setFrequencyPage(1); }}><option value="asc">由小到大</option><option value="desc">由大到小</option></select></label>
+          <label><span>排序方向</span><select value={sortDirection} onChange={(event) => { setSortDirection(event.target.value as "asc" | "desc"); setFrequencyPage(1); }}><option value="asc">由小至大</option><option value="desc">由大至小</option></select></label>
         </div>
         {pagedFrequencies.length === 0 ? <div className="records-placeholder records-frequency-empty"><strong>沒有符合條件的牌卡</strong><p>請調整資料範圍或搜尋條件。</p></div> : <>
           <div className="records-frequency-table-wrap"><table className="records-frequency-table records-frequency-complete"><thead><tr><th>牌序</th><th>牌卡</th><th>牌類</th><th>牌組</th><th>總次數</th><th>正位</th><th>逆位</th><th>比例</th><th>最近出現日期</th></tr></thead><tbody>{pagedFrequencies.map((row) => <tr key={row.cardName}><td>{row.order}</td><td>{row.totalCount > 0 ? <a href={buildRecordsHash({ cardName: row.cardName })} aria-label={`查看${row.cardName}的原始紀錄`}><strong>{row.cardName}</strong></a> : <strong>{row.cardName}</strong>}</td><td>{arcanaLabels[row.arcanaType]}</td><td>{suitLabels[row.suit]}</td><td>{row.totalCount}</td><td>{row.uprightCount}</td><td>{row.reversedCount}</td><td>{formatPercentage(row.percentage)}</td><td>{row.recentDate ? row.recentDate.replace(/-/g, "/") : "尚未出現"}</td></tr>)}</tbody></table></div>
