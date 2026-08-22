@@ -9,6 +9,7 @@ const navigation: Array<{ route: AppRoute; label: string }> = [
   { route: "/records", label: "抽牌資料庫" },
   { route: "/analytics", label: "統計分析" },
   { route: "/cooccurrence", label: "共現分析" },
+  { route: "/trends", label: "趨勢分析" },
 ];
 
 export function AppLayout({ currentRoute, children }: { currentRoute: string; children: ReactNode }) {
