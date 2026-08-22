@@ -8,10 +8,11 @@ import { TarotRecordImportPage } from "../pages/TarotRecordImportPage";
 import { TarotRecordsPage } from "../pages/TarotRecordsPage";
 import { TarotRecordDetailPage } from "../pages/TarotRecordDetailPage";
 import { OpenObservationPage } from "../pages/OpenObservationPage";
+import { TarotTrendAnalysisPage } from "../pages/TarotTrendAnalysisPage";
 import { AppLayout } from "./AppLayout";
 import { NetworkStatusNotice } from "../components/NetworkStatusNotice";
 
-const routes = ["/", "/draw", "/open-observation", "/import", "/records", "/records/detail", "/analytics", "/analytics/daily", "/cooccurrence"] as const;
+const routes = ["/", "/draw", "/open-observation", "/import", "/records", "/records/detail", "/analytics", "/analytics/daily", "/cooccurrence", "/trends"] as const;
 export type AppRoute = (typeof routes)[number];
 
 function getRoute(): string {
@@ -56,6 +57,9 @@ export function AppRouter() {
       break;
     case "/cooccurrence":
       page = <TarotCooccurrencePage />;
+      break;
+    case "/trends":
+      page = <TarotTrendAnalysisPage />;
       break;
     case "/records":
       page = <TarotRecordsPage />;
