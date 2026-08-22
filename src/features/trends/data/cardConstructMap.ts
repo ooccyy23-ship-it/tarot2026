@@ -1,21 +1,23 @@
 import { tarotCardCatalog } from "../../../data/tarotCardCatalog";
 import { tarotCardStableId } from "../../records/logic/tarotRecordNavigation";
-import type { CardConstructMapping, TrendConstructId } from "../types/trendAnalysis";
-
-// Only mappings explicitly supported by the supplied research specification belong here.
-// Missing N Model meanings intentionally remain UNASSIGNED rather than being inferred.
-const EXPLICIT_MAPPINGS: Partial<Record<string, TrendConstructId>> = {
-  TAROT_48: "EMOTIONAL_CONNECTION", // 聖杯皇后 — explicit example supplied in the specification.
-};
+import type { CardConstructMapping } from "../types/trendAnalysis";
+import { N_MODEL_CONSTRUCT_BY_NAME } from "./nModelConstructDictionary";
 
 export const CARD_CONSTRUCT_MAPPINGS: CardConstructMapping[] = tarotCardCatalog.map((card) => {
   const cardId = tarotCardStableId(card.order);
-  const category = EXPLICIT_MAPPINGS[cardId] ?? "UNASSIGNED";
+  const dictionaryEntry = N_MODEL_CONSTRUCT_BY_NAME[card.name];
+  const category = dictionaryEntry?.category ?? "UNASSIGNED";
   return {
     cardId,
     cardName: card.name,
     category,
-    source: category === "UNASSIGNED" ? "unavailable" : "explicit_requirement",
+    source: dictionaryEntry ? "n_model_dictionary" : "unavailable",
+    primaryConstruct: dictionaryEntry?.primaryConstruct,
+    domain: dictionaryEntry?.domain,
+    sourceBatch: dictionaryEntry?.sourceBatch,
+    sourceVersion: dictionaryEntry?.sourceVersion,
+    reviewVersion: dictionaryEntry?.reviewVersion,
+    reviewStatus: dictionaryEntry?.reviewStatus,
   };
 });
 

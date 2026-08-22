@@ -14,6 +14,7 @@ export type TrendConstructId =
 
 export type TrendMappingCategory = TrendConstructId | "UNASSIGNED";
 export type TrendDirection = "BASELINE" | "NEW" | "UP" | "DOWN" | "STABLE" | "NO_DATA";
+export type NModelDomain = "META" | "MOTIVATION" | "EMOTION" | "COGNITION" | "REALITY_RESOURCE";
 
 export type TrendConstructDefinition = {
   id: TrendConstructId;
@@ -26,7 +27,13 @@ export type CardConstructMapping = {
   cardId: string;
   cardName: string;
   category: TrendMappingCategory;
-  source: "explicit_requirement" | "unavailable";
+  source: "explicit_requirement" | "n_model_dictionary" | "unavailable";
+  primaryConstruct?: string;
+  domain?: NModelDomain;
+  sourceBatch?: "major_arcana_22" | "wands_14" | "cups_14" | "swords_14" | "pentacles_14";
+  sourceVersion?: "v1.0";
+  reviewVersion?: "v1.0-RC1";
+  reviewStatus?: "release_candidate";
 };
 
 export type TrendPeriodStrategy = {
